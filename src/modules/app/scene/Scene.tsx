@@ -1,21 +1,14 @@
 import Dirt from '@modules/gameplay/dirt/Dirt'
-import Snail from '@modules/gameplay/snail/Snail'
-import { PerspectiveCamera } from '@react-three/drei'
+import Opponent from '@modules/gameplay/opponent/Opponent'
+import Player from '@modules/gameplay/player/Player'
 import { Canvas } from '@react-three/fiber'
 
 const Scene = () => {
   return (
     <Canvas>
-      <PerspectiveCamera makeDefault position={[10, 1, 6]} rotation={[0, Math.PI / 2, 0]} />
-      {/* <PerspectiveCamera
-        makeDefault
-        position={[8, 8, 14]}
-        rotation={[-Math.PI / 4, Math.PI / 4, Math.PI / 4]}
-      /> */}
-      <directionalLight position={[-2, 5, 2]} intensity={3} />
-      <directionalLight position={[5, 1, 0]} intensity={3} />
-      <directionalLight position={[2, 5, 2]} intensity={3} />
-      <Snail />
+      <ambientLight position={[5, 1, 0]} intensity={1} />
+      <Opponent />
+      <Player />
       <Dirt />
     </Canvas>
   )
