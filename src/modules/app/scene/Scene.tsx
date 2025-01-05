@@ -2,61 +2,67 @@ import Dirt from '@modules/gameplay/dirt/Dirt'
 import Menu from '@modules/gameplay/menu/Menu'
 import Opponent from '@modules/gameplay/opponent/Opponent'
 import Player from '@modules/gameplay/player/Player'
-import { useSpring } from '@react-spring/three'
+import { animated, useSpring } from '@react-spring/three'
 import { PerspectiveCamera } from '@react-three/drei'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { Object3D, PerspectiveCamera as PerspectiveCameraType } from 'three'
+import { calcRotation, getGlobalPosition } from '../util'
+import { SpringSettings } from './Scene.type'
 
 const Scene = () => {
   const playerRef = useRef<Object3D>(null)
   const menuRef = useRef<Object3D>(null)
   const cameraRef = useRef<PerspectiveCameraType>(null)
 
-  const [_, api] = useSpring(() => ({
+  const [spring, api] = useSpring<SpringSettings>(() => ({
     position: [0, 14, -14],
     rotation: [-Math.PI, 0, -Math.PI],
-    config: { mass: 1, tension: 30, friction: 40, frequency: 8 },
+    config: { mass: 1, tension: 30, friction: 40, duration: 2500 },
   }))
 
   const handleStart = () => {
     if (playerRef.current && cameraRef.current) {
-      const camera = cameraRef.current.position.toArray().map(value => value)
-      const target = playerRef.current.position.toArray().map(value => value)
-      const direction = [target[0] - camera[0], target[1] - camera[1], target[2] + 8 - camera[2]]
+      const cameraVector = getGlobalPosition(cameraRef.current)
 
-      const length = Math.sqrt(direction[0] ** 2 + direction[1] ** 2 + direction[2] ** 2)
-      const [dx, dy, dz] = direction.map(v => v / length)
-
-      const newYaw = Math.atan2(dx, dz)
-      const newPitch = -Math.asin(dy) + cameraRef.current.rotation.x
-      const newRoll = cameraRef.current.rotation.z
+      const targetRotation = calcRotation(
+        cameraVector,
+        playerRef.current.position,
+        cameraRef.current.matrixWorld
+      )
 
       api.start({
         position: [0, 11, -11],
-        rotation: [newPitch, newYaw, newRoll],
-        onChange: ({ value }) => {
-          if (cameraRef.current) {
-            cameraRef.current.rotation.set(value.rotation[0], value.rotation[1], value.rotation[2])
-            cameraRef.current.position.set(value.position[0], value.position[1], value.position[2])
-          }
+        rotation: [...(Object.values(targetRotation) as SpringSettings['rotation'])],
+      })
+    }
+  }
+
+  const updateCameraPosition = () => {
+    if (playerRef.current && cameraRef.current) {
+      const cameraPosition = getGlobalPosition(cameraRef.current)
+      const playerPosition = getGlobalPosition(playerRef.current)
+      api.start({
+        from: {
+          position: [cameraPosition.x, cameraPosition.y, cameraPosition.z],
+        },
+        to: {
+          position: [playerPosition.x, playerPosition.y + 11, playerPosition.z - 11],
+        },
+        config: {
+          duration: 1500,
         },
       })
     }
   }
 
-  useEffect(() => {
-    if (cameraRef.current && menuRef.current) {
-      const { x, y, z } = menuRef.current.position
-      cameraRef.current.lookAt(x, y, z)
-    }
-  }, [])
-
   return (
     <>
-      <PerspectiveCamera makeDefault ref={cameraRef} position={[0, 14, -14]} />
+      <animated.group position={spring.position} rotation={spring.rotation as any}>
+        <PerspectiveCamera makeDefault ref={cameraRef} />
+      </animated.group>
       <ambientLight position={[5, 1, 0]} intensity={1} />
       <Menu ref={menuRef} handleStart={handleStart} />
-      <Player ref={playerRef} />
+      <Player ref={playerRef} updateCameraPosition={updateCameraPosition} />
       <Opponent />
       <Dirt />
     </>

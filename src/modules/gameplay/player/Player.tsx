@@ -1,8 +1,9 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { DirectionalLight, Object3D, Object3DEventMap } from 'three'
 import SnailJump from '../snail-jump/SnailJump'
+import { PlayerProp } from './Player.type'
 
-const Player = forwardRef<Object3D<Object3DEventMap>>((_, ref) => {
+const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>((props, ref) => {
   const modelRef = useRef<Object3D>(null)
 
   useImperativeHandle(ref, () => modelRef.current as Object3D)
@@ -17,7 +18,7 @@ const Player = forwardRef<Object3D<Object3DEventMap>>((_, ref) => {
         intensity={6}
         lookAt={() => modelRef?.current?.position}
       />
-      <SnailJump ref={modelRef} />
+      <SnailJump {...props} ref={modelRef} />
     </>
   )
 })
