@@ -23,8 +23,8 @@ export const calcRotation = (
   targetPosition: Vector3,
   objectRotation?: Matrix4
 ) => {
-  const camera = objectPosition.toArray().map(value => value)
-  const target = targetPosition.toArray().map(value => value)
+  const camera = objectPosition.toArray()
+  const target = targetPosition.toArray()
   const direction = [target[0] - camera[0], target[1] - camera[1], target[2] + 8 - camera[2]]
   const length = Math.sqrt(direction[0] ** 2 + direction[1] ** 2 + direction[2] ** 2)
   const [dx, dy, dz] = direction.map(v => v / length)
@@ -34,5 +34,5 @@ export const calcRotation = (
   const newPitch = -Math.asin(dy) + cameraRotation.pitch
   const newRoll = cameraRotation.roll
 
-  return { newPitch, newYaw, newRoll }
+  return new Euler(newPitch, newYaw, newRoll)
 }

@@ -17,7 +17,6 @@ const Scene = () => {
   const [spring, api] = useSpring<SpringSettings>(() => ({
     position: [0, 14, -14],
     rotation: [-Math.PI, 0, -Math.PI],
-    config: { mass: 1, tension: 30, friction: 40, duration: 2500 },
   }))
 
   const handleStart = () => {
@@ -31,8 +30,13 @@ const Scene = () => {
       )
 
       api.start({
+        rotation: targetRotation.toArray(),
+        config: { mass: 1, tension: 30, friction: 40, duration: 2500 },
+      })
+
+      api.start({
         position: [0, 11, -11],
-        rotation: [...(Object.values(targetRotation) as SpringSettings['rotation'])],
+        config: { mass: 1, tension: 10, friction: 40 },
       })
     }
   }
@@ -43,14 +47,12 @@ const Scene = () => {
       const playerPosition = getGlobalPosition(playerRef.current)
       api.start({
         from: {
-          position: [cameraPosition.x, cameraPosition.y, cameraPosition.z],
+          position: cameraPosition.toArray(),
         },
         to: {
           position: [playerPosition.x, playerPosition.y + 11, playerPosition.z - 11],
         },
-        config: {
-          duration: 1500,
-        },
+        config: { mass: 1, tension: 30, friction: 40 },
       })
     }
   }

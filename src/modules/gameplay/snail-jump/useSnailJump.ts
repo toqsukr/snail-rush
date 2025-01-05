@@ -31,7 +31,7 @@ export const useSnailJump = () => {
     if (!mixerRef.current) return
 
     const jumpAction = mixerRef.current.clipAction(model.animations[0])
-    if (!jumpAction.isRunning() && started) {
+    if (started) {
       jumpAction.reset().play()
 
       const currentPosition = springProps.position.get()
@@ -66,6 +66,7 @@ export const useSnailJump = () => {
   })
 
   return {
+    isJumping: () => mixerRef.current?.clipAction(model.animations[0]).isRunning(),
     modelRef,
     model,
     triggerJump,

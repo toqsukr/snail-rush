@@ -6,13 +6,15 @@ import { useSnailJump } from './useSnailJump'
 
 const SnailJump = forwardRef<Object3D<Object3DEventMap>, SnailJumpProp>(
   ({ updateCameraPosition }, ref) => {
-    const { position, modelRef, model, triggerJump } = useSnailJump()
+    const { isJumping, position, modelRef, model, triggerJump } = useSnailJump()
 
     useImperativeHandle(ref, () => modelRef.current as Object3D)
 
     const handleJump = () => {
-      triggerJump()
-      updateCameraPosition()
+      if (!isJumping()) {
+        triggerJump()
+        updateCameraPosition()
+      }
     }
 
     return (
