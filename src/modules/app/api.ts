@@ -5,3 +5,9 @@ export const queryClient = new QueryClient({
     queries: { staleTime: Infinity },
   },
 })
+
+export const baseConfig = {
+  headers: {
+    'Content-Type': 'application/json',
+  },
+}

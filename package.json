@@ -15,6 +15,7 @@
     "@react-three/drei": "^9.120.4",
     "@react-three/fiber": "^8.17.10",
     "@tanstack/react-query": "^5.62.14",
+    "axios": "^1.7.9",
     "lodash.throttle": "^4.1.1",
     "node-path": "^0.0.3",
     "path": "^0.12.7",
