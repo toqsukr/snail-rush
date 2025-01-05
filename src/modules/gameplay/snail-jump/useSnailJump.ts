@@ -1,15 +1,21 @@
+import { useSpring } from '@react-spring/three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { useAppState } from '../store'
 
 export const useSnailJump = () => {
-  const model = useGLTF('animations/jump1.glb')
+  const { started } = useAppState()
+  const model = useGLTF('animations/full-jump-static.glb')
   const mixerRef = useRef<THREE.AnimationMixer | null>(null)
-  const targetPosition = useRef(new THREE.Vector3())
-
   const modelRef = useRef<THREE.Object3D>(null)
   const { scene, animations } = model
+
+  const [springProps, api] = useSpring(() => ({
+    position: [0, 0, 0],
+    config: { mass: 10, tension: 300, friction: 40 },
+  }))
 
   useEffect(() => {
     if (!scene || !animations.length) return
@@ -22,13 +28,33 @@ export const useSnailJump = () => {
   }, [scene, animations])
 
   const triggerJump = () => {
-    if (!mixerRef.current || !modelRef.current) return
+    if (!mixerRef.current) return
 
     const jumpAction = mixerRef.current.clipAction(model.animations[0])
-    if (!jumpAction.isRunning()) {
-      targetPosition.current.copy(modelRef.current.position).add(new THREE.Vector3(0, 0, 4))
-
+    if (!jumpAction.isRunning() && started) {
       jumpAction.reset().play()
+
+      const currentPosition = springProps.position.get()
+      const intermediatePosition = [
+        currentPosition[0],
+        currentPosition[1] + 1.5,
+        currentPosition[2] + 2,
+      ]
+
+      const targetPosition = [currentPosition[0], currentPosition[1], currentPosition[2] + 4]
+
+      api.start({
+        position: intermediatePosition,
+        delay: jumpAction.getClip().duration * 280,
+        config: { duration: jumpAction.getClip().duration * 220 },
+      })
+
+      api.start({
+        position: targetPosition,
+        delay: jumpAction.getClip().duration * 450,
+        config: { duration: jumpAction.getClip().duration * 220 },
+      })
+
       setTimeout(() => {
         jumpAction.stop()
       }, jumpAction.getClip().duration * 1000)
@@ -37,24 +63,12 @@ export const useSnailJump = () => {
 
   useFrame((_, delta) => {
     if (mixerRef.current) mixerRef.current.update(delta)
-
-    if (mixerRef.current && modelRef.current) {
-      const jumpAction = mixerRef.current.clipAction(model.animations[0])
-      const animationDuration = jumpAction.getClip().duration
-      const currentTime = jumpAction.time
-
-      const progress =
-        Math.max(0, currentTime - 0.25 * animationDuration) / (0.75 * animationDuration)
-
-      const interpolatedPosition = new THREE.Vector3().lerpVectors(
-        modelRef.current.position,
-        targetPosition.current,
-        progress
-      )
-
-      modelRef.current.position.copy(interpolatedPosition)
-    }
   })
 
-  return { modelRef, model, triggerJump }
+  return {
+    modelRef,
+    model,
+    triggerJump,
+    position: springProps.position.to((x, y, z) => [x, y, z]),
+  }
 }

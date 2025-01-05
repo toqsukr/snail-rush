@@ -41,3 +41,10 @@ export type GetPositionResponse = z.infer<typeof GetPositionResponseSchema>
 export type WebSocketRequestEvent = z.infer<typeof WebSocketRequestEventSchema>
 
 export type WebSocketResponseEvent = z.infer<typeof WebSocketResponseEventSchema>
+
+export type AppState = {
+  started: boolean
+  onGameStart: () => void
+  onGameOver: () => void
+  onWin: () => void
+}

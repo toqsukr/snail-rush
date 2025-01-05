@@ -10,7 +10,7 @@ export const useReactQuerySubscription = () => {
   const websocket = useRef<WebSocket>()
 
   useEffect(() => {
-    websocket.current = new WebSocket('wss://echo.websocket.org/')
+    websocket.current = new WebSocket('ws://echo.websocket.org/')
     websocket.current.onmessage = event => {
       console.log('received event', event)
       try {
