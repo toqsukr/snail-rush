@@ -1,7 +1,7 @@
 import { baseConfig } from '@modules/app/api'
 import { HTTP_HOST_URL } from '@modules/app/constant'
 import axios from 'axios'
-import { CreateSessionResponse, GetSessionResponse } from './type'
+import { ConnectSessionResponse, CreateSessionResponse, GetSessionResponse } from './type'
 
 class SessionService {
   readonly SESSION_PREFIX = `${HTTP_HOST_URL}/api/v1/session`
@@ -14,8 +14,8 @@ class SessionService {
 
   async createSession(playerID: string) {
     return await axios.post<CreateSessionResponse>(
-      `${this.SESSION_PREFIX}/${playerID}`,
-      null,
+      `${this.SESSION_PREFIX}`,
+      { player_id: playerID },
       baseConfig
     )
   }
@@ -25,7 +25,7 @@ class SessionService {
   }
 
   async connectSession(sessionID: string, playerID: string) {
-    return await axios.post(
+    return await axios.post<ConnectSessionResponse>(
       `${this.SESSION_PREFIX}/${sessionID}/connect/${playerID}`,
       null,
       baseConfig

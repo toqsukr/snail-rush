@@ -1,3 +1,3 @@
-import { SnailJumpProp } from '../snail-jump/SnailJump.type'
+import { SnailJumpProp } from '../snail-jump/SnailJump.type.d'
 
 export type PlayerProp = SnailJumpProp

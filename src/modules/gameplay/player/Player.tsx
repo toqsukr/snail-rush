@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { DirectionalLight, Object3D, Object3DEventMap } from 'three'
 import SnailJump from '../snail-jump/SnailJump'
-import { PlayerProp } from './Player.type'
+import { PlayerProp } from './Player.type.d'
 
 const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>((props, ref) => {
   const modelRef = useRef<Object3D>(null)

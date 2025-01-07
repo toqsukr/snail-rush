@@ -3,10 +3,8 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { useAppState } from '../store'
 
 export const useSnailJump = () => {
-  const { started } = useAppState()
   const model = useGLTF('animations/full-jump-static.glb')
   const mixerRef = useRef<THREE.AnimationMixer | null>(null)
   const modelRef = useRef<THREE.Object3D>(null)
@@ -31,34 +29,32 @@ export const useSnailJump = () => {
     if (!mixerRef.current) return
 
     const jumpAction = mixerRef.current.clipAction(model.animations[0])
-    if (started) {
-      jumpAction.reset().play()
+    jumpAction.reset().play()
 
-      const currentPosition = springProps.position.get()
-      const intermediatePosition = [
-        currentPosition[0],
-        currentPosition[1] + 1.5,
-        currentPosition[2] + 2,
-      ]
+    const currentPosition = springProps.position.get()
+    const intermediatePosition = [
+      currentPosition[0],
+      currentPosition[1] + 1.5,
+      currentPosition[2] + 2,
+    ]
 
-      const targetPosition = [currentPosition[0], currentPosition[1], currentPosition[2] + 4]
+    const targetPosition = [currentPosition[0], currentPosition[1], currentPosition[2] + 4]
 
-      api.start({
-        position: intermediatePosition,
-        delay: jumpAction.getClip().duration * 280,
-        config: { duration: jumpAction.getClip().duration * 220 },
-      })
+    api.start({
+      position: intermediatePosition,
+      delay: jumpAction.getClip().duration * 280,
+      config: { duration: jumpAction.getClip().duration * 220 },
+    })
 
-      api.start({
-        position: targetPosition,
-        delay: jumpAction.getClip().duration * 450,
-        config: { duration: jumpAction.getClip().duration * 220 },
-      })
+    api.start({
+      position: targetPosition,
+      delay: jumpAction.getClip().duration * 450,
+      config: { duration: jumpAction.getClip().duration * 220 },
+    })
 
-      setTimeout(() => {
-        jumpAction.stop()
-      }, jumpAction.getClip().duration * 1000)
-    }
+    setTimeout(() => {
+      jumpAction.stop()
+    }, jumpAction.getClip().duration * 1000)
   }
 
   useFrame((_, delta) => {

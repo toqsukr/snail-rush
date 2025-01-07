@@ -1,5 +1,6 @@
 import Scene from '@modules/app/scene/Scene'
 import { useAppState } from '@modules/gameplay/store'
+import { useReactQuerySubscription } from '@modules/gameplay/useQuerySubscription'
 import { animated, useSpring } from '@react-spring/web'
 import { Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
@@ -12,6 +13,8 @@ const Board = () => {
   const props = useSpring({
     scale: started ? 1 : 0,
   })
+
+  useReactQuerySubscription()
 
   return (
     <>

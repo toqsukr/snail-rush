@@ -1,7 +1,12 @@
 import { baseConfig } from '@modules/app/api'
 import { HTTP_HOST_URL } from '@modules/app/constant'
 import axios from 'axios'
-import { CreatePlayerRequest, GetPlayerResponse, UpdatePlayerRequest } from './type'
+import {
+  CreatePlayerRequest,
+  CreatePlayerResponse,
+  GetPlayerResponse,
+  UpdatePlayerRequest,
+} from './type'
 
 class PlayerService {
   readonly PLAYER_PREFIX = `${HTTP_HOST_URL}/api/v1/player`
@@ -13,7 +18,7 @@ class PlayerService {
   }
 
   async createPlayer(data: CreatePlayerRequest) {
-    return await axios.post<CreatePlayerRequest>(this.PLAYER_PREFIX, data, baseConfig)
+    return await axios.post<CreatePlayerResponse>(this.PLAYER_PREFIX, data, baseConfig)
   }
 
   async updatePlayer(playerID: string, data: UpdatePlayerRequest) {

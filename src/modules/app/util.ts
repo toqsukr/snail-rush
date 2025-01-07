@@ -8,7 +8,7 @@ export const getGlobalRotation = (matrixWorld: Matrix4) => {
   euler.setFromRotationMatrix(rotationMatrix)
   const { x, y, z } = euler
 
-  return { pitch: x, yaw: y, roll: z }
+  return { x, y, z }
 }
 
 export const getGlobalPosition = (object: Object3D<Object3DEventMap>) => {
@@ -30,9 +30,9 @@ export const calcRotation = (
   const [dx, dy, dz] = direction.map(v => v / length)
 
   const cameraRotation = getGlobalRotation(objectRotation ?? new Matrix4())
-  const newYaw = Math.atan2(dx, dz) + cameraRotation.yaw
-  const newPitch = -Math.asin(dy) + cameraRotation.pitch
-  const newRoll = cameraRotation.roll
+  const newYaw = Math.atan2(dx, dz) + cameraRotation.y
+  const newPitch = -Math.asin(dy) + cameraRotation.x
+  const newRoll = cameraRotation.z
 
   return new Euler(newPitch, newYaw, newRoll)
 }
