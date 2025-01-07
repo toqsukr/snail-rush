@@ -1,10 +1,10 @@
 import Scene from '@modules/app/scene/Scene'
 import { useAppState } from '@modules/gameplay/store'
-import { useReactQuerySubscription } from '@modules/gameplay/useQuerySubscription'
 import { animated, useSpring } from '@react-spring/web'
 import { Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Perf } from 'r3f-perf'
+import { useWebSocket } from '../useWebSocket'
 import css from './Board.module.scss'
 
 const Board = () => {
@@ -14,7 +14,7 @@ const Board = () => {
     scale: started ? 1 : 0,
   })
 
-  useReactQuerySubscription()
+  useWebSocket()
 
   return (
     <>

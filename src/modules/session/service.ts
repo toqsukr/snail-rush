@@ -21,7 +21,7 @@ class SessionService {
   }
 
   async deleteSession(sessionID: string) {
-    return await axios.post<null>(`${this.SESSION_PREFIX}/${sessionID}`, null, baseConfig)
+    return await axios.delete(`${this.SESSION_PREFIX}/${sessionID}`, baseConfig)
   }
 
   async connectSession(sessionID: string, playerID: string) {
@@ -33,11 +33,7 @@ class SessionService {
   }
 
   async kickPlayer(sessionID: string, playerID: string) {
-    return await axios.post(
-      `${this.SESSION_PREFIX}/${sessionID}/kick/${playerID}`,
-      null,
-      baseConfig
-    )
+    return await axios.delete(`${this.SESSION_PREFIX}/${sessionID}/kick/${playerID}`, baseConfig)
   }
 }
 

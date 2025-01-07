@@ -5,7 +5,7 @@ export const GetPlayerRequestSchema = z.object({
 })
 
 export const CreatePlayerRequestSchema = z.object({
-  username: z.string(),
+  username: z.string().min(1),
 })
 
 export const GetPlayerResponseSchema = CreatePlayerRequestSchema.extend({
@@ -18,6 +18,8 @@ export const CreatePlayerResponseSchema = GetPlayerResponseSchema
 
 export const UpdatePlayerRequestSchema = CreatePlayerRequestSchema
 
+export const UpdatePlayerResponseSchema = GetPlayerResponseSchema
+
 export type GetPlayerRequest = z.infer<typeof GetPlayerRequestSchema>
 
 export type GetPlayerResponse = z.infer<typeof GetPlayerResponseSchema>
@@ -26,7 +28,7 @@ export type CreatePlayerRequest = z.infer<typeof CreatePlayerRequestSchema>
 
 export type UpdatePlayerRequest = z.infer<typeof UpdatePlayerRequestSchema>
 
-export type DeletePlayerRequest = z.infer<typeof DeletePlayerRequestSchema>
+export type UpdatePlayerResponse = z.infer<typeof UpdatePlayerResponseSchema>
 
 export type CreatePlayerResponse = z.infer<typeof CreatePlayerResponseSchema>
 

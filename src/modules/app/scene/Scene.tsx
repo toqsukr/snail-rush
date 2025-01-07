@@ -1,7 +1,7 @@
 import Dirt from '@modules/gameplay/dirt/Dirt'
 import Opponent from '@modules/gameplay/opponent/Opponent'
 import Player from '@modules/gameplay/player/Player'
-import Menu from '@modules/lobby/menu/Menu'
+import MenuWrapper from '@modules/lobby/menu-wrapper/MenuWrapper'
 import { animated, useSpring } from '@react-spring/three'
 import { PerspectiveCamera } from '@react-three/drei'
 import { useRef } from 'react'
@@ -63,7 +63,7 @@ const Scene = () => {
         <PerspectiveCamera makeDefault ref={cameraRef} />
       </animated.group>
       <ambientLight position={[5, 1, 0]} intensity={1} />
-      <Menu handleStart={handleStart} />
+      <MenuWrapper handleStart={handleStart} />
       <Player ref={playerRef} updateCameraPosition={updateCameraPosition} />
       <Opponent />
       <Dirt />

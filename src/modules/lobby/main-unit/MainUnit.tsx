@@ -1,51 +1,68 @@
-import { MutationKeys } from '@modules/app/type.d'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreatePlayer } from '@modules/player/model/hooks/useCreatePlayer'
+import { useUpdatePlayer } from '@modules/player/model/hooks/useUpdatePlayer'
+import NameInput from '@modules/player/name-input/NameInput'
 import { usePlayerData } from '@modules/player/store'
+import { CreatePlayerRequest, CreatePlayerRequestSchema } from '@modules/player/type.d'
 import { useCreateSession } from '@modules/session/model/hooks/useCreateSession'
+import { useDeleteSession } from '@modules/session/model/hooks/useDeleteSession'
 import { useSession } from '@modules/session/store'
-import { useIsMutating } from '@tanstack/react-query'
+import debounce from 'lodash.debounce'
+import { useForm } from 'react-hook-form'
 import { useLobby } from '../store'
 
 const MainUnit = () => {
   const { username, id, setPlayerData } = usePlayerData()
   const { onCreateLobby, onJoinLobby } = useLobby()
-  const { session, setSession } = useSession()
-  const { createSession } = useCreateSession()
   const { createPlayer } = useCreatePlayer()
+  const { createSession } = useCreateSession()
+  const { updatePlayer } = useUpdatePlayer()
+  const { deleteSession } = useDeleteSession()
+  const { session, setSession } = useSession()
 
-  const handleCreation = async () => {
-    let playerID = id
-    if (!id) {
-      const playerData = await createPlayer({ username })
-      setPlayerData(playerData)
-      playerID = playerData.id
+  const { register, handleSubmit, formState } = useForm<CreatePlayerRequest>({
+    mode: 'onChange',
+    defaultValues: { username },
+    resolver: zodResolver(CreatePlayerRequestSchema),
+  })
+
+  const onUpdate = debounce((data: CreatePlayerRequest) => {
+    if (id && data.username) {
+      updatePlayer({ ...data, id })
     }
-    if (!session) {
-      const sessionData = await createSession(playerID ?? '')
+  }, 600)
+
+  const onCreate = async (data: CreatePlayerRequest) => {
+    onCreateLobby()
+    if (!id) {
+      const response = await createPlayer(data)
+      setPlayerData(response)
+      const sessionData = await createSession(response.id)
+      setSession(sessionData)
+    } else if (!session) {
+      const sessionData = await createSession(id)
       setSession(sessionData)
     }
-    onCreateLobby()
   }
 
-  const handleJoin = async () => {
+  const onJoin = async (data: CreatePlayerRequest) => {
     onJoinLobby()
     if (!id) {
-      const playerData = await createPlayer({ username })
+      const playerData = await createPlayer(data)
       setPlayerData(playerData)
     }
+    if (session) {
+      deleteSession(session.session_id)
+    }
   }
-
-  const isPlayerCreating = useIsMutating({ mutationKey: [MutationKeys.CREATE_PLAYER] })
-  const isSessionCreating = useIsMutating({ mutationKey: [MutationKeys.CREATE_SESSION] })
-
-  if (!!isPlayerCreating || !!isSessionCreating) return <div>Loading...</div>
 
   return (
     <>
-      <button disabled={!username} onClick={handleCreation}>
-        CREATE LOBBY
+      <NameInput {...register('username', { onChange: handleSubmit(onUpdate) })} />
+      <button disabled={!username && !formState.isValid} onClick={handleSubmit(onCreate)}>
+        {(session ? '' : 'CREATE') + ' LOBBY'}
       </button>
-      <button disabled={!username} onClick={handleJoin}>
+      <button disabled={!username && !formState.isValid} onClick={handleSubmit(onJoin)}>
         JOIN
       </button>
     </>

@@ -1,5 +1,5 @@
 import { queryClient } from '@modules/app/api'
-import Board from '@shared/board/Board'
+import Board from '@modules/app/board/Board'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'

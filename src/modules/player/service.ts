@@ -6,6 +6,7 @@ import {
   CreatePlayerResponse,
   GetPlayerResponse,
   UpdatePlayerRequest,
+  UpdatePlayerResponse,
 } from './type'
 
 class PlayerService {
@@ -22,7 +23,7 @@ class PlayerService {
   }
 
   async updatePlayer(playerID: string, data: UpdatePlayerRequest) {
-    return await axios.post<UpdatePlayerRequest, string>(
+    return await axios.put<UpdatePlayerResponse>(
       `${this.PLAYER_PREFIX}/${playerID}`,
       data,
       baseConfig
