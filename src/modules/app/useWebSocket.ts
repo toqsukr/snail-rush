@@ -1,3 +1,4 @@
+import { usePlayerData } from '@modules/player/store'
 import { useSession } from '@modules/session/store'
 import { SessionType } from '@modules/session/type.d'
 import { useEffect, useRef } from 'react'
@@ -6,13 +7,14 @@ import { Operations, WebSocketResponse, WebSocketResponseSchema } from './type.d
 
 export const useWebSocket = () => {
   const { session, setSession } = useSession()
+  const { player_id } = usePlayerData()
 
   const websocket = useRef<WebSocket>()
 
   useEffect(() => {
     if (session?.session_id) {
       websocket.current = new WebSocket(
-        `${WS_HOST_URL}/api/v1/gameplay/session/${session.session_id}/start/`
+        `${WS_HOST_URL}/api/v1/gameplay/session/${session.session_id}/player/${player_id}/start/`
       )
       websocket.current.onmessage = event => {
         try {

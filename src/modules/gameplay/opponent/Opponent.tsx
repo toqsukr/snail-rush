@@ -7,7 +7,7 @@ import { useAppState } from '../store'
 const Opponent = () => {
   const modelRef = useRef<Object3D>(null)
   const { started } = useAppState()
-  const { model, triggerJump, position } = useSnailJump(
+  const { model, triggerJump, position, rotation } = useSnailJump(
     'animations/full-jump-static-opponent.glb',
     [6, 0, 0]
   )
@@ -22,7 +22,14 @@ const Opponent = () => {
     }
   }, [started])
 
-  return <JumpAnimation ref={modelRef} position={position as any} object={model.scene} />
+  return (
+    <JumpAnimation
+      ref={modelRef}
+      position={position as any}
+      rotation={rotation as any}
+      object={model.scene}
+    />
+  )
 }
 
 export default Opponent

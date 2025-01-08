@@ -24,7 +24,7 @@ const Scene = () => {
 
   const handleStart = () => {
     if (!started && playerRef.current && cameraRef.current) {
-      const targetPosition: [number, number, number] = [0, 22, playerRef.current.position.z - 11]
+      const targetPosition: [number, number, number] = [0, 22, playerRef.current.position.z - 17]
 
       const targetRotation = calcRotation(
         new Vector3(...targetPosition),
@@ -52,14 +52,8 @@ const Scene = () => {
       const { x, y, z } = getGlobalPosition(playerRef.current)
 
       api.start({
-        position: [x, y + 22, z - 11],
+        position: [x, y + 22, z - 17],
         config: { mass: 1, tension: 50, friction: 40 },
-        onStart: () => {
-          console.log('start')
-        },
-        onRest: () => {
-          console.log('rest')
-        },
       })
     }
   }

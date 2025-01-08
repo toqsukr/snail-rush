@@ -9,9 +9,8 @@ import { useSnailJump } from './useSnailJump'
 const SnailJump = forwardRef<Object3D<Object3DEventMap>, SnailJumpProp>(
   ({ updateCameraPosition }, ref) => {
     const { handleKeyDown, handleKeyUp } = useSpaceHold(1000)
-    const { model, isJumping, position, modelRef, triggerJump } = useSnailJump(
-      'animations/full-jump-static.glb'
-    )
+    const { modelRef, model, position, rotation, triggerJump, triggerRotate, isJumping } =
+      useSnailJump('animations/full-jump-static.glb')
     const { started } = useAppState()
 
     useImperativeHandle(ref, () => modelRef.current as Object3D)
@@ -30,17 +29,34 @@ const SnailJump = forwardRef<Object3D<Object3DEventMap>, SnailJumpProp>(
       }
     }
 
+    const arrowCallback = (e: KeyboardEvent) => {
+      if (e.code == 'ArrowRight') {
+        triggerRotate(-0.2)
+      }
+      if (e.code == 'ArrowLeft') {
+        triggerRotate(0.2)
+      }
+      handleKeyDown(e)
+    }
+
     useEffect(() => {
-      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('keydown', arrowCallback)
       window.addEventListener('keyup', spaceCallback)
 
       return () => {
-        window.removeEventListener('keydown', handleKeyDown)
+        window.removeEventListener('keydown', arrowCallback)
         window.removeEventListener('keyup', spaceCallback)
       }
     }, [handleJump])
 
-    return <JumpAnimation ref={modelRef} position={position as any} object={model.scene} />
+    return (
+      <JumpAnimation
+        ref={modelRef}
+        position={position as any}
+        rotation={rotation as any}
+        object={model.scene}
+      />
+    )
   }
 )
 
