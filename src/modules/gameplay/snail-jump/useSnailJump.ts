@@ -43,7 +43,7 @@ export const useSnailJump = (modelPath: string, startPosition?: [number, number,
       to: async next => {
         await next({
           position: targetPosition.toArray(),
-          config: { duration: getAnimationDuration(koef) * 220 },
+          config: { duration: getAnimationDuration(koef) * 1000 },
         })
       },
     })

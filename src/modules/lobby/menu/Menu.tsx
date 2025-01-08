@@ -6,13 +6,7 @@ import { useLobby } from '../store'
 const Menu: FC<{ handleClickPlay: () => void }> = ({ handleClickPlay }) => {
   const { status } = useLobby()
 
-  if (!status)
-    return (
-      <>
-        <MainUnit />
-        <button onClick={handleClickPlay}>PLAY</button>
-      </>
-    )
+  if (!status) return <MainUnit />
 
   return <SessionUnit status={status} handleClickPlay={handleClickPlay} />
 }

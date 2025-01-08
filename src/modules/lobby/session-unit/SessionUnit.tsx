@@ -9,7 +9,7 @@ const SessionUnit: FC<{ status: PlayerStatus; handleClickPlay: () => void }> = (
 }) => {
   const content: Record<PlayerStatus, ReactNode> = {
     host: <CreationUnit handleStart={handleClickPlay} />,
-    joined: <JoinUnit />,
+    joined: <JoinUnit handleClickPlay={handleClickPlay} />,
   }
 
   return content[status]

@@ -4,12 +4,13 @@ import { useConnectSession } from '@modules/session/model/hooks/useConnectSessio
 import { useKickPlayer } from '@modules/session/model/hooks/useKickPlayer'
 import { useSession } from '@modules/session/store'
 import Input from '@shared/input/Input'
+import { FC } from 'react'
 import { useForm } from 'react-hook-form'
 import LobbyUnit from '../lobby-unit/LobbyUnit'
 import { useLobby } from '../store'
 import { LobbyFormCodeSchema, LobbyFormCodeType } from '../type.d'
 
-const JoinUnit = () => {
+const JoinUnit: FC<{ handleClickPlay: () => void }> = ({ handleClickPlay }) => {
   const { username, player_id } = usePlayerData()
   const { session, setSession } = useSession()
   const { onClickBack } = useLobby()
@@ -49,6 +50,8 @@ const JoinUnit = () => {
           <button disabled={!username || !formState.isValid} onClick={handleSubmit(onSubmit)}>
             CONNECT
           </button>
+          <button onClick={handleClickPlay}>PLAY</button>
+
           <button onClick={onClickBack}>BACK</button>
         </>
       )}
