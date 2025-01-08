@@ -10,7 +10,7 @@ export const useUpdatePlayer = () => {
     mutationKey: [MutationKeys.UPDATE_PLAYER],
     mutationFn: async (data: GetPlayerResponse) => {
       return playerService
-        .updatePlayer(data.id, data)
+        .updatePlayer(data.player_id, data)
         .then(({ data }) => UpdatePlayerResponseSchema.parse(data))
     },
     onSuccess: data => {

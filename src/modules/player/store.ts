@@ -6,15 +6,15 @@ import { PlayerData, PlayerDataStore } from './type.d'
 export const usePlayerData = create(
   persist<PlayerDataStore, [], [], Partial<PlayerData>>(
     (set, get) => ({
-      id: undefined,
+      player_id: undefined,
       username: '',
       setPlayerData: playerData => set({ ...get(), ...playerData }),
       setUsername: username => set({ ...get(), username }),
     }),
     {
       name: StorageKeys.PLAYER_DATA,
-      partialize: ({ id, username }) => ({
-        id,
+      partialize: ({ player_id, username }) => ({
+        player_id,
         username,
       }),
     }

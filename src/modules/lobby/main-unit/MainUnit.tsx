@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form'
 import { useLobby } from '../store'
 
 const MainUnit = () => {
-  const { username, id, setPlayerData } = usePlayerData()
+  const { username, player_id, setPlayerData } = usePlayerData()
   const { onCreateLobby, onJoinLobby } = useLobby()
   const { createPlayer } = useCreatePlayer()
   const { createSession } = useCreateSession()
@@ -27,27 +27,27 @@ const MainUnit = () => {
   })
 
   const onUpdate = debounce((data: CreatePlayerRequest) => {
-    if (id && data.username) {
-      updatePlayer({ ...data, id })
+    if (player_id && data.username) {
+      updatePlayer({ ...data, player_id })
     }
-  }, 600)
+  }, 1500)
 
   const onCreate = async (data: CreatePlayerRequest) => {
     onCreateLobby()
-    if (!id) {
+    if (!player_id) {
       const response = await createPlayer(data)
       setPlayerData(response)
-      const sessionData = await createSession(response.id)
+      const sessionData = await createSession(response.player_id)
       setSession(sessionData)
     } else if (!session) {
-      const sessionData = await createSession(id)
+      const sessionData = await createSession(player_id)
       setSession(sessionData)
     }
   }
 
   const onJoin = async (data: CreatePlayerRequest) => {
     onJoinLobby()
-    if (!id) {
+    if (!player_id) {
       const playerData = await createPlayer(data)
       setPlayerData(playerData)
     }

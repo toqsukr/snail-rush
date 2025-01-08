@@ -1,3 +1,3 @@
-import { SnailProp } from '../snail/Snail.type.d'
+import { SnailProp } from '../model/Model.type'
 
 export type OpponentProp = Pick<SnailProp, 'geometry'>

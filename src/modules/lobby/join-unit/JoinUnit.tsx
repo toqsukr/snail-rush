@@ -10,7 +10,7 @@ import { useLobby } from '../store'
 import { LobbyFormCodeSchema, LobbyFormCodeType } from '../type.d'
 
 const JoinUnit = () => {
-  const { username, id } = usePlayerData()
+  const { username, player_id } = usePlayerData()
   const { session, setSession } = useSession()
   const { onClickBack } = useLobby()
   const { connectSession } = useConnectSession()
@@ -22,7 +22,7 @@ const JoinUnit = () => {
 
   const onSubmit = (formData: LobbyFormCodeType) => {
     const { sessionID } = formData
-    connectSession({ playerID: id ?? '', sessionID })
+    connectSession({ playerID: player_id ?? '', sessionID })
   }
 
   const handleDisconnect = async (sessionID: string, playerID: string) => {
@@ -36,10 +36,12 @@ const JoinUnit = () => {
 
   return (
     <>
-      {session && id ? (
+      {session && player_id ? (
         <>
           <LobbyUnit />
-          <button onClick={() => handleDisconnect(session.session_id, id)}>DISCONNECT</button>
+          <button onClick={() => handleDisconnect(session.session_id, player_id)}>
+            DISCONNECT
+          </button>
         </>
       ) : (
         <>

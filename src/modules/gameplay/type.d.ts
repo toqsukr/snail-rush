@@ -33,3 +33,13 @@ export type AppState = {
   onGameOver: () => void
   onWin: () => void
 }
+
+export type PositionType = [number, number, number]
+
+export type AnimationPositionData = { start: PositionType; end: PositionType }
+
+export type OpponentState = {
+  positionQueue: AnimationPositionData[]
+  addPosition: (position: AnimationPositionData) => void
+  popPosition: () => void
+}

@@ -1,68 +1,45 @@
 import { useSpring } from '@react-spring/three'
-import { useGLTF } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import * as THREE from 'three'
+import { usePositionAnimation } from '../jump-animation/usePositionAnimation'
+import { calcIntermediatePosition, calcTargetPosition } from '../util'
 
-export const useSnailJump = () => {
-  const model = useGLTF('animations/full-jump-static.glb')
-  const mixerRef = useRef<THREE.AnimationMixer | null>(null)
+export const useSnailJump = (modelPath: string, startPosition?: [number, number, number]) => {
   const modelRef = useRef<THREE.Object3D>(null)
-  const { scene, animations } = model
+
+  const { animatePosition, getAnimationDuration, isAnimationRunning, model } =
+    usePositionAnimation(modelPath)
 
   const [springProps, api] = useSpring(() => ({
-    position: [0, 0, 0],
+    position: startPosition ?? [0, 0, 0],
     config: { mass: 10, tension: 300, friction: 40 },
   }))
 
-  useEffect(() => {
-    if (!scene || !animations.length) return
-
-    mixerRef.current = new THREE.AnimationMixer(scene)
-
-    return () => {
-      mixerRef.current?.stopAllAction()
-    }
-  }, [scene, animations])
-
-  const triggerJump = () => {
-    if (!mixerRef.current) return
-
-    const jumpAction = mixerRef.current.clipAction(model.animations[0])
-    jumpAction.reset().play()
-
+  const triggerJump = (koef: number) => {
     const currentPosition = springProps.position.get()
-    const intermediatePosition = [
-      currentPosition[0],
-      currentPosition[1] + 1.5,
-      currentPosition[2] + 2,
-    ]
 
-    const targetPosition = [currentPosition[0], currentPosition[1], currentPosition[2] + 4]
+    const targetPosition = calcTargetPosition(currentPosition, koef)
 
-    api.start({
-      position: intermediatePosition,
-      delay: jumpAction.getClip().duration * 280,
-      config: { duration: jumpAction.getClip().duration * 220 },
-    })
+    const intermediatePosition = calcIntermediatePosition(currentPosition, targetPosition)
+
+    animatePosition(koef)
 
     api.start({
-      position: targetPosition,
-      delay: jumpAction.getClip().duration * 450,
-      config: { duration: jumpAction.getClip().duration * 220 },
+      to: async next => {
+        await next({
+          position: intermediatePosition,
+          config: { duration: getAnimationDuration(koef) * 220 },
+        })
+        await next({
+          position: targetPosition,
+          config: { duration: getAnimationDuration(koef) * 220 },
+        })
+      },
     })
-
-    setTimeout(() => {
-      jumpAction.stop()
-    }, jumpAction.getClip().duration * 1000)
   }
 
-  useFrame((_, delta) => {
-    if (mixerRef.current) mixerRef.current.update(delta)
-  })
-
   return {
-    isJumping: () => mixerRef.current?.clipAction(model.animations[0]).isRunning(),
+    isJumping: isAnimationRunning,
     modelRef,
     model,
     triggerJump,

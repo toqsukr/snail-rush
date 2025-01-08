@@ -18,11 +18,11 @@ export const getGlobalPosition = (object: Object3D<Object3DEventMap>) => {
   return cameraVector
 }
 
-export const calcRotation = (
+export const calcRotation: (
   objectPosition: Vector3,
   targetPosition: Vector3,
   objectRotation?: Matrix4
-) => {
+) => [number, number, number] = (objectPosition, targetPosition, objectRotation) => {
   const camera = objectPosition.toArray()
   const target = targetPosition.toArray()
   const direction = [target[0] - camera[0], target[1] - camera[1], target[2] + 8 - camera[2]]
@@ -34,5 +34,5 @@ export const calcRotation = (
   const newPitch = -Math.asin(dy) + cameraRotation.x
   const newRoll = cameraRotation.z
 
-  return new Euler(newPitch, newYaw, newRoll)
+  return [newPitch, newYaw, newRoll]
 }

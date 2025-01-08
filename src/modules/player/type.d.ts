@@ -1,16 +1,14 @@
 import { z } from 'zod'
 
 export const GetPlayerRequestSchema = z.object({
-  playerID: z.string(),
+  player_id: z.string(),
 })
 
 export const CreatePlayerRequestSchema = z.object({
   username: z.string().min(1),
 })
 
-export const GetPlayerResponseSchema = CreatePlayerRequestSchema.extend({
-  id: z.string(),
-})
+export const GetPlayerResponseSchema = CreatePlayerRequestSchema.merge(GetPlayerRequestSchema)
 
 export const PlayerDataSchema = GetPlayerResponseSchema
 

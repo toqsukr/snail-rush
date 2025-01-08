@@ -14,12 +14,12 @@ const LobbyUnit = () => {
     <section className={css.lobby}>
       <h1>LOBBY</h1>
       <ol className={css.players}>
-        {session?.players.map(({ id, username }) => (
-          <li key={id} className={css.list_item}>
+        {session?.players.map(({ player_id, username }) => (
+          <li key={player_id} className={css.list_item}>
             <p>{username}</p>
-            {id !== playerData.id && status === 'host' && (
+            {player_id !== playerData.player_id && status === 'host' && (
               <RxCross2
-                onClick={() => kickPlayer({ sessionID: session.session_id, playerID: id })}
+                onClick={() => kickPlayer({ sessionID: session.session_id, playerID: player_id })}
               />
             )}
           </li>

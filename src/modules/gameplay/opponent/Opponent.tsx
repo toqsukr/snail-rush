@@ -1,20 +1,28 @@
-import { useFrame } from '@react-three/fiber'
-import { useRef } from 'react'
-import { DirectionalLight, Object3D } from 'three'
-import Snail from '../snail/Snail'
+import { useEffect, useRef } from 'react'
+import { Object3D } from 'three'
+import JumpAnimation from '../jump-animation/PositionAnimation'
+import { useSnailJump } from '../snail-jump/useSnailJump'
+import { useAppState } from '../store'
 
 const Opponent = () => {
   const modelRef = useRef<Object3D>(null)
-  const lightRef = useRef<DirectionalLight>(null)
+  const { started } = useAppState()
+  const { model, triggerJump, position } = useSnailJump(
+    'animations/full-jump-static-opponent.glb',
+    [6, 0, 0]
+  )
 
-  useFrame(() => {
-    if (modelRef.current) {
-      const modelPosition = modelRef.current.position
-      lightRef.current?.lookAt(modelPosition)
+  useEffect(() => {
+    if (started) {
+      const interval = setInterval(() => {
+        triggerJump(1)
+      }, 2000)
+
+      return () => clearInterval(interval)
     }
-  })
+  }, [started])
 
-  return <Snail ref={modelRef} modelPath='models/snail/snail-opponent.glb' />
+  return <JumpAnimation ref={modelRef} position={position as any} object={model.scene} />
 }
 
 export default Opponent

@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     react(),
     Unfonts({
-      google: { families: ['Jersey 25'] },
+      google: { families: ['Jersey 25'], preconnect: true },
     }),
   ],
   resolve: {
