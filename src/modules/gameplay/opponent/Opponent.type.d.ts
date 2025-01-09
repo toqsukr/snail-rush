@@ -1,3 +1,3 @@
-import { SnailProp } from '../model/Model.type'
+import { SnailJumpProp } from '../player/Player.type'
 
-export type OpponentProp = Pick<SnailProp, 'geometry'>
+export type OpponentProp = Pick<SnailJumpProp, 'mode'>

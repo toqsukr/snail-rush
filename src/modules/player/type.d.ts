@@ -8,13 +8,24 @@ export const CreatePlayerRequestSchema = z.object({
   username: z.string().min(1),
 })
 
-export const GetPlayerResponseSchema = CreatePlayerRequestSchema.merge(GetPlayerRequestSchema)
+export const PositionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  z: z.number(),
+})
+
+export const GetPlayerResponseSchema = z
+  .object({
+    position: PositionSchema.nullable(),
+    position_history: PositionSchema.array(),
+  })
+  .merge(CreatePlayerRequestSchema.merge(GetPlayerRequestSchema))
 
 export const PlayerDataSchema = GetPlayerResponseSchema
 
 export const CreatePlayerResponseSchema = GetPlayerResponseSchema
 
-export const UpdatePlayerRequestSchema = CreatePlayerRequestSchema
+export const UpdatePlayerRequestSchema = GetPlayerRequestSchema.merge(CreatePlayerRequestSchema)
 
 export const UpdatePlayerResponseSchema = GetPlayerResponseSchema
 

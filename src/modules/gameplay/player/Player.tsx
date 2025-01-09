@@ -1,26 +1,26 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { DirectionalLight, Object3D, Object3DEventMap } from 'three'
-import SnailJump from '../snail-jump/SnailJump'
-import { PlayerProp } from './Player.type.d'
+import { forwardRef } from 'react'
+import { Object3D, Object3DEventMap, Vector3 } from 'three'
+import JumpAnimation from '../jump-animation/PositionAnimation'
+import { PlayerProp } from './Player.type'
+import { usePlayer } from './usePlayer'
 
-const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>((props, ref) => {
-  const modelRef = useRef<Object3D>(null)
+const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>(
+  ({ updateCameraPosition, playerID, mode }, ref) => {
+    const onJump = (position: Vector3) => {
+      updateCameraPosition(position)
+    }
 
-  useImperativeHandle(ref, () => modelRef.current as Object3D)
+    const { model, position, rotation } = usePlayer(mode, playerID, onJump)
 
-  const lightRef = useRef<DirectionalLight>(null)
-
-  return (
-    <>
-      <directionalLight
-        ref={lightRef}
-        position={[0, 1, -1]}
-        intensity={6}
-        lookAt={() => modelRef?.current?.position}
+    return (
+      <JumpAnimation
+        ref={ref}
+        position={position as any}
+        rotation={rotation as any}
+        object={model.scene}
       />
-      <SnailJump {...props} ref={modelRef} />
-    </>
-  )
-})
+    )
+  }
+)
 
 export default Player

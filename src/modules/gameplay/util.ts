@@ -1,10 +1,50 @@
+import { PlayerStatus } from '@modules/lobby/type'
+import { ObjectMap } from '@react-three/fiber'
 import { Euler, Quaternion, Vector3 } from 'three'
+import { GLTF } from 'three-stdlib'
 import {
+  HOST_START_POSITION,
+  JOINED_START_POSITION,
   MAX_ANIMATION_DURATION,
   MAX_JUMP_LENGTH,
   MIN_ANIMATION_DURATION,
   MIN_JUMP_LENGTH,
 } from './constant'
+
+export const getStartPosition = (status: PlayerStatus, mode: PlayerStatus) => {
+  const definePosition = {
+    host: {
+      host: HOST_START_POSITION,
+      joined: JOINED_START_POSITION,
+    },
+    joined: {
+      host: JOINED_START_POSITION,
+      joined: HOST_START_POSITION,
+    },
+  }
+
+  return definePosition[mode][status]
+}
+
+export const getModel = (
+  mode: PlayerStatus,
+  status: PlayerStatus,
+  playerModel: GLTF & ObjectMap,
+  opponentModel: GLTF & ObjectMap
+) => {
+  const defineModel = {
+    host: {
+      host: playerModel,
+      joined: opponentModel,
+    },
+    joined: {
+      host: opponentModel,
+      joined: playerModel,
+    },
+  }
+
+  return defineModel[mode][status]
+}
 
 export const calcJumpDistance = (koef: number) => {
   return Math.max(MIN_JUMP_LENGTH, koef * MAX_JUMP_LENGTH)

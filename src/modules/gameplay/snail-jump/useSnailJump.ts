@@ -1,14 +1,15 @@
+import { PlayerStatus } from '@modules/lobby/type'
 import { useSpring } from '@react-spring/three'
-import { useRef } from 'react'
 import * as THREE from 'three'
 import { usePositionAnimation } from '../jump-animation/usePositionAnimation'
-import { calcJumpDistance, calculateLandingPosition } from '../util'
+import { calcJumpDistance, calculateLandingPosition, getStartPosition } from '../util'
 
-export const useSnailJump = (modelPath: string, startPosition?: [number, number, number]) => {
-  const modelRef = useRef<THREE.Object3D>(null)
+export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
+  const startPosition = getStartPosition(mode, status)
 
-  const { animatePosition, getAnimationDuration, isAnimationRunning, model } =
-    usePositionAnimation(modelPath)
+  const animationOptions = usePositionAnimation(mode, status)
+
+  const { animatePosition, getAnimationDuration, isAnimationRunning, model } = animationOptions
 
   const [springProps, api] = useSpring(() => ({
     position: startPosition ?? [0, 0, 0],
@@ -25,7 +26,7 @@ export const useSnailJump = (modelPath: string, startPosition?: [number, number,
     })
   }
 
-  const triggerJump = (koef: number) => {
+  const calcTargetPosition = (koef: number) => {
     const currentPosition = springProps.position.get()
     const currentRotation = springProps.rotation.get()
 
@@ -37,6 +38,10 @@ export const useSnailJump = (modelPath: string, startPosition?: [number, number,
       distance
     )
 
+    return targetPosition
+  }
+
+  const triggerJump = (koef: number, targetPosition: THREE.Vector3) => {
     animatePosition(koef)
 
     api.start({
@@ -51,9 +56,10 @@ export const useSnailJump = (modelPath: string, startPosition?: [number, number,
 
   return {
     model,
-    modelRef,
     triggerJump,
     triggerRotate,
+    calcTargetPosition,
+    getAnimationDuration,
     isJumping: isAnimationRunning,
     rotation: springProps.rotation,
     position: springProps.position.to((x, y, z) => [x, y, z]),

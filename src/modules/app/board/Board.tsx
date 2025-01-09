@@ -4,7 +4,7 @@ import { animated, useSpring } from '@react-spring/web'
 import { Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Perf } from 'r3f-perf'
-import { useWebSocket } from '../useWebSocket'
+import WebSocketProvider from '../websocket-provider/WebsocketProvider'
 import css from './Board.module.scss'
 
 const Board = () => {
@@ -14,17 +14,15 @@ const Board = () => {
     scale: started ? 1 : 0,
   })
 
-  useWebSocket()
-
   return (
-    <>
+    <WebSocketProvider>
       <Canvas>
         <Perf position='top-left' />
         <Scene />
         <Preload all />
       </Canvas>
       <animated.div style={props} className={css.settings} />
-    </>
+    </WebSocketProvider>
   )
 }
 

@@ -1,6 +1,9 @@
 import { PlayerStatus } from '@modules/lobby/type'
-import { SnailJumpProp } from '../snail-jump/SnailJump.type.d'
+import { PlayerData } from '@modules/player/type'
+import { Vector3 } from 'three'
 
-export type PlayerProp = SnailJumpProp & {
-  status: PlayerStatus
+export type PlayerProp = {
+  updateCameraPosition: (targetPosition: Vector3) => void
+  mode: PlayerStatus
+  playerID: PlayerData['player_id']
 }

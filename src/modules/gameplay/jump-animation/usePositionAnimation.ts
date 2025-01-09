@@ -1,12 +1,20 @@
+import { PlayerStatus } from '@modules/lobby/type'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
 import { AnimationMixer } from 'three'
-import { calcAnimationDuration } from '../util'
+import { calcAnimationDuration, getModel } from '../util'
 
-export const usePositionAnimation = (modelPath: string, animationIdx?: number) => {
-  const model = useGLTF(modelPath)
+export const usePositionAnimation = (
+  mode: PlayerStatus,
+  status: PlayerStatus,
+  animationIdx?: number
+) => {
+  const opponentModel = useGLTF('animations/full-jump-static-opponent.glb')
+  const playerModel = useGLTF('animations/full-jump-static.glb')
+
   const mixerRef = useRef<AnimationMixer | null>(null)
+  const model = getModel(mode, status, playerModel, opponentModel)
 
   const getAnimationDuration = (koef: number) => {
     return calcAnimationDuration(model.animations[animationIdx ?? 0].duration ?? 0, koef)

@@ -1,28 +1,10 @@
-import { PlayerStatus } from '@modules/lobby/type'
-import { FC, useEffect, useRef } from 'react'
-import { Object3D } from 'three'
-import { HOST_START_POSITION, JOINED_START_POSITION } from '../constant'
+import { FC } from 'react'
 import JumpAnimation from '../jump-animation/PositionAnimation'
-import { useSnailJump } from '../snail-jump/useSnailJump'
-import { useAppState } from '../store'
+import { OpponentProp } from './Opponent.type'
+import { useOpponent } from './useOpponent'
 
-const Opponent: FC<{ status: PlayerStatus }> = ({ status }) => {
-  const startPosition = status === 'host' ? JOINED_START_POSITION : HOST_START_POSITION
-  const animationData = `animations/full-jump-static${status === 'host' ? '-opponent' : ''}.glb`
-
-  const modelRef = useRef<Object3D>(null)
-  const { started } = useAppState()
-  const { model, triggerJump, position, rotation } = useSnailJump(animationData, startPosition)
-
-  useEffect(() => {
-    if (started) {
-      const interval = setInterval(() => {
-        triggerJump(0.6)
-      }, 2000)
-
-      return () => clearInterval(interval)
-    }
-  }, [started])
+const Opponent: FC<OpponentProp> = ({ mode }) => {
+  const { modelRef, model, position, rotation } = useOpponent(mode)
 
   return (
     <JumpAnimation

@@ -4,6 +4,8 @@
 //   z: z.number(),
 // })
 
+import { Vector3 } from 'three'
+
 // export const GetPositionRequestSchema = z.object({
 //   operation: z.literal(Operations.GET_POSITION),
 //   id: z.number(),
@@ -34,12 +36,9 @@ export type AppState = {
   onWin: () => void
 }
 
-export type PositionType = [number, number, number]
-
-export type AnimationPositionData = { start: PositionType; end: PositionType }
-
-export type OpponentState = {
-  positionQueue: AnimationPositionData[]
-  addPosition: (position: AnimationPositionData) => void
-  popPosition: () => void
+export type OpponentStreamType = {
+  position: Vector3
+  rotationY: number
+  distance: number
+  duration: number
 }
