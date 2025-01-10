@@ -35,8 +35,11 @@ export const useScene = () => {
             position: targetPosition,
             onRest: onGameStart,
             config: { mass: 1, tension: 20, friction: 40, duration: 2500 },
-          }),
-            next({ rotation: targetRotation, config: { mass: 1, tension: 50, friction: 40 } })
+          }).catch(() => {}),
+            next({
+              rotation: targetRotation,
+              config: { mass: 1, tension: 50, friction: 40 },
+            }).catch(() => {})
         },
       })
     }

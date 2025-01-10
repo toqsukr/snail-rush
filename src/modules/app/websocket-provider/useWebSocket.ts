@@ -3,8 +3,8 @@ import { useSession } from '@modules/session/store'
 import { SessionType } from '@modules/session/type.d'
 import { useEffect, useRef } from 'react'
 import { Vector3 } from 'three'
-import { WS_HOST_URL } from './constant'
-import { Operations, WebSocketResponse, WebSocketResponseSchema } from './type.d'
+import { WS_HOST_URL } from '../constant'
+import { Operations, WebSocketResponse, WebSocketResponseSchema } from '../type.d'
 
 export const useWebSocket = () => {
   const { session, setSession } = useSession()

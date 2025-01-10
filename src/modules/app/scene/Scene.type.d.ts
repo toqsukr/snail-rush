@@ -1,4 +1,4 @@
 export type SpringSettings = {
-  position: [number, number, number]
-  rotation: [number, number, number]
+  position: PositionType
+  rotation: RotationType
 }

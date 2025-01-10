@@ -4,7 +4,7 @@ import { animated, useSpring } from '@react-spring/web'
 import { Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Perf } from 'r3f-perf'
-import WebSocketProvider from '../websocket-provider/WebsocketProvider'
+import WebSocketProvider from '../websocket-provider/WebSocketProvider'
 import css from './Board.module.scss'
 
 const Board = () => {

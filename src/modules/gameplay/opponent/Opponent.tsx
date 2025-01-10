@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import JumpAnimation from '../jump-animation/PositionAnimation'
+import JumpAnimation from '../position-animation/PositionAnimation'
 import { OpponentProp } from './Opponent.type'
 import { useOpponent } from './useOpponent'
 

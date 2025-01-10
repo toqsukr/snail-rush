@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 import { Object3D, Object3DEventMap, Vector3 } from 'three'
-import JumpAnimation from '../jump-animation/PositionAnimation'
+import JumpAnimation from '../position-animation/PositionAnimation'
 import { PlayerProp } from './Player.type'
 import { usePlayer } from './usePlayer'
 

@@ -2,10 +2,10 @@ import { concatMap } from 'rxjs'
 import { opponentStream } from '../store'
 import { OpponentStreamType } from '../type'
 
-export const sequentialPositionStream = opponentStream.pipe(
-  concatMap(point => {
+export const sequentialOpponentStream = opponentStream.pipe(
+  concatMap(data => {
     return new Promise<OpponentStreamType>(resolve => {
-      setTimeout(() => resolve(point), 300)
+      setTimeout(() => resolve(data), data.duration * 1000 + data.holdTime)
     })
   })
 )

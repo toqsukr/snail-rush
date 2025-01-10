@@ -1,8 +1,8 @@
 import { PlayerStatus } from '@modules/lobby/type'
 import { useSpring } from '@react-spring/three'
 import * as THREE from 'three'
-import { usePositionAnimation } from '../jump-animation/usePositionAnimation'
 import { calcJumpDistance, calculateLandingPosition, getStartPosition } from '../util'
+import { usePositionAnimation } from './useAnimation'
 
 export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
   const startPosition = getStartPosition(mode, status)
@@ -41,14 +41,14 @@ export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
     return targetPosition
   }
 
-  const triggerJump = (koef: number, targetPosition: THREE.Vector3) => {
-    animatePosition(koef)
+  const triggerJump = (targetPosition: THREE.Vector3, duration: number) => {
+    animatePosition(duration)
 
     api.start({
       to: async next => {
         await next({
           position: targetPosition.toArray(),
-          config: { duration: getAnimationDuration(koef) * 1000 },
+          config: { duration: duration * 1000 },
         })
       },
     })

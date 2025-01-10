@@ -1,6 +1,6 @@
 import { createContext, FC, PropsWithChildren } from 'react'
 import { Vector3 } from 'three'
-import { useWebSocket } from '../useWebSocket'
+import { useWebSocket } from './useWebSocket'
 
 export type WebSocketContextType = {
   sendStartGame: () => void

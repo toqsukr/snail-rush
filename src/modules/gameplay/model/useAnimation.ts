@@ -20,10 +20,8 @@ export const usePositionAnimation = (
     return calcAnimationDuration(model.animations[animationIdx ?? 0].duration ?? 0, koef)
   }
 
-  const animatePosition = (koef: number) => {
+  const animatePosition = (animationDuration: number) => {
     if (!mixerRef.current) return
-
-    const animationDuration = getAnimationDuration(koef)
 
     const currentAnimation = model.animations[animationIdx ?? 0]
 
