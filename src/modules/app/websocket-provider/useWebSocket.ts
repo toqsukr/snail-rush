@@ -1,13 +1,23 @@
+import { appendOpponentPosition } from '@modules/gameplay/model/append-opponent-position'
+import { appendOpponentRotation } from '@modules/gameplay/model/append-opponent-rotation'
+import { useAppState } from '@modules/gameplay/store'
+import { OpponentPositionType, OpponentRotationType } from '@modules/gameplay/type'
 import { usePlayerData } from '@modules/player/store'
+import {
+  PlayerMoveMessageSchema,
+  PlayerMoveMessageType,
+  PlayerRotateMessageSchema,
+  PlayerRotateMessageType,
+} from '@modules/player/type.d'
 import { useSession } from '@modules/session/store'
-import { SessionType } from '@modules/session/type.d'
+import { ConnectPlayerMessageType, KickPlayerMessageType } from '@modules/session/type.d'
 import { useEffect, useRef } from 'react'
-import { Vector3 } from 'three'
 import { WS_HOST_URL } from '../constant'
 import { Operations, WebSocketResponse, WebSocketResponseSchema } from '../type.d'
 
 export const useWebSocket = () => {
-  const { session, setSession } = useSession()
+  const { session, setSession, onChangePlayers } = useSession()
+  const { onGameStart } = useAppState()
   const { player_id } = usePlayerData()
 
   const websocket = useRef<WebSocket>()
@@ -25,36 +35,36 @@ export const useWebSocket = () => {
 
           switch (responseData.type) {
             case Operations.PLAYER_CONNECT:
-              const connectData = responseData.data as SessionType
-              setSession(connectData)
+              const connectData = responseData.data as ConnectPlayerMessageType
+              onChangePlayers(connectData.players)
               break
             case Operations.PLAYER_KICK:
               console.log('player kicked')
-              const kickData = responseData.data as SessionType
-              setSession(kickData)
+              const kickData = responseData.data as KickPlayerMessageType
+              onChangePlayers(kickData.players)
               break
             case Operations.PLAYER_MOVE:
-              const moveData = responseData.data as SessionType
-              console.log('player moved', moveData)
-              // appendOpponentData()
+              const { position } = PlayerMoveMessageSchema.parse(
+                responseData.data
+              ) as PlayerMoveMessageType
+              console.log('player moved', position)
+              appendOpponentPosition({ position })
               break
-            case Operations.SESSION_CLOSE:
-              websocket.current?.close()
-              setSession(null)
-              console.log('session closed')
+            case Operations.PLAYER_ROTATION:
+              const { rotation } = PlayerRotateMessageSchema.parse(
+                responseData.data
+              ) as PlayerRotateMessageType
+              console.log('player moved', rotation)
+              appendOpponentRotation({ rotation })
               break
             case Operations.SESSION_DELETE:
               websocket.current?.close()
               setSession(null)
               console.log('session deleted')
               break
-            case Operations.SESSION_UPDATE:
-              console.log('session updated')
-              const updatedData = responseData.data as SessionType
-              setSession(updatedData)
-              break
-            case Operations.SESSION_UPDATE:
+            case Operations.SESSION_START:
               console.log('game started')
+              onGameStart()
               break
             default:
               break
@@ -71,19 +81,27 @@ export const useWebSocket = () => {
     }
   }, [session?.session_id])
 
-  const sendStartGame = () => {
-    websocket.current?.send(JSON.stringify({ type: Operations.SESSION_START }))
+  const sendStartGame = (player_id: string) => {
+    websocket.current?.send(JSON.stringify({ type: Operations.SESSION_START, data: { player_id } }))
   }
 
-  const sendTargetPosition = (player_id: string, position: Vector3) => {
-    const { x, y, z } = position
+  const sendTargetPosition = (player_id: string, data: OpponentPositionType) => {
     websocket.current?.send(
       JSON.stringify({
         type: Operations.PLAYER_MOVE,
-        data: { player_id, position: { x, y, z } },
+        data: { player_id, ...data },
       })
     )
   }
 
-  return { sendStartGame, sendTargetPosition }
+  const sendTargetRotation = (player_id: string, data: OpponentRotationType) => {
+    websocket.current?.send(
+      JSON.stringify({
+        type: Operations.PLAYER_ROTATION,
+        data: { player_id, ...data },
+      })
+    )
+  }
+
+  return { sendStartGame, sendTargetPosition, sendTargetRotation }
 }

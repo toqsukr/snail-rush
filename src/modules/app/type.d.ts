@@ -20,17 +20,20 @@ export enum StorageKeys {
 
 export enum Operations {
   SESSION_START = 'session.start',
-  SESSION_UPDATE = 'session.update',
   SESSION_DELETE = 'session.delete',
-  SESSION_CLOSE = 'session.close',
   PLAYER_CONNECT = 'player.connect',
   PLAYER_MOVE = 'player.move',
+  PLAYER_ROTATION = 'player.rotate',
   PLAYER_KICK = 'player.kick',
 }
 
 export const WebSocketResponseSchema = z.object({
   type: z.nativeEnum(Operations),
   data: z.unknown(),
+})
+
+export const MessageSchema = z.object({
+  actor_id: z.string(),
 })
 
 export type WebSocketResponse = z.infer<typeof WebSocketResponseSchema>

@@ -17,38 +17,52 @@ export const usePlayer = (
   const { handleKeyDown, handleKeyUp } = useSpaceHold(SPACE_HOLD_TIME)
   const webSocketActions = useContext(webSocketContext)
 
-  const { triggerJump, calcTargetPosition, triggerRotate, isJumping, getAnimationDuration } =
-    jumpOptions
+  const {
+    getRotation,
+    triggerJump,
+    calcTargetPosition,
+    triggerRotate,
+    isJumping,
+    getAnimationDuration,
+  } = jumpOptions
 
-  const handleJump = (koef: number) => {
+  const handleJump = (holdTime: number) => {
+    const koef = holdTime / SPACE_HOLD_TIME
     if (!isJumping() && started) {
       const position = calcTargetPosition(koef)
       const duration = getAnimationDuration(koef)
       triggerJump(position, duration)
-      webSocketActions?.sendTargetPosition(playerID, position)
+      const targetPosition = { position: { ...position, duration, hold_time: holdTime } }
+      webSocketActions?.sendTargetPosition(playerID, targetPosition)
       onJump(position)
     }
   }
 
-  const handleRotate = (koef: number) => {
+  const handleRotate = (directionKoef: number) => {
+    const koef = 0.2 * directionKoef
     if (!isJumping()) {
-      triggerRotate(koef)
+      const rotationArr = getRotation()
+      const updatedPitch = rotationArr[1] + koef
+      const rotation = { roll: rotationArr[0], pitch: updatedPitch, yaw: rotationArr[2] }
+      triggerRotate(updatedPitch)
+      const targetRotation = { rotation: { ...rotation, duration: 0 } }
+      webSocketActions?.sendTargetRotation(playerID, targetRotation)
     }
   }
 
   const spaceCallback = (e: KeyboardEvent) => {
     if (e.key == ' ' || e.code == 'Space') {
       const duration = handleKeyUp(e)
-      handleJump(duration / SPACE_HOLD_TIME)
+      handleJump(duration)
     }
   }
 
   const arrowCallback = (e: KeyboardEvent) => {
     if (e.code == 'ArrowRight') {
-      handleRotate(-0.2)
+      handleRotate(-1)
     }
     if (e.code == 'ArrowLeft') {
-      handleRotate(0.2)
+      handleRotate(1)
     }
     handleKeyDown(e)
   }

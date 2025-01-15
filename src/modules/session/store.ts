@@ -8,6 +8,12 @@ export const useSession = create(
     (set, get) => ({
       session: null,
       setSession: session => set({ ...get(), session }),
+      onChangePlayers: players => {
+        const session = get().session
+        if (session) {
+          set({ ...get(), session: { ...session, players: players } })
+        }
+      },
     }),
     {
       name: StorageKeys.SESSION_DATA,

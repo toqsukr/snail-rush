@@ -1,6 +1,6 @@
 import { MutationKeys } from '@modules/app/type.d'
 import { useSession } from '@modules/session/store'
-import { ConnectSessionResponseSchema } from '@modules/session/type.d'
+import { ConnectPlayerResponseSchema } from '@modules/session/type.d'
 import { useMutation } from '@tanstack/react-query'
 import sessionService from '../../service'
 
@@ -11,7 +11,7 @@ export const useConnectSession = () => {
     mutationFn: async (data: { sessionID: string; playerID: string }) => {
       return sessionService
         .connectSession(data.sessionID, data.playerID)
-        .then(({ data }) => ConnectSessionResponseSchema.parse(data))
+        .then(({ data }) => ConnectPlayerResponseSchema.parse(data))
     },
     onSuccess: session => {
       setSession(session)

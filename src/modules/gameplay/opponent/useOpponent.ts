@@ -1,23 +1,29 @@
 import { PlayerStatus } from '@modules/lobby/type'
-import { useEffect, useRef } from 'react'
-import { Object3D } from 'three'
-import { sequentialOpponentStream } from '../model/sequential-opponent-stream'
+import { useEffect } from 'react'
+import { Vector3 } from 'three'
+import { sequentialOpponentPosition } from '../model/sequential-opponent-position'
+import { sequentialOpponentRotation } from '../model/sequential-opponent-rotation'
 import { useSnailJump } from '../model/useSnailJump'
-import { useGetPosition } from './test.data'
 
 export const useOpponent = (mode: PlayerStatus) => {
-  const modelRef = useRef<Object3D>(null)
-  const { model, triggerJump, position, rotation } = useSnailJump(mode, 'joined')
-
-  useGetPosition()
+  const { model, triggerJump, triggerRotate, position, rotation } = useSnailJump(mode, 'joined')
 
   useEffect(() => {
-    const subscription = sequentialOpponentStream.subscribe(({ position, duration }) => {
-      triggerJump(position, duration)
+    const subscriptionPosition = sequentialOpponentPosition.subscribe(({ position }) => {
+      const { x, y, z, duration } = position
+      triggerJump(new Vector3(x, y, z), duration)
     })
 
-    return () => subscription.unsubscribe()
+    const subscriptionRotation = sequentialOpponentRotation.subscribe(({ rotation }) => {
+      const { pitch } = rotation
+      triggerRotate(pitch)
+    })
+
+    return () => {
+      subscriptionPosition.unsubscribe()
+      subscriptionRotation.unsubscribe()
+    }
   }, [])
 
-  return { modelRef, model, position, rotation }
+  return { model, position, rotation }
 }

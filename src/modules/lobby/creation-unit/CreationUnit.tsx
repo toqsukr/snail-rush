@@ -22,7 +22,7 @@ const CreationUnit: FC<{ handleStart: () => void }> = ({ handleStart }) => {
     <>
       <h1>Let your friend connect by code: {session?.session_id}</h1>
       <LobbyUnit />
-      <button disabled={session.count_players - 2 < 0} onClick={handleStart}>
+      <button disabled={session.players.length - 2 < 0} onClick={handleStart}>
         PLAY
       </button>
       <button disabled={!username} onClick={handleBack}>

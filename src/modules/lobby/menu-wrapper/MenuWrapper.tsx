@@ -1,17 +1,21 @@
 import { queryClient } from '@modules/app/api'
-import { webSocketContext } from '@modules/app/websocket-provider/WebsocketProvider'
+import { webSocketContext } from '@modules/app/websocket-provider/WebSocketProvider'
+import { useAppState } from '@modules/gameplay/store'
+import { usePlayerData } from '@modules/player/store'
 import { Html } from '@react-three/drei'
 import LoadingLayout from '@shared/loading-layout/LoadingLayout'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { FC, useContext } from 'react'
+import { useContext } from 'react'
 import Menu from '../menu/Menu'
 import css from './MenuWrapper.module.scss'
 
-const MenuWrapper: FC<{ handleStart: () => void }> = ({ handleStart }) => {
+const MenuWrapper = () => {
   const webSocketActions = useContext(webSocketContext)
+  const { player_id } = usePlayerData()
+  const { onGameStart } = useAppState()
   const handleClickPlay = () => {
-    handleStart()
-    webSocketActions?.sendStartGame()
+    onGameStart()
+    player_id && webSocketActions?.sendStartGame(player_id)
   }
 
   return (

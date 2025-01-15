@@ -1,6 +1,6 @@
 import { useAppState } from '@modules/gameplay/store'
 import { useSpring } from '@react-spring/three'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Object3D, PerspectiveCamera as PerspectiveCameraType, Vector3 } from 'three'
 import { calcRotation, getGlobalPosition } from '../util'
 import { SpringSettings } from './Scene.type.d'
@@ -10,7 +10,7 @@ export const useScene = () => {
   const cameraRef = useRef<PerspectiveCameraType>(null)
   const startRef = useRef<Object3D>(null)
 
-  const { started, onGameStart } = useAppState()
+  const { started, moveable, allowMoving } = useAppState()
 
   const [spring, api] = useSpring<SpringSettings>(() => ({
     position: [0, 28, -15],
@@ -18,7 +18,7 @@ export const useScene = () => {
   }))
 
   const handleStart = () => {
-    if (!started && playerRef.current && cameraRef.current) {
+    if (playerRef.current && cameraRef.current) {
       const playerPosition = getGlobalPosition(playerRef.current)
 
       const targetPosition: [number, number, number] = [playerPosition.x, 22, playerPosition.z - 11]
@@ -33,7 +33,6 @@ export const useScene = () => {
         to: next => {
           next({
             position: targetPosition,
-            onRest: onGameStart,
             config: { mass: 1, tension: 20, friction: 40, duration: 2500 },
           }).catch(() => {}),
             next({
@@ -54,5 +53,12 @@ export const useScene = () => {
     })
   }
 
-  return { playerRef, cameraRef, startRef, handleStart, spring, updateCameraPosition }
+  useEffect(() => {
+    if (started && !moveable) {
+      handleStart()
+      setTimeout(() => allowMoving(), 5000)
+    }
+  }, [started])
+
+  return { playerRef, cameraRef, startRef, spring, updateCameraPosition }
 }

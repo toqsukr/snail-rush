@@ -10,9 +10,10 @@ const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>(
       updateCameraPosition(position)
     }
 
-    const { model, position, rotation } = usePlayer(mode, playerID, onJump)
+    const { rigidBodyRef, model, position, rotation } = usePlayer(mode, playerID, onJump)
 
     return (
+      // <RigidBody ref={rigidBodyRef} colliders='ball'>
       <JumpAnimation
         ref={ref}
         position={position as any}

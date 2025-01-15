@@ -12,6 +12,8 @@ export type LobbyFormCodeType = z.infer<typeof LobbyFormCodeSchema>
 
 export type LobbyStore = {
   status: PlayerStatus | null
+  isGameStarted: boolean
+  setGameStarted: (isGameStarted: boolean) => void
   onCreateLobby: () => void
   onJoinLobby: () => void
   onClickBack: () => void

@@ -6,21 +6,22 @@ import MenuWrapper from '@modules/lobby/menu-wrapper/MenuWrapper'
 import { useLobby } from '@modules/lobby/store'
 import { animated } from '@react-spring/three'
 import { PerspectiveCamera } from '@react-three/drei'
+import { Physics } from '@react-three/rapier'
 import { Suspense } from 'react'
 import { useScene } from './useScene'
 
 const Scene = () => {
   const { status } = useLobby()
   const { playerRef, cameraRef, startRef, ...options } = useScene()
-  const { spring, handleStart, updateCameraPosition } = options
+  const { spring, updateCameraPosition } = options
 
   return (
-    <>
+    <Physics debug>
       <animated.group position={spring.position} rotation={spring.rotation as any}>
         <PerspectiveCamera makeDefault ref={cameraRef} />
       </animated.group>
       <ambientLight position={[5, 1, 0]} intensity={1} />
-      <MenuWrapper handleStart={handleStart} />
+      <MenuWrapper />
       <StartLine ref={startRef} />
       <Dirt />
       <Suspense fallback={null}>
@@ -31,7 +32,7 @@ const Scene = () => {
           </>
         )}
       </Suspense>
-    </>
+    </Physics>
   )
 }
 
