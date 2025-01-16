@@ -22,10 +22,11 @@ class PlayerService {
     return await axios.post<CreatePlayerResponse>(this.PLAYER_PREFIX, data, baseConfig)
   }
 
-  async updatePlayer(playerID: string, data: UpdatePlayerRequest) {
+  async updatePlayer(data: UpdatePlayerRequest) {
+    const { player_id, username } = data
     return await axios.put<UpdatePlayerResponse>(
-      `${this.PLAYER_PREFIX}/${playerID}`,
-      data,
+      `${this.PLAYER_PREFIX}/${player_id}`,
+      { username },
       baseConfig
     )
   }
