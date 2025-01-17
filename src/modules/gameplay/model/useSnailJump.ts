@@ -66,6 +66,11 @@ export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
         })
       },
     })
+
+    if (rigidBodyRef.current) {
+      rigidBodyRef.current.setTranslation(targetPosition, true)
+      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true)
+    }
   }
 
   return {

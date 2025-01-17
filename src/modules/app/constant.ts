@@ -1,4 +1,3 @@
-export const HTTP_HOST_URL = 'http://192.168.1.24:10000'
-// 'http://192.168.1.24:10000'
-export const WS_HOST_URL = 'ws://192.168.1.24:10000'
-// 'ws://192.168.1.24:10000'
+export const HTTP_HOST_URL = 'http://213.171.31.233:10000'
+// '213.171.31.233:10000'
+export const WS_HOST_URL = 'ws://213.171.31.233:10000'

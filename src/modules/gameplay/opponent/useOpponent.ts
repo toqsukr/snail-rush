@@ -6,7 +6,9 @@ import { sequentialOpponentRotation } from '../model/sequential-opponent-rotatio
 import { useSnailJump } from '../model/useSnailJump'
 
 export const useOpponent = (mode: PlayerStatus) => {
-  const { model, triggerJump, triggerRotate, position, rotation } = useSnailJump(mode, 'joined')
+  const jumpOptions = useSnailJump(mode, 'joined')
+
+  const { triggerJump, triggerRotate } = jumpOptions
 
   useEffect(() => {
     const subscriptionPosition = sequentialOpponentPosition.subscribe(({ position }) => {
@@ -25,5 +27,5 @@ export const useOpponent = (mode: PlayerStatus) => {
     }
   }, [])
 
-  return { model, position, rotation }
+  return jumpOptions
 }

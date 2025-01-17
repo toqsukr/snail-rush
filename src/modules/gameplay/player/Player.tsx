@@ -1,3 +1,4 @@
+import { RigidBody } from '@react-three/rapier'
 import { forwardRef } from 'react'
 import { Object3D, Object3DEventMap, Vector3 } from 'three'
 import JumpAnimation from '../position-animation/PositionAnimation'
@@ -13,13 +14,14 @@ const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>(
     const { rigidBodyRef, model, position, rotation } = usePlayer(mode, playerID, onJump)
 
     return (
-      // <RigidBody ref={rigidBodyRef} colliders='ball'>
-      <JumpAnimation
-        ref={ref}
-        position={position as any}
-        rotation={rotation as any}
-        object={model.scene}
-      />
+      <RigidBody ref={rigidBodyRef} colliders='ball'>
+        <JumpAnimation
+          ref={ref}
+          position={position as any}
+          rotation={rotation as any}
+          object={model.scene}
+        />
+      </RigidBody>
     )
   }
 )
