@@ -16,6 +16,11 @@ export type OpponentRotationType = z.infer<typeof OpponentRotationSchema>
 export type AppState = {
   moveable: boolean
   started: boolean
+  countdown: boolean
+  pause: boolean
+  onPauseGame: () => void
+  onCountDown: () => void
+  onResumeGame: () => void
   onGameStart: () => void
   allowMoving: () => void
   onGameOver: () => void

@@ -1,19 +1,11 @@
 import Scene from '@modules/app/scene/Scene'
-import { useAppState } from '@modules/gameplay/store'
-import { animated, useSpring } from '@react-spring/web'
+import PauseMenu from '@modules/lobby/pause-menu/PauseMenu'
 import { Preload } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Perf } from 'r3f-perf'
 import WebSocketProvider from '../websocket-provider/WebSocketProvider'
-import css from './Board.module.scss'
 
 const Board = () => {
-  const { started } = useAppState()
-
-  const props = useSpring({
-    scale: started ? 1 : 0,
-  })
-
   return (
     <WebSocketProvider>
       <Canvas>
@@ -21,7 +13,7 @@ const Board = () => {
         <Scene />
         <Preload all />
       </Canvas>
-      <animated.div style={props} className={css.settings} />
+      <PauseMenu />
     </WebSocketProvider>
   )
 }

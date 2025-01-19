@@ -1,6 +1,7 @@
 import { usePlayerData } from '@modules/player/store'
 import { useDeleteSession } from '@modules/session/model/hooks/useDeleteSession'
 import { useSession } from '@modules/session/store'
+import Menu from '@shared/menu/Menu'
 import { FC } from 'react'
 import LobbyUnit from '../lobby-unit/LobbyUnit'
 import { useLobby } from '../store'
@@ -19,17 +20,17 @@ const CreationUnit: FC<{ handleStart: () => void }> = ({ handleStart }) => {
   }
 
   return (
-    <>
+    <Menu>
       <h1>Let your friend connect by code: {session?.session_id}</h1>
       <LobbyUnit />
-      <button disabled={session.players.length - 2 < 0} onClick={handleStart}>
+      <Menu.Button disabled={session.players.length - 2 < 0} onClick={handleStart}>
         PLAY
-      </button>
-      <button disabled={!username} onClick={handleBack}>
+      </Menu.Button>
+      <Menu.Button disabled={!username} onClick={handleBack}>
         DELETE LOBBY
-      </button>
-      <button onClick={onClickBack}>BACK</button>
-    </>
+      </Menu.Button>
+      <Menu.Button onClick={onClickBack}>BACK</Menu.Button>
+    </Menu>
   )
 }
 

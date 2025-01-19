@@ -32,7 +32,11 @@ export const DeleteSessionWSSchema = z.object({
 
 export const KickPlayerResponseSchema = CreateSessionResponseSchema
 
-export const KickPlayerMessageSchema = ConnectPlayerMessageSchema
+export const KickPlayerMessageSchema = ConnectPlayerMessageSchema.merge(
+  z.object({
+    target_player_id: z.string(),
+  })
+)
 
 export type SessionType = z.infer<typeof SessionSchema>
 

@@ -4,6 +4,7 @@ import { useConnectSession } from '@modules/session/model/hooks/useConnectSessio
 import { useKickPlayer } from '@modules/session/model/hooks/useKickPlayer'
 import { useSession } from '@modules/session/store'
 import Input from '@shared/input/Input'
+import Menu from '@shared/menu/Menu'
 import { useForm } from 'react-hook-form'
 import LobbyUnit from '../lobby-unit/LobbyUnit'
 import { useLobby } from '../store'
@@ -35,24 +36,24 @@ const JoinUnit = () => {
   }
 
   return (
-    <>
+    <Menu>
       {session && player_id ? (
         <>
           <LobbyUnit />
-          <button onClick={() => handleDisconnect(session.session_id, player_id)}>
+          <Menu.Button onClick={() => handleDisconnect(session.session_id, player_id)}>
             DISCONNECT
-          </button>
+          </Menu.Button>
         </>
       ) : (
         <>
           <Input {...register('sessionID')} placeholder='Lobby code' />
-          <button disabled={!username || !formState.isValid} onClick={handleSubmit(onSubmit)}>
+          <Menu.Button disabled={!username || !formState.isValid} onClick={handleSubmit(onSubmit)}>
             CONNECT
-          </button>
-          <button onClick={onClickBack}>BACK</button>
+          </Menu.Button>
+          <Menu.Button onClick={onClickBack}>BACK</Menu.Button>
         </>
       )}
-    </>
+    </Menu>
   )
 }
 

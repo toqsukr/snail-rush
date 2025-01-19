@@ -6,8 +6,7 @@ import { Html } from '@react-three/drei'
 import LoadingLayout from '@shared/loading-layout/LoadingLayout'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useContext } from 'react'
-import Menu from '../menu/Menu'
-import css from './MenuWrapper.module.scss'
+import MainMenu from '../main-menu/MainMenu'
 
 const MenuWrapper = () => {
   const webSocketActions = useContext(webSocketContext)
@@ -21,11 +20,9 @@ const MenuWrapper = () => {
   return (
     <Html position={[0, 28, -4]} rotation={[0, Math.PI, 0]} occlude='raycast' transform>
       <QueryClientProvider client={queryClient}>
-        <div className={css.menu}>
-          <LoadingLayout>
-            <Menu handleClickPlay={handleClickPlay} />
-          </LoadingLayout>
-        </div>
+        <LoadingLayout>
+          <MainMenu handleClickPlay={handleClickPlay} />
+        </LoadingLayout>
       </QueryClientProvider>
     </Html>
   )

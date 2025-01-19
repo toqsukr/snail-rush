@@ -12,7 +12,7 @@ export const usePlayer = (
   playerID: string,
   onJump: (position: Vector3) => void
 ) => {
-  const { started } = useAppState()
+  const { moveable } = useAppState()
   const jumpOptions = useSnailJump(mode, 'host')
   const { handleKeyDown, handleKeyUp } = useSpaceHold(SPACE_HOLD_TIME)
   const webSocketActions = useContext(webSocketContext)
@@ -28,7 +28,7 @@ export const usePlayer = (
 
   const handleJump = (holdTime: number) => {
     const koef = holdTime / SPACE_HOLD_TIME
-    if (!isJumping() && started) {
+    if (!isJumping() && moveable) {
       const position = calcTargetPosition(koef)
       const duration = getAnimationDuration(koef)
       triggerJump(position, duration)
@@ -40,7 +40,7 @@ export const usePlayer = (
 
   const handleRotate = (directionKoef: number) => {
     const koef = 0.2 * directionKoef
-    if (!isJumping()) {
+    if (!isJumping() && moveable) {
       const rotationArr = getRotation()
       const updatedPitch = rotationArr[1] + koef
       const rotation = { roll: rotationArr[0], pitch: updatedPitch, yaw: rotationArr[2] }

@@ -10,7 +10,7 @@ export const useScene = () => {
   const cameraRef = useRef<PerspectiveCameraType>(null)
   const startRef = useRef<Object3D>(null)
 
-  const { started, moveable, allowMoving } = useAppState()
+  const { started, moveable, onCountDown } = useAppState()
 
   const [spring, api] = useSpring<SpringSettings>(() => ({
     position: [0, 28, -15],
@@ -20,6 +20,7 @@ export const useScene = () => {
   const handleStart = () => {
     if (playerRef.current && cameraRef.current) {
       const playerPosition = getGlobalPosition(playerRef.current)
+      console.log(playerPosition)
 
       const targetPosition: [number, number, number] = [playerPosition.x, 22, playerPosition.z - 11]
 
@@ -56,7 +57,7 @@ export const useScene = () => {
   useEffect(() => {
     if (started && !moveable) {
       handleStart()
-      setTimeout(() => allowMoving(), 5000)
+      setTimeout(() => onCountDown(), 2000)
     }
   }, [started])
 

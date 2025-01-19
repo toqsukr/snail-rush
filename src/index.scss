@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -73,7 +72,7 @@ body {
   -moz-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   background-color: var(--main-background-color);
-  font-family: 'SF Sans', 'Roboto', 'Open Sans', sans-serif;
+  font-family: 'Jersey 25';
 }
 
 input,

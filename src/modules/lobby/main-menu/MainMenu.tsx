@@ -3,7 +3,7 @@ import MainUnit from '../main-unit/MainUnit'
 import SessionUnit from '../session-unit/SessionUnit'
 import { useLobby } from '../store'
 
-const Menu: FC<{ handleClickPlay: () => void }> = ({ handleClickPlay }) => {
+const MainMenu: FC<{ handleClickPlay: () => void }> = ({ handleClickPlay }) => {
   const { status } = useLobby()
 
   if (!status) return <MainUnit />
@@ -11,4 +11,4 @@ const Menu: FC<{ handleClickPlay: () => void }> = ({ handleClickPlay }) => {
   return <SessionUnit status={status} handleClickPlay={handleClickPlay} />
 }
 
-export default Menu
+export default MainMenu

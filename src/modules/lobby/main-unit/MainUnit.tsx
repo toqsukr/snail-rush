@@ -7,6 +7,7 @@ import { CreatePlayerRequest, CreatePlayerRequestSchema } from '@modules/player/
 import { useCreateSession } from '@modules/session/model/hooks/useCreateSession'
 import { useDeleteSession } from '@modules/session/model/hooks/useDeleteSession'
 import { useSession } from '@modules/session/store'
+import Menu from '@shared/menu/Menu'
 import debounce from 'lodash.debounce'
 import { useForm } from 'react-hook-form'
 import { useLobby } from '../store'
@@ -57,15 +58,15 @@ const MainUnit = () => {
   }
 
   return (
-    <>
+    <Menu>
       <NameInput {...register('username', { onChange: handleSubmit(onUpdate) })} />
-      <button disabled={!username && !formState.isValid} onClick={handleSubmit(onCreate)}>
+      <Menu.Button disabled={!username && !formState.isValid} onClick={handleSubmit(onCreate)}>
         {(session ? '' : 'CREATE') + ' LOBBY'}
-      </button>
-      <button disabled={!username && !formState.isValid} onClick={handleSubmit(onJoin)}>
+      </Menu.Button>
+      <Menu.Button disabled={!username && !formState.isValid} onClick={handleSubmit(onJoin)}>
         JOIN
-      </button>
-    </>
+      </Menu.Button>
+    </Menu>
   )
 }
 

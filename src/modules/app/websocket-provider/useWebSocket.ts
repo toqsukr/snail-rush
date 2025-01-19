@@ -22,6 +22,11 @@ export const useWebSocket = () => {
 
   const websocket = useRef<WebSocket>()
 
+  const onSessionExit = () => {
+    websocket.current?.close()
+    setSession(null)
+  }
+
   useEffect(() => {
     if (session?.session_id) {
       websocket.current = new WebSocket(
@@ -37,34 +42,38 @@ export const useWebSocket = () => {
             case Operations.PLAYER_CONNECT:
               const connectData = responseData.data as ConnectPlayerMessageType
               onChangePlayers(connectData.players)
+              console.log('player connected')
               break
             case Operations.PLAYER_KICK:
+              const { target_player_id, players } = responseData.data as KickPlayerMessageType
+              if (player_id === target_player_id) {
+                onSessionExit()
+              } else {
+                onChangePlayers(players)
+              }
               console.log('player kicked')
-              const kickData = responseData.data as KickPlayerMessageType
-              onChangePlayers(kickData.players)
               break
             case Operations.PLAYER_MOVE:
               const { position } = PlayerMoveMessageSchema.parse(
                 responseData.data
               ) as PlayerMoveMessageType
-              console.log('player moved', position)
               appendOpponentPosition({ position })
+              console.log('player moved', position)
               break
             case Operations.PLAYER_ROTATION:
               const { rotation } = PlayerRotateMessageSchema.parse(
                 responseData.data
               ) as PlayerRotateMessageType
-              console.log('player moved', rotation)
               appendOpponentRotation({ rotation })
+              console.log('player rotated', rotation)
               break
             case Operations.SESSION_DELETE:
-              websocket.current?.close()
-              setSession(null)
+              onSessionExit()
               console.log('session deleted')
               break
             case Operations.SESSION_START:
-              console.log('game started')
               onGameStart()
+              console.log('game started')
               break
             default:
               break
