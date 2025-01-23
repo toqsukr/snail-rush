@@ -1,3 +1,5 @@
-import { PlayerProp } from '../player/Player.type'
+import { ReactNode } from 'react'
 
-export type IlluminatedPlayerProp = Omit<PlayerProp, 'playerID'>
+export type IlluminatedPlayerProp = {
+  player: ReactNode
+}
