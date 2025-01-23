@@ -18,11 +18,6 @@ const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>(
 
     return (
       <RigidBody ref={rigidBodyRef} type='dynamic' mass={0} colliders='cuboid'>
-        <directionalLight
-          position={[0, 1, 0]}
-          intensity={3}
-          lookAt={() => modelRef?.current?.position}
-        />
         <primitive ref={modelRef} object={model.scene} />
       </RigidBody>
     )
