@@ -18,6 +18,8 @@ export default defineConfig({
       '@layouts': path.resolve(__dirname, './src/layouts'),
       '@modules': path.resolve(__dirname, './src/modules'),
       '@shared': path.resolve(__dirname, './src/shared'),
+      '@scenes': path.resolve(__dirname, './src/scenes'),
+      '@objects': path.resolve(__dirname, './src/objects'),
     },
   },
 })

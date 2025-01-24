@@ -91,6 +91,7 @@ export const useWebSocket = () => {
   }, [session?.session_id])
 
   const sendStartGame = (player_id: string) => {
+    console.log('start game', player_id)
     websocket.current?.send(JSON.stringify({ type: Operations.SESSION_START, data: { player_id } }))
   }
 

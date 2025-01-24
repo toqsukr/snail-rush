@@ -1,4 +1,5 @@
-import { MessageSchema } from '@modules/app/type.d'
+import { MessageSchema, PositionType } from '@modules/app/type.d'
+import { Vector3 } from 'three'
 import { z } from 'zod'
 
 export const GetPlayerRequestSchema = z.object({
@@ -66,6 +67,8 @@ export type PlayerRotateMessageType = z.infer<typeof PlayerRotateMessageSchema>
 
 export type PlayerDataStore = Partial<Omit<PlayerData, 'username'>> & {
   username: PlayerData['username']
+  initPosition: Vector3
+  setInitPosition: (position: PositionType) => void
   setUsername: (username: string) => void
   setPlayerData: (playerData: PlayerData) => void
 }

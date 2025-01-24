@@ -1,18 +1,28 @@
+import { webSocketContext } from '@modules/app/websocket-provider/WebSocketProvider'
+import { useAppState } from '@modules/gameplay/store'
 import { usePlayerData } from '@modules/player/store'
 import { useDeleteSession } from '@modules/session/model/hooks/useDeleteSession'
 import { useSession } from '@modules/session/store'
 import Menu from '@shared/menu/Menu'
-import { FC } from 'react'
+import { FC, useContext } from 'react'
 import LobbyUnit from '../lobby-unit/LobbyUnit'
 import { useLobby } from '../store'
 
-const CreationUnit: FC<{ handleStart: () => void }> = ({ handleStart }) => {
+const CreationUnit: FC<{ playerID: string }> = ({ playerID }) => {
   const { username } = usePlayerData()
   const { session } = useSession()
   const { onClickBack } = useLobby()
   const { deleteSession } = useDeleteSession()
+  const { onGameStart } = useAppState()
+  const webSocketActions = useContext(webSocketContext)
 
   if (!session) return
+
+  const handleStart = () => {
+    console.log(webSocketActions)
+    webSocketActions?.sendStartGame(playerID)
+    onGameStart()
+  }
 
   const handleBack = () => {
     deleteSession(session.session_id)

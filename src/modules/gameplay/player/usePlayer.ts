@@ -6,6 +6,7 @@ import { SPACE_HOLD_TIME } from '../constant'
 import { useSnailJump } from '../model/useSnailJump'
 import { useSpaceHold } from '../model/useSpaceHold'
 import { useAppState } from '../store'
+import { getPlayerPosition, getPlayerSkin } from '../util'
 
 export const usePlayer = (
   mode: PlayerStatus,
@@ -13,7 +14,8 @@ export const usePlayer = (
   onJump: (position: Vector3) => void
 ) => {
   const { moveable } = useAppState()
-  const jumpOptions = useSnailJump(mode, 'host')
+
+  const jumpOptions = useSnailJump(getPlayerPosition(mode), getPlayerSkin(mode))
   const { handleKeyDown, handleKeyUp } = useSpaceHold(SPACE_HOLD_TIME)
   const webSocketActions = useContext(webSocketContext)
 

@@ -7,7 +7,14 @@ const Opponent: FC<OpponentProp> = ({ mode }) => {
   const { rigidBodyRef, model } = useOpponent(mode)
 
   return (
-    <RigidBody ref={rigidBodyRef} mass={0} type='dynamic' colliders='cuboid'>
+    <RigidBody
+      ref={rigidBodyRef}
+      type='dynamic'
+      enabledRotations={[false, false, false]}
+      linearDamping={1.5}
+      friction={0.5}
+      mass={1}
+      colliders='cuboid'>
       <primitive object={model.scene} />
     </RigidBody>
   )

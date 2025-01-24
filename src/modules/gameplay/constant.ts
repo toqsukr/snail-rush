@@ -12,4 +12,4 @@ export const HOST_START_POSITION: PositionType = [0, 0, 0]
 
 export const JOINED_START_POSITION: PositionType = [6, 0, 0]
 
-export const SPACE_HOLD_TIME = 1000
+export const SPACE_HOLD_TIME = 1500

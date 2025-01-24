@@ -1,7 +1,6 @@
+import { PositionType } from '@modules/app/type'
 import { PlayerStatus } from '@modules/lobby/type'
-import { ObjectMap } from '@react-three/fiber'
 import { Euler, Quaternion, Vector3 } from 'three'
-import { GLTF } from 'three-stdlib'
 import {
   HOST_START_POSITION,
   JOINED_START_POSITION,
@@ -10,40 +9,38 @@ import {
   MIN_ANIMATION_DURATION,
   MIN_JUMP_LENGTH,
 } from './constant'
+import { PlayerPositions, PlayerSkins } from './type.d'
 
-export const getStartPosition = (status: PlayerStatus, mode: PlayerStatus) => {
-  const definePosition = {
-    host: {
-      host: HOST_START_POSITION,
-      joined: JOINED_START_POSITION,
-    },
-    joined: {
-      host: JOINED_START_POSITION,
-      joined: HOST_START_POSITION,
-    },
+export const getStartPosition = (playerPosition: PlayerPositions) => {
+  const definePosition: Record<PlayerPositions, PositionType> = {
+    0: HOST_START_POSITION,
+    1: JOINED_START_POSITION,
   }
-
-  return definePosition[mode][status]
+  return definePosition[playerPosition]
 }
 
-export const getModel = (
-  mode: PlayerStatus,
-  status: PlayerStatus,
-  playerModel: GLTF & ObjectMap,
-  opponentModel: GLTF & ObjectMap
-) => {
-  const defineModel = {
-    host: {
-      host: playerModel,
-      joined: opponentModel,
-    },
-    joined: {
-      host: opponentModel,
-      joined: playerModel,
-    },
+export const getModelPath = (skin: PlayerSkins) => {
+  const defineModelPath: Record<PlayerSkins, string> = {
+    herbivore: '/animations/full-jump-static-light.glb',
+    predator: '/animations/full-jump-static-opponent.glb',
   }
+  return defineModelPath[skin]
+}
 
-  return defineModel[mode][status]
+export const getPlayerPosition = (status: PlayerStatus) => {
+  const definePlayerPosition: Record<PlayerStatus, PlayerPositions> = {
+    host: PlayerPositions.FIRST,
+    joined: PlayerPositions.SECOND,
+  }
+  return definePlayerPosition[status]
+}
+
+export const getPlayerSkin = (status: PlayerStatus) => {
+  const definePlayerPosition: Record<PlayerStatus, PlayerSkins> = {
+    host: PlayerSkins.HERBIVORE,
+    joined: PlayerSkins.PREDATOR,
+  }
+  return definePlayerPosition[status]
 }
 
 export const calcJumpDistance = (koef: number) => {

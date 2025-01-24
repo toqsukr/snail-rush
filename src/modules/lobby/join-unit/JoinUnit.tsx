@@ -3,19 +3,21 @@ import { usePlayerData } from '@modules/player/store'
 import { useConnectSession } from '@modules/session/model/hooks/useConnectSession'
 import { useKickPlayer } from '@modules/session/model/hooks/useKickPlayer'
 import { useSession } from '@modules/session/store'
-import Input from '@shared/input/Input'
+import { SessionType } from '@modules/session/type'
 import Menu from '@shared/menu/Menu'
+import { FC } from 'react'
 import { useForm } from 'react-hook-form'
-import LobbyUnit from '../lobby-unit/LobbyUnit'
 import { useLobby } from '../store'
 import { LobbyFormCodeSchema, LobbyFormCodeType } from '../type.d'
+import Connect from './connect/Connect'
+import Disconnect from './disconnect/Disconnect'
 
-const JoinUnit = () => {
-  const { username, player_id } = usePlayerData()
-  const { session, setSession } = useSession()
+const JoinUnit: FC<{ playerID: string }> = ({ playerID }) => {
   const { onClickBack } = useLobby()
-  const { connectSession } = useConnectSession()
+  const { username } = usePlayerData()
   const { kickPlayer } = useKickPlayer()
+  const { session, setSession } = useSession()
+  const { connectSession } = useConnectSession()
 
   const { register, handleSubmit, formState } = useForm<LobbyFormCodeType>({
     resolver: zodResolver(LobbyFormCodeSchema),
@@ -23,7 +25,7 @@ const JoinUnit = () => {
 
   const onSubmit = (formData: LobbyFormCodeType) => {
     const { sessionID } = formData
-    connectSession({ playerID: player_id ?? '', sessionID })
+    connectSession({ playerID, sessionID })
   }
 
   const handleDisconnect = async (sessionID: string, playerID: string) => {
@@ -35,26 +37,20 @@ const JoinUnit = () => {
     }
   }
 
-  return (
-    <Menu>
-      {session && player_id ? (
-        <>
-          <LobbyUnit />
-          <Menu.Button onClick={() => handleDisconnect(session.session_id, player_id)}>
-            DISCONNECT
-          </Menu.Button>
-        </>
-      ) : (
-        <>
-          <Input {...register('sessionID')} placeholder='Lobby code' />
-          <Menu.Button disabled={!username || !formState.isValid} onClick={handleSubmit(onSubmit)}>
-            CONNECT
-          </Menu.Button>
-          <Menu.Button onClick={onClickBack}>BACK</Menu.Button>
-        </>
-      )}
-    </Menu>
-  )
+  const getContent = (session: SessionType | null) => {
+    if (session)
+      return <Disconnect handleDisconnect={() => handleDisconnect(playerID, session.session_id)} />
+    return (
+      <Connect
+        inputProps={register('sessionID')}
+        handleBack={onClickBack}
+        handleConnect={handleSubmit(onSubmit)}
+        connectDisabled={!username || !formState.isValid}
+      />
+    )
+  }
+
+  return <Menu>{getContent(session)}</Menu>
 }
 
 export default JoinUnit

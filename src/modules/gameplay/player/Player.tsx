@@ -1,27 +1,30 @@
 import { RigidBody } from '@react-three/rapier'
-import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { Object3D, Object3DEventMap, Vector3 } from 'three'
+import { mainSceneContext } from '@scenes/main-scene/MainScene'
+import { FC, useContext } from 'react'
+import { Vector3 } from 'three'
 import { PlayerProp } from './Player.type'
 import { usePlayer } from './usePlayer'
 
-const Player = forwardRef<Object3D<Object3DEventMap>, PlayerProp>(
-  ({ updateCameraPosition, playerID, mode }, ref) => {
-    const modelRef = useRef<Object3D>(null)
+const Player: FC<PlayerProp> = ({ playerID, mode }) => {
+  const mainSceneActions = useContext(mainSceneContext)
 
-    const onJump = (position: Vector3) => {
-      updateCameraPosition(position)
-    }
-
-    const { rigidBodyRef, model } = usePlayer(mode, playerID, onJump)
-
-    useImperativeHandle(ref, () => modelRef.current as Object3D)
-
-    return (
-      <RigidBody ref={rigidBodyRef} type='dynamic' mass={0} colliders='cuboid'>
-        <primitive ref={modelRef} object={model.scene} />
-      </RigidBody>
-    )
+  const onJump = (position: Vector3) => {
+    mainSceneActions?.updateCameraPosition(position)
   }
-)
+
+  const { rigidBodyRef, model } = usePlayer(mode, playerID, onJump)
+
+  return (
+    <RigidBody
+      ref={rigidBodyRef}
+      type='dynamic'
+      enabledRotations={[false, false, false]}
+      linearDamping={1.5}
+      friction={0.5}
+      colliders='cuboid'>
+      <primitive object={model.scene} />
+    </RigidBody>
+  )
+}
 
 export default Player

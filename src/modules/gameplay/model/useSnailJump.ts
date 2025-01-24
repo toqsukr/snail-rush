@@ -1,17 +1,42 @@
-import { PlayerStatus } from '@modules/lobby/type'
 import { useSpring } from '@react-spring/three'
+import { useGLTF } from '@react-three/drei'
 import { RapierRigidBody } from '@react-three/rapier'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { calcJumpDistance, calculateLandingPosition, getStartPosition } from '../util'
-import { usePositionAnimation } from './useAnimation'
+import { PlayerPositions, PlayerSkins } from '../type'
+import {
+  calcAnimationDuration,
+  calcJumpDistance,
+  calculateLandingPosition,
+  getModelPath,
+  getStartPosition,
+} from '../util'
+import { useAnimation } from './useAnimation'
 
-export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
-  const startPosition = getStartPosition(mode, status)
+/**
+ * Хук описывающий логику вращения и перемещения улиток
+ *
+ * Управляет как анимацией, так и физической составляющей
+ *
+ * @param playerPosition начальная позиция данного игрока
+ * @param skin скин данного игрока
+ *
+ * @returns position - параметр перемещения (для анимации react-spring)
+ * @returns rotation - параметр вращения (для анимации react-spring)
+ * @returns triggerJump - функция, запускающая перемещение модели
+ * @returns triggerRotate - функция, запускающая вращение модели
+ * @returns isJumping - флаг, равен true, пока анимация активна
+ * @returns getRotation - функция получения текущего глобального угла вращения модели
+ * @returns getAnimationDuration - функция получения продолжительности анимации перемещения
+ * @returns calcTargetPosition - функция для расчета целевой позиции перемещения
+ */
 
-  const animationOptions = usePositionAnimation(mode, status)
+export const useSnailJump = (playerPosition: PlayerPositions, skin: PlayerSkins) => {
+  const model = useGLTF(getModelPath(skin))
+  const startPosition = getStartPosition(playerPosition)
+  const animationOptions = useAnimation(model)
 
-  const { animatePosition, getAnimationDuration, isAnimationRunning, model } = animationOptions
+  const { animate, isAnimationRunning } = animationOptions
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
 
@@ -23,6 +48,10 @@ export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
 
   const getRotation = () => {
     return springProps.rotation.get()
+  }
+
+  const getAnimationDuration = (koef: number) => {
+    return calcAnimationDuration(animationOptions.getAnimationDuration(), koef)
   }
 
   const triggerRotate = (rotateY: number) => {
@@ -57,7 +86,7 @@ export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
   }
 
   const triggerJump = (targetPosition: THREE.Vector3, duration: number) => {
-    animatePosition(duration)
+    animate(duration)
     if (rigidBodyRef.current) {
       const rigidBody = rigidBodyRef.current
 
@@ -65,7 +94,7 @@ export const useSnailJump = (mode: PlayerStatus, status: PlayerStatus) => {
       const direction = new THREE.Vector3()
         .subVectors(targetPosition, currentPosition)
         .normalize()
-        .multiplyScalar(duration * 8)
+        .multiplyScalar(duration * 16)
 
       rigidBody.setLinvel(direction, true)
     }

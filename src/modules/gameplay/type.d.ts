@@ -26,3 +26,13 @@ export type AppState = {
   onGameOver: () => void
   onWin: () => void
 }
+
+export enum PlayerPositions {
+  FIRST,
+  SECOND,
+}
+
+export enum PlayerSkins {
+  HERBIVORE = 'herbivore',
+  PREDATOR = 'predator',
+}
