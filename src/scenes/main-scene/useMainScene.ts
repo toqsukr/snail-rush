@@ -13,12 +13,12 @@ export const useMainScene = () => {
   const { initPosition } = usePlayerData()
 
   const [spring, api] = useSpring<SpringSettings>(() => ({
-    position: [0, 28, -15],
+    position: [0, 35, -21],
     rotation: [-Math.PI, 0, -Math.PI],
   }))
 
   const handleStart = () => {
-    const targetPosition: [number, number, number] = [initPosition.x, 22, initPosition.z - 11]
+    const targetPosition: [number, number, number] = [initPosition.x, 30, initPosition.z - 10]
 
     const targetRotation = calcRotation(
       new Vector3(...targetPosition),
@@ -44,7 +44,7 @@ export const useMainScene = () => {
     const { x, y, z } = targetPosition
 
     api.start({
-      position: [x, y + 22, z - 11],
+      position: [x, y + 30, z - 10],
       config: { mass: 1, tension: 50, friction: 40 },
     })
   }

@@ -1,3 +1,5 @@
 import { SnailJumpProp } from '../player/Player.type'
 
-export type OpponentProp = Pick<SnailJumpProp, 'mode'>
+export type OpponentProp = Pick<SnailJumpProp, 'mode'> & {
+  nickname: string
+}

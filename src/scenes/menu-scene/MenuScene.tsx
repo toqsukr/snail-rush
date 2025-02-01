@@ -3,7 +3,7 @@ import HTMLLayout from '@shared/html-layout/HTMLLayout'
 
 const MenuScene = () => {
   return (
-    <HTMLLayout>
+    <HTMLLayout position={[0, 35, -10]} rotation={[0, Math.PI, 0]}>
       <MainMenu />
     </HTMLLayout>
   )

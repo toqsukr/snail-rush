@@ -18,13 +18,15 @@ export type AppState = {
   started: boolean
   countdown: boolean
   pause: boolean
+  finished: boolean
+  winnerID: string | null
+  setWinner: (winnerID: string) => void
   onPauseGame: () => void
   onCountDown: () => void
   onResumeGame: () => void
   onGameStart: () => void
   allowMoving: () => void
   onGameOver: () => void
-  onWin: () => void
 }
 
 export enum PlayerPositions {

@@ -13,7 +13,7 @@ const PlayersScene = () => {
   return (
     <Suspense fallback={null}>
       <Player mode={status} playerID={player_id} />
-      <Opponent mode={status === 'host' ? 'joined' : 'host'} />
+      <Opponent nickname='Enemy' mode={status === 'host' ? 'joined' : 'host'} />
     </Suspense>
   )
 }

@@ -45,8 +45,8 @@ export const useWebSocket = () => {
               console.log('player connected')
               break
             case Operations.PLAYER_KICK:
-              const { target_player_id, players } = responseData.data as KickPlayerMessageType
-              if (player_id === target_player_id) {
+              const { kicked_id, players } = responseData.data as KickPlayerMessageType
+              if (player_id === kicked_id) {
                 onSessionExit()
               } else {
                 onChangePlayers(players)

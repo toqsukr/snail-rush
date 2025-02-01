@@ -39,7 +39,7 @@ const JoinUnit: FC<{ playerID: string }> = ({ playerID }) => {
 
   const getContent = (session: SessionType | null) => {
     if (session)
-      return <Disconnect handleDisconnect={() => handleDisconnect(playerID, session.session_id)} />
+      return <Disconnect handleDisconnect={() => handleDisconnect(session.session_id, playerID)} />
     return (
       <Connect
         inputProps={register('sessionID')}

@@ -34,7 +34,7 @@ export const KickPlayerResponseSchema = CreateSessionResponseSchema
 
 export const KickPlayerMessageSchema = ConnectPlayerMessageSchema.merge(
   z.object({
-    target_player_id: z.string(),
+    kicked_id: z.string(),
   })
 )
 
