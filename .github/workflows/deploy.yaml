@@ -25,10 +25,10 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ vars.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          echo "${{ vars.SSH_KNOWN_HOSTS_CONTENT }}" >> ~/.ssh/known_hosts
+          echo "${{ env.SSH_KNOWN_HOSTS_CONTENT }}" >> ~/.ssh/known_hosts
           
       - name: Deploy to Hosting
         run: |
-          ssh ${{ vars.REMOTE_USER }}@${{ vars.REMOTE_HOST }} "cd snail-rush && git pull origin master && sudo docker compose up --build -d"
+          ssh ${{ env.REMOTE_USER }}@${{ env.REMOTE_HOST }} "cd snail-rush && git pull origin master && sudo docker compose up --build -d"
