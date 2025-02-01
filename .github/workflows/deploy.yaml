@@ -47,6 +47,10 @@ jobs:
           echo "${{ env.SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ env.SSH_KNOWN_HOSTS_CONTENT }}" >> ~/.ssh/known_hosts
+
+      - name: Assert there is known host
+        run: |
+          cat ~/.ssh/known_hosts
           
       - name: Deploy to Hosting
         run: |
