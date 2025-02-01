@@ -19,9 +19,16 @@ FROM nginx:1.25-alpine
 
 # Copy built files to Nginx directory
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY default.conf /etc/nginx/sites-available/
+COPY default.conf /etc/nginx/conf.d/
+COPY default.conf /etc/nginx/sites-enabled/
+
+COPY ./ssl/snail-rush.pem /etc/nginx/ssl/snail-rush.pem
+COPY ./ssl/snail-private.key /etc/nginx/ssl/snail-private.key
 
 # Expose port
-EXPOSE 80
+EXPOSE 443
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
+
