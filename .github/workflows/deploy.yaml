@@ -22,6 +22,8 @@ env:
     213.171.31.233 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINGkZv0Z1xCXf7dLUEVCUIYCak+JfHOMEKHN3bgrtjOM
     213.171.31.233 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8X9DYOdDE7zBBI507TVnYBp921Q/2HhP93if9pz8gVIGQyp/Qi+IpHoUByWKIfA2V0ofWma24DsOIzUgnr4xyjRbTwNyBuo3FeMOrKdCjpYVRLMUObmoAfAy9dAjEgXCcSKr/HbOOx2T8NolXIxsU8a/j4BakBPD0jKGakUpAAIPSmZO7nla3HlLDJDck5G1i8uRaHuLD6sq2UO2ad+Ohy3pXsre2aZc4b7O0yx0w8zpi1nj+U/hL5gEnDNUiI1IT5622DSuEW8q4JF6uxOksBEQU/uAGIjKZzQvxgujFGgxeCaOEga8l0ZfWMRfjUzUa35b9XjGUxvYXBUH74TYgt/5R4LT9JyCge8Qjplhs12dIPgqjeNMPujJKf8XsldqUyuVV7lao8KxjfnV460SZe1fb71KQ3De2NafrNXRxDXrnfCzLPNO9PDSBHOohjC0eLdMFPcriTsRy+eUR/GeJaBT0wr0kWruOr1LZQWcjSK1dgu03Yi9FeMpmalcqTwk=
     213.171.31.233 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMoJKVOBVuWxmZIcF2JDiASXi0E0HrVw/BN8bFSny+Ql5vuGmcjs1UEMM4dcaLsmHXFeKH62dSmKdkFnaObZ+L0=
+  SSH_PUBLIC_KEY: |
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH148ZoK1h9ABtkZ5zikfMiRhsnyf4gRvGFwJna+MILQ skeesh@skeesh-modern15b12m
   REMOTE_USER: "skeesh"
   REMOTE_HOST: "213.171.31.233"
   
@@ -42,6 +44,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "${{ env.SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ env.SSH_KNOWN_HOSTS_CONTENT }}" >> ~/.ssh/known_hosts
           
