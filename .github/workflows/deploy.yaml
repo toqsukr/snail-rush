@@ -11,10 +11,14 @@ on:
 
 jobs:
   deploy:
-    if: github.event.pull_request.merged == true    
     runs-on: ubuntu-latest
-
     steps:
+      - name: Check if triggered by push or merged PR
+        if: |
+          github.event_name == 'push' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+        run: echo "This will run on push to master or merged PR"
+
       - name: Checkout code
         uses: actions/checkout@v3
 
