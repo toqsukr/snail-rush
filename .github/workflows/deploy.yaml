@@ -38,7 +38,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           echo "${{ secrets.SSH_KNOWN_HOSTS_CONTENT }}" >> ~/.ssh/known_hosts
-          echo "$SSH_PRIVATE_KEY"
+          echo "${{ vars.SSH_PRIVATE_KEY }}"
           
       - name: Deploy to Hosting
         run: |
