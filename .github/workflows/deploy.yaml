@@ -8,7 +8,9 @@ on:
     types: [closed]
     branches:
       - master
-
+env:
+  SSH_PRIVATE_KEY: ${{ vars.SSH_PRIVATE_KEY }} 
+  
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -21,14 +23,23 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v3
-
+        
+      - name: Check if secrets are available
+        run: |
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "SSH_PRIVATE_KEY is empty or not set"
+          else
+            echo "SSH_PRIVATE_KEY is set"
+          fi
+          
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          echo "$SSH_KNOWN_HOSTS_CONTENT" >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_KNOWN_HOSTS_CONTENT }}" >> ~/.ssh/known_hosts
+          echo "$SSH_PRIVATE_KEY"
           
       - name: Deploy to Hosting
         run: |
-          ssh "$REMOTE_USER"@"$REMOTE_HOST" "cd snail-rush && git pull origin master && sudo docker compose up --build -d"
+          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "cd snail-rush && git pull origin master && docker compose up --build -d"
