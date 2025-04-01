@@ -8,9 +8,9 @@ export const useKickPlayer = () => {
   const { onChangePlayers } = useSession()
   const { mutateAsync, isPending } = useMutation({
     mutationKey: [MutationKeys.KICK_PLAYER],
-    mutationFn: async (data: { sessionID: string; playerID: string }) => {
+    mutationFn: async (data: { sessionID: string; actorID: string; dependentID: string }) => {
       return sessionService
-        .kickPlayer(data.sessionID, data.playerID)
+        .kickPlayer(data.sessionID, data.actorID, data.dependentID)
         .then(({ data }) => KickPlayerResponseSchema.parse(data))
     },
     onSuccess: ({ players }) => {

@@ -10,6 +10,7 @@ export const useAppState = create<AppState>((set, get) => ({
   countdown: false,
   winnerID: null,
   setWinner: winnerID => set({ ...get(), winnerID }),
+  setMoveable: moveable => set({ ...get(), moveable }),
   onCountDown: () => set({ ...get(), countdown: true }),
   allowMoving: () => set({ ...get(), moveable: true, countdown: false }),
   onGameOver: () => set({ ...get(), started: false, moveable: false, finished: true }),

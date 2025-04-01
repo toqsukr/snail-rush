@@ -28,9 +28,9 @@ const JoinUnit: FC<{ playerID: string }> = ({ playerID }) => {
     connectSession({ playerID, sessionID })
   }
 
-  const handleDisconnect = async (sessionID: string, playerID: string) => {
+  const handleDisconnect = async (sessionID: string, dependentID: string) => {
     try {
-      await kickPlayer({ sessionID, playerID })
+      await kickPlayer({ sessionID, actorID: playerID, dependentID })
       setSession(null)
     } catch (e) {
       console.error(e)

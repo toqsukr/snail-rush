@@ -21,6 +21,7 @@ export type AppState = {
   finished: boolean
   winnerID: string | null
   setWinner: (winnerID: string) => void
+  setMoveable: (moveable: boolean) => void
   onPauseGame: () => void
   onCountDown: () => void
   onResumeGame: () => void

@@ -32,7 +32,7 @@ const CreationUnit: FC<{ playerID: string }> = ({ playerID }) => {
   return (
     <Menu>
       <h1>Let your friend connect by code: {session?.session_id}</h1>
-      <LobbyUnit />
+      <LobbyUnit localPlayerID={playerID} />
       <Menu.Button disabled={session.players.length - 2 < 0} onClick={handleStart}>
         PLAY
       </Menu.Button>

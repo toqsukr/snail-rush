@@ -32,8 +32,8 @@ class SessionService {
     )
   }
 
-  async kickPlayer(sessionID: string, playerID: string) {
-    return await axios.delete(`${this.SESSION_PREFIX}/${sessionID}/kick/${playerID}`, baseConfig)
+  async kickPlayer(sessionID: string, actionID: string, dependentID: string) {
+    return await axios.delete(`${this.SESSION_PREFIX}/${sessionID}/player/${actionID}/kick/${dependentID}`, baseConfig)
   }
 }
 

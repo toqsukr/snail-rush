@@ -12,7 +12,7 @@ const Stone: FC<RigidBodyProps> = props => {
   // const randomRotationY = useMemo(() => Math.random() * Math.PI * 2, [])
 
   return (
-    <RigidBody {...props} type='fixed' colliders='cuboid'>
+    <RigidBody {...props} userData={{ isObstacle: true }} type='fixed' colliders='cuboid'>
       <primitive object={clonedScene} ref={modelRef} />
     </RigidBody>
   )
