@@ -1,0 +1,22 @@
+.lobby {
+  @apply flex flex-col text-center;
+  padding: 0.6rem;
+  border-radius: 0.4rem;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.players {
+  @apply flex flex-col pt-[0.6rem];
+}
+
+.list_item {
+  @apply flex justify-between py-[.5rem];
+  border-top: 1px solid gray;
+  &:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
