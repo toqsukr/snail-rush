@@ -1,9 +1,9 @@
 import { useAppState } from '@modules/gameplay/store'
 import { animated, useSpring } from '@react-spring/web'
-import LoadingLayout from '@shared/loading-layout/LoadingLayout'
-import Menu from '@shared/menu/Menu'
 import cn from 'clsx'
 import { useState } from 'react'
+import LoadingLayout from 'src/shared-old/loading-layout/LoadingLayout'
+import Menu from 'src/shared-old/menu/Menu'
 import css from './PauseMenu.module.scss'
 
 const PauseMenu = () => {

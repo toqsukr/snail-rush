@@ -23,6 +23,10 @@
       "@modules/*": ["src/modules/*"],
       "@scenes/*": ["src/scenes/*"],
       "@objects/*": ["src/objects/*"],
+      "@app/*": ["src/app/*"],
+      "@widgets/*": ["src/widgets/*"],
+      "@features/*": ["src/features/*"],
+      "@entities/*": ["src/entities/*"],
       "@shared/*": ["src/shared/*"]
     },
 

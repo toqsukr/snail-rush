@@ -8,9 +8,9 @@ import { CreatePlayerRequest, CreatePlayerRequestSchema } from '@modules/player/
 import { useCreateSession } from '@modules/session/model/hooks/useCreateSession'
 import { useDeleteSession } from '@modules/session/model/hooks/useDeleteSession'
 import { useSession } from '@modules/session/store'
-import Menu from '@shared/menu/Menu'
 import debounce from 'lodash.debounce'
 import { useForm } from 'react-hook-form'
+import Menu from 'src/shared-old/menu/Menu'
 import { useLobby } from '../store'
 
 const MainUnit = () => {
