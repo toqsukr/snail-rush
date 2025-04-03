@@ -9,7 +9,7 @@ const KickPlayerButton: FC<{ lobbyPlayerID: string }> = ({ lobbyPlayerID }) => {
   const { isHost } = useMenuDeps()
   const user = useUser(s => s.user)
 
-  if (isHost(user?.id ?? '')) return null
+  if (!isHost(user?.id ?? '') || user?.id === lobbyPlayerID) return
 
   return <RxCross2 onClick={() => kickPlayer(lobbyPlayerID)} />
 }

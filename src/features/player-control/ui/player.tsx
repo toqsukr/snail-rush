@@ -7,18 +7,18 @@ const SPACE_HOLD_TIME = 1300
 export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { handleKeyUp, handleKeyDown } = useSpaceHold(SPACE_HOLD_TIME)
   const {
-    isJumping,
+    getIsAnimating,
     onJump,
     onRotate,
     calcTargetPosition,
     calcAnimationDuration,
     getRotation,
-    isMoveable,
+    getMoveable,
   } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
     const koef = holdTime / SPACE_HOLD_TIME
-    if (!isJumping && isMoveable) {
+    if (!getIsAnimating() && getMoveable()) {
       const position = calcTargetPosition(koef)
       const duration = calcAnimationDuration(koef)
       const targetPosition = { ...position, duration, holdTime }
@@ -28,7 +28,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
 
   const handleRotate = (directionKoef: number) => {
     const koef = 0.2 * directionKoef
-    if (!isJumping && isMoveable) {
+    if (!getIsAnimating() && getMoveable()) {
       const rotationArr = getRotation()
       const updatedPitch = rotationArr[1] + koef
       const rotation = { roll: rotationArr[0], pitch: updatedPitch, yaw: rotationArr[2] }

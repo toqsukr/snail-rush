@@ -8,7 +8,7 @@ import { useCountdownStore } from '../model/store'
 type CountdownProp = Omit<PrimitiveProps, 'object'>
 
 export const Countdown: FC<CountdownProp> = props => {
-  const { value, running, updateRunning, updateValue } = useCountdownStore()
+  const { started, value, running, updateRunning, updateValue } = useCountdownStore()
   const { startValue, onAlarm, playerPosition } = useCountdownDeps()
 
   const model = useGLTF('animations/start-timer.glb')
@@ -29,7 +29,7 @@ export const Countdown: FC<CountdownProp> = props => {
   }, [model])
 
   useEffect(() => {
-    if (!running) {
+    if (started && !running) {
       updateValue(startValue)
       const currentAnimation = model.animations[0]
 

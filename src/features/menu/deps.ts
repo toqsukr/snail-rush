@@ -4,6 +4,10 @@ type MenuDeps = {
   onPlay: () => void
   onPause: () => void
   onContinue: () => void
+  onCreateLobby: () => void
+  onConnectLobby: () => void
+  onDeleteLobby: () => void
+  onDisconnectLobby: () => void
   isHost: (playerID: string) => boolean
 }
 

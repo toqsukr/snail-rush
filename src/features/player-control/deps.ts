@@ -3,13 +3,13 @@ import { Vector3 } from 'three'
 import { PositionType, RotationType } from './model/types'
 
 type PlayerDeps = {
+  getMoveable: () => boolean
+  getRotation: () => number[]
+  getIsAnimating: () => boolean
   onJump: (position: PositionType) => void
   onRotate: (rotation: RotationType) => void
-  getRotation: () => number[]
-  calcAnimationDuration: (koef: number) => number
   calcTargetPosition: (koef: number) => Vector3
-  isMoveable: boolean
-  isJumping: boolean
+  calcAnimationDuration: (koef: number) => number
 }
 
 export const playerDepsContext = createStrictContext<PlayerDeps>()

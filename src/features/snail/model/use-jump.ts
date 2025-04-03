@@ -1,11 +1,11 @@
 import { useSpring } from '@react-spring/three'
 import { useGLTF } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
 import { RapierRigidBody } from '@react-three/rapier'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useSnailDeps } from '../deps'
-import { sequentialPosition } from './sequential-position'
-import { sequentialRotation } from './sequential-rotation'
+import { useSnailOrientationContext } from '../ui/snail-provider'
 import { useSnailStore } from './store'
 import { useAnimation } from './use-animation'
 
@@ -47,8 +47,9 @@ export const useJump = () => {
   const { modelPath, startPosition } = useSnailDeps()
 
   const model = useGLTF(modelPath)
-  const { animate } = useAnimation(model)
-  const { updatePosition, updateRotation } = useSnailStore()
+  const { animate, isAnimationRunning } = useAnimation(model)
+  const { updatePosition, updateRotation, updateIsAnimating } = useSnailStore()
+  const { sequentialPosition, sequentialRotation } = useSnailOrientationContext()
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
 
@@ -65,6 +66,8 @@ export const useJump = () => {
   const triggerRotate = (rotateY: number) => {
     const currentRotation = getRotation()
 
+    console.log(rotateY)
+
     springAPI.start({
       rotation: [currentRotation[0], rotateY, currentRotation[2]],
       config: { duration: 0 },
@@ -74,8 +77,7 @@ export const useJump = () => {
           quaternion.setFromEuler(new THREE.Euler(...value.rotation))
           rigidBodyRef.current.setRotation(quaternion, true)
         }
-      },
-      onRest: ({ value }) => {
+        console.log(value.rotation)
         updateRotation(value.rotation)
       },
     })
@@ -96,6 +98,11 @@ export const useJump = () => {
     }
   }
 
+  //TODO
+  useFrame(() => {
+    updateIsAnimating(isAnimationRunning(0))
+  })
+
   useEffect(() => {
     if (rigidBodyRef.current) {
       const position = springProps.position.get()
@@ -114,7 +121,7 @@ export const useJump = () => {
 
         springAPI.start({
           position: [position.x, position.y, position.z],
-          onRest: ({ value }) => {
+          onChange: ({ value }) => {
             updatePosition(new THREE.Vector3(...value.position))
           },
         })
@@ -164,6 +171,12 @@ export const useGetRotation = () => {
   const rotation = useSnailStore(s => s.rotation)
 
   return () => rotation
+}
+
+export const useIsAnimating = () => {
+  const isAnimating = useSnailStore(s => s.isAnimating)
+
+  return () => isAnimating
 }
 
 export const useCalcAnimationDuration = () => {

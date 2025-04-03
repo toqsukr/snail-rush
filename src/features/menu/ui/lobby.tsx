@@ -39,7 +39,11 @@ const JoinLobby = () => {
 
   return (
     <>
-      <Input value={lobbyCode} onChange={e => setLobbyCode(e.currentTarget.value)} />
+      <Input
+        value={lobbyCode}
+        onChange={e => setLobbyCode(e.currentTarget.value)}
+        placeholder='Lobby code'
+      />
       <ConnectLobbyButton lobbyCode={lobbyCode} disabled={lobbyCode.length !== 4} />
       <BackButton />
     </>

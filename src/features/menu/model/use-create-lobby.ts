@@ -1,10 +1,11 @@
+import { usePlayers } from '@entities/players'
 import { parseFromSessionDTO, useSession } from '@entities/session'
 import { parseFromPlayerDTO } from '@entities/user'
 import sessionService from '@shared/api/session'
 import { useIsMutating, useMutation } from '@tanstack/react-query'
+import { useMenuDeps } from '../deps'
 import { useMenu } from './store'
 import { useCreateUser, useIsUserCreating } from './use-create-user'
-import { useUpdateLobbyPlayers } from './use-update-lobby-players'
 
 const createSessionMutationKey = 'create-session'
 
@@ -20,16 +21,21 @@ const useCreateSession = () => {
 export const useCreateLobby = () => {
   const createSession = useCreateSession()
   const connectLobby = useMenu(s => s.connectLobby)
-  const updateSession = useSession(s => s.updateSession)
-  const updateLobbyPlayers = useUpdateLobbyPlayers()
+  const { session, updateSession } = useSession()
   const createUser = useCreateUser()
+  const updatePlayers = usePlayers(s => s.updatePlayers)
+  const { onCreateLobby } = useMenuDeps()
 
   return async (username: string) => {
     connectLobby()
+
+    if (session) return
+
     const user = await createUser(username)
-    const session = await createSession.mutateAsync(user.id)
-    updateLobbyPlayers(session.players.map(player => parseFromPlayerDTO(player)))
-    updateSession(parseFromSessionDTO(session))
+    const createdSession = await createSession.mutateAsync(user.id)
+    onCreateLobby()
+    updatePlayers(createdSession.players.map(player => parseFromPlayerDTO(player)))
+    updateSession(parseFromSessionDTO(createdSession))
   }
 }
 

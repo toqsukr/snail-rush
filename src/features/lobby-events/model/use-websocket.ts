@@ -21,10 +21,16 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
   const websocket = useRef<WebSocket>()
   const { session, deleteSession } = useSession()
   const { user } = useUser()
-  const { onGameStart, onChangeLobbyPlayers, onChangeOpponentPosition, onChangeOpponentRotation } =
-    props
+  const {
+    onGameStart,
+    onKickMe,
+    onChangeLobbyPlayers,
+    onChangeOpponentPosition,
+    onChangeOpponentRotation,
+  } = props
 
   const onSessionExit = () => {
+    onKickMe()
     websocket.current?.close()
     deleteSession()
   }
@@ -43,11 +49,13 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
           switch (responseData.type) {
             case Operations.PLAYER_CONNECT:
               const connectData = responseData.data as ConnectPlayerMessageType
+              console.log('connected!', connectData)
               onChangeLobbyPlayers(connectData.players.map(player => parseFromPlayerDTO(player)))
               console.log('player connected')
               break
             case Operations.PLAYER_KICK:
               const { kicked_id, players } = responseData.data as KickPlayerMessageType
+              console.log('kicked!', players)
               if (user.id === kicked_id) {
                 onSessionExit()
               } else {

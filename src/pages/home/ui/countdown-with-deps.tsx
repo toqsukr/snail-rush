@@ -1,21 +1,26 @@
 import { Countdown, countdownDepsContext } from '@features/countdown'
-import { PLAYER_START_POSITION } from '../'
+import { Suspense } from 'react'
+import { getPlayerPosition, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
 const START_TIMER_VALUE = 3
 
 const CountdownWithDeps = () => {
-  const allowMoving = useGameStore(s => s.allowMoving)
+  const { playerStatus, allowMoving } = useGameStore()
+
+  if (!playerStatus) return
 
   return (
-    <countdownDepsContext.Provider
-      value={{
-        onAlarm: allowMoving,
-        startValue: START_TIMER_VALUE,
-        playerPosition: PLAYER_START_POSITION,
-      }}>
-      <Countdown rotation={[-Math.PI / 8, Math.PI, 0]} />
-    </countdownDepsContext.Provider>
+    <Suspense fallback={null}>
+      <countdownDepsContext.Provider
+        value={{
+          onAlarm: allowMoving,
+          startValue: START_TIMER_VALUE,
+          playerPosition: getStartPosition(getPlayerPosition(playerStatus)),
+        }}>
+        <Countdown rotation={[-Math.PI / 8, Math.PI, 0]} />
+      </countdownDepsContext.Provider>
+    </Suspense>
   )
 }
 

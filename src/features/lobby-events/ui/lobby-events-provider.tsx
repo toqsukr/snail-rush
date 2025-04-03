@@ -6,6 +6,7 @@ import { useWebSocket } from '../model/use-websocket'
 
 export type LobbyEventsProviderProp = {
   onGameStart: () => void
+  onKickMe: () => void
   onChangeLobbyPlayers: (players: TUser[]) => void
   onChangeOpponentPosition: (position: OpponentPositionType) => void
   onChangeOpponentRotation: (position: OpponentRotationType) => void

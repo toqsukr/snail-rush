@@ -1,4 +1,3 @@
-import { TUser } from '@entities/user'
 import { create } from 'zustand'
 
 export type MenuMode = 'main-menu' | 'lobby' | 'game-pause' | 'game-over'
@@ -27,17 +26,4 @@ export const useMenu = create<MenuStore>((set, get) => ({
   pauseGame: () => set({ ...get(), mode: 'game-pause', visibility: true }),
   resumeGame: () => set({ ...get(), visibility: false }),
   finishGame: () => set({ ...get(), mode: 'game-over', visibility: true }),
-}))
-
-type LobbyPlayersStore = {
-  players: TUser[]
-  updatePlayers: (players: TUser[]) => void
-  removePlayer: (playerID: string) => void
-}
-
-export const useLobbyPlayersStore = create<LobbyPlayersStore>((set, get) => ({
-  players: [],
-  updatePlayers: players => set({ ...get(), players }),
-  removePlayer: playerID =>
-    set({ ...get(), players: get().players.filter(({ id }) => id !== playerID) }),
 }))

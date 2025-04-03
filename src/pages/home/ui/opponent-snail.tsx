@@ -1,28 +1,57 @@
+import { usePlayers } from '@entities/players'
+import { useUser } from '@entities/user'
 import { isObstacle } from '@features/obstacle'
-import { opponentDepsContext } from '@features/opponent-control'
-import { Snail, snailDepsContext, useSnailOrientationContext } from '@features/snail'
-
-const OPPONENT_START_POSITION = [6, 0, 0] satisfies [number, number, number]
+import { Opponent, opponentDepsContext } from '@features/opponent-control'
+import {
+  Snail,
+  snailDepsContext,
+  SnailOrientationProvider,
+  useSnailOrientationContext,
+} from '@features/snail'
+import { Suspense } from 'react'
+import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
+import { useGameStore } from '../model/store'
 
 const OpponentSnail = () => {
   const { appendPosition, appendRotation } = useSnailOrientationContext()
 
   return (
-    <snailDepsContext.Provider
+    <opponentDepsContext.Provider
       value={{
-        modelPath: '/animations/full-jump-static-opponent.glb',
-        shouldHandleCollision: isObstacle,
-        startPosition: OPPONENT_START_POSITION,
+        onJump: appendPosition,
+        onRotate: appendRotation,
       }}>
-      <opponentDepsContext.Provider
-        value={{
-          onJump: appendPosition,
-          onRotate: appendRotation,
-        }}>
+      <Opponent>
         <Snail />
-      </opponentDepsContext.Provider>
-    </snailDepsContext.Provider>
+      </Opponent>
+    </opponentDepsContext.Provider>
   )
 }
 
-export default OpponentSnail
+const OpponentSuspense = () => {
+  const playerStatus = useGameStore(s => s.playerStatus)
+  const user = useUser(s => s.user)
+  const players = usePlayers(s => s.players)
+
+  if (!playerStatus || players.length < 2) return
+
+  return (
+    <Suspense fallback={null}>
+      <snailDepsContext.Provider
+        value={{
+          shouldHandleCollision: isObstacle,
+          modelPath: getModelPath(getPlayerSkin(playerStatus === 'joined' ? 'host' : 'joined')),
+          username: players.filter(({ id }) => id !== user?.id)[0].username,
+          startPosition: getStartPosition(
+            getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined')
+          ),
+        }}>
+        <SnailOrientationProvider>
+          <OpponentSnail />
+        </SnailOrientationProvider>
+      </snailDepsContext.Provider>
+    </Suspense>
+  )
+}
+
+export default OpponentSuspense

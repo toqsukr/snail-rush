@@ -11,7 +11,7 @@ type UserStore = {
 }
 
 export const useUser = create(
-  persist<UserStore, [], [], UserStore['user']>(
+  persist<UserStore, [], [], Pick<UserStore, 'user'>>(
     (set, get) => ({
       user: null,
       updateUser: user => set({ ...get(), user }),
@@ -19,7 +19,7 @@ export const useUser = create(
     }),
     {
       name: USER_STORE_KEY,
-      partialize: ({ user }) => user,
+      partialize: state => ({ user: state.user }),
     }
   )
 )

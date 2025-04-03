@@ -1,9 +1,11 @@
-import { useLobbyPlayersStore } from '@features/menu/model/store'
+import { usePlayers } from '@entities/players'
 import KickPlayerButton from '../action-buttons/kick-player-button'
 import css from './lobby-board.module.scss'
 
 const LobbyBoard = () => {
-  const lobbyPlayers = useLobbyPlayersStore(s => s.players)
+  const lobbyPlayers = usePlayers(s => s.players)
+
+  console.log(lobbyPlayers)
 
   return (
     <section className={css.lobby}>

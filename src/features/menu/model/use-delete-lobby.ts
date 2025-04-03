@@ -20,7 +20,7 @@ export const useDeleteLobby = () => {
   const disconnectLobby = useMenu(s => s.disconnectLobby)
   const { session, deleteSession } = useSession()
   const user = useUser(s => s.user)
-  const { isHost } = useMenuDeps()
+  const { isHost, onDeleteLobby } = useMenuDeps()
   const removeSession = useDeleteSession()
 
   return () => {
@@ -28,6 +28,7 @@ export const useDeleteLobby = () => {
 
     disconnectLobby()
     deleteSession()
+    onDeleteLobby()
     removeSession.mutate(session.id)
   }
 }

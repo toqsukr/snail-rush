@@ -9,7 +9,7 @@ import { useGameStore } from '../model/store'
 const MenuWithDeps = () => {
   const checkHost = useIsHost()
   const { sendStartGame } = useLobbyEventsContext()
-  const { pauseGame, resumeGame } = useGameStore()
+  const { pauseGame, resumeGame, updatePlayerStatus } = useGameStore()
 
   return (
     <Html
@@ -24,6 +24,10 @@ const MenuWithDeps = () => {
           onPlay: sendStartGame,
           onPause: pauseGame,
           onContinue: resumeGame,
+          onCreateLobby: () => updatePlayerStatus('host'),
+          onConnectLobby: () => updatePlayerStatus('joined'),
+          onDeleteLobby: () => updatePlayerStatus(null),
+          onDisconnectLobby: () => updatePlayerStatus(null),
         }}>
         <QueryClientProvider client={queryClient}>
           <Menu />
