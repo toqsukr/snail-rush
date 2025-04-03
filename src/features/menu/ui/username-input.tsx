@@ -10,7 +10,7 @@ const UsernameInput: FC<HTMLProps<HTMLInputElement>> = ({ onChange, ...props }) 
     updateUser(e.currentTarget.value)
   }
 
-  return <Input {...props} onChange={onInputChange} />
+  return <Input {...props} onChange={onInputChange} placeholder='Enter username' />
 }
 
 export default UsernameInput

@@ -1,8 +1,7 @@
-import { useSession } from '@entities/session'
+import { parseFromSessionDTO, useSession } from '@entities/session'
 import { useUser } from '@entities/user'
 import sessionService from '@shared/api/session'
 import { useIsMutating, useMutation } from '@tanstack/react-query'
-import { parseFromSessionDTO } from '../lib/parse-session-dto'
 import { useMenu } from './store'
 
 const connectSessionMutationKey = 'connect-session'

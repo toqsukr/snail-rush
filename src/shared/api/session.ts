@@ -19,7 +19,7 @@ class SessionService {
       .get<SessionDTO>(this.SESSION_PREFIX, {
         params: { sessionID },
       })
-      .then(data => SessionDTOSchema.parse(data))
+      .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
   async createSession(playerID: string) {
@@ -27,7 +27,7 @@ class SessionService {
       .post<SessionDTO>(`${this.SESSION_PREFIX}`, {
         player_id: playerID,
       })
-      .then(data => SessionDTOSchema.parse(data))
+      .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
   async deleteSession(sessionID: string) {
@@ -37,7 +37,7 @@ class SessionService {
   async connectSession(sessionID: string, playerID: string) {
     return baseTemplate
       .post<SessionDTO>(`${this.SESSION_PREFIX}/${sessionID}/connect/${playerID}`, null)
-      .then(data => SessionDTOSchema.parse(data))
+      .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
   async kickPlayer(sessionID: string, actionID: string, dependentID: string) {

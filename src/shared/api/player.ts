@@ -16,20 +16,20 @@ class PlayerService {
       .get<PlayerDTO>(this.PLAYER_PREFIX, {
         params: { playerID },
       })
-      .then(data => PlayerDTOSchema.parse(data))
+      .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
   async createPlayer(username: string) {
     return baseTemplate
       .post<PlayerDTO>(this.PLAYER_PREFIX, { username })
-      .then(data => PlayerDTOSchema.parse(data))
+      .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
   async updatePlayer(user: PlayerDTO) {
     const { player_id, username } = user
     return baseTemplate
       .put<PlayerDTO>(`${this.PLAYER_PREFIX}/${player_id}`, { username })
-      .then(data => PlayerDTOSchema.parse(data))
+      .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
   async deletePlayer(playerID: string) {

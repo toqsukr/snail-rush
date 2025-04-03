@@ -1,20 +1,18 @@
-import { useSession } from '@entities/session'
-import { useMenuDeps } from '@features/menu/deps'
+import { useLobbyPlayersStore } from '@features/menu/model/store'
 import KickPlayerButton from '../action-buttons/kick-player-button'
 import css from './lobby-board.module.scss'
 
 const LobbyBoard = () => {
-  const session = useSession(s => s.session)
-  const { getUserByID } = useMenuDeps()
+  const lobbyPlayers = useLobbyPlayersStore(s => s.players)
 
   return (
     <section className={css.lobby}>
       <h1>LOBBY</h1>
       <ul className={css.players}>
-        {session?.players.map(playerID => (
-          <li key={playerID} className={css.list_item}>
-            <p>{getUserByID(playerID).username}</p>
-            <KickPlayerButton lobbyPlayerID={playerID} />
+        {lobbyPlayers.map(({ id, username }) => (
+          <li key={id} className={css.list_item}>
+            <p>{username}</p>
+            <KickPlayerButton lobbyPlayerID={id} />
           </li>
         ))}
       </ul>

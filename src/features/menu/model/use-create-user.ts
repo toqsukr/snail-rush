@@ -1,7 +1,6 @@
-import { useUser } from '@entities/user'
+import { parseFromPlayerDTO, useUser } from '@entities/user'
 import playerService from '@shared/api/player'
 import { useIsMutating, useMutation } from '@tanstack/react-query'
-import { parseFromPlayerDTO } from '../lib/parse-user-dto'
 
 const createPlayerMutationKey = 'create-player'
 

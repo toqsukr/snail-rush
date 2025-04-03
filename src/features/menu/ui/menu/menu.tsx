@@ -1,8 +1,5 @@
 import { useUser } from '@entities/user'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ReactNode } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { z } from 'zod'
+import { ReactNode, useState } from 'react'
 import { MenuMode, useMenu } from '../../model/store'
 import BackToLobbyButton from '../action-buttons/back-to-lobby-button'
 import ContinueButton from '../action-buttons/continue-button'
@@ -15,21 +12,13 @@ import css from './menu.module.scss'
 const MainMenu = () => {
   const user = useUser(s => s.user)
 
-  const formData = useForm<{ username: string }>({
-    mode: 'onChange',
-    defaultValues: { username: user?.username ?? '' },
-    resolver: zodResolver(z.object({ username: z.string().min(1) })),
-  })
+  const [username, setUsername] = useState(user?.username ?? '')
 
   return (
     <>
-      <Controller
-        control={formData.control}
-        name='username'
-        render={({ field }) => <UsernameInput {...field} />}
-      />
-      <CreateLobbyButton username={user?.username ?? ''} />
-      <JoinLobbyButton username={user?.username ?? ''} />
+      <UsernameInput onChange={e => setUsername(e.currentTarget.value)} />
+      <CreateLobbyButton username={username} />
+      <JoinLobbyButton username={username} />
     </>
   )
 }

@@ -5,7 +5,11 @@ import { useCreateLobby } from '../../model/use-create-lobby'
 const CreateLobbyButton: FC<{ username: string }> = ({ username }) => {
   const createLobby = useCreateLobby()
 
-  return <Button onClick={() => createLobby(username)}>CREATE LOBBY</Button>
+  return (
+    <Button onClick={() => createLobby(username)} disabled={!username.length}>
+      CREATE LOBBY
+    </Button>
+  )
 }
 
 export default CreateLobbyButton
