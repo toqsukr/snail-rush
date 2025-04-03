@@ -2,7 +2,7 @@ import { useSession } from '@entities/session'
 import { parseFromPlayerDTO, useUser } from '@entities/user'
 import { WS_HOST_URL } from '@shared/api/base-template'
 import { useEffect, useRef } from 'react'
-import { WebsocketProviderProp } from '../ui/lobby-events-provider'
+import { LobbyEventsProviderProp } from '../ui/lobby-events-provider'
 import {
   ConnectPlayerMessageType,
   KickPlayerMessageType,
@@ -17,7 +17,7 @@ import {
   WebSocketResponseSchema,
 } from './types'
 
-export const useWebSocket = (props: WebsocketProviderProp) => {
+export const useWebSocket = (props: LobbyEventsProviderProp) => {
   const websocket = useRef<WebSocket>()
   const { session, deleteSession } = useSession()
   const { user } = useUser()
