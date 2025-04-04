@@ -26,9 +26,9 @@ const OpponentSnail = () => {
 }
 
 const OpponentSuspense = () => {
-  const playerStatus = useGameStore(s => s.playerStatus)
   const user = useUser(s => s.user)
   const players = usePlayers(s => s.players)
+  const playerStatus = useGameStore(s => s.playerStatus)
 
   if (!playerStatus || players.length < 2) return
 

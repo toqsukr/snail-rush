@@ -8,8 +8,10 @@ import { useCountdownStore } from '../model/store'
 type CountdownProp = Omit<PrimitiveProps, 'object'>
 
 export const Countdown: FC<CountdownProp> = props => {
-  const { started, value, running, updateRunning, updateValue } = useCountdownStore()
+  const { started, value, updateValue } = useCountdownStore()
   const { startValue, onAlarm, playerPosition } = useCountdownDeps()
+
+  const isRunning = useRef(false)
 
   const model = useGLTF('animations/start-timer.glb')
 
@@ -29,8 +31,9 @@ export const Countdown: FC<CountdownProp> = props => {
   }, [model])
 
   useEffect(() => {
-    if (started && !running) {
+    if (started && !isRunning.current) {
       updateValue(startValue)
+      isRunning.current = true
       const currentAnimation = model.animations[0]
 
       const action = mixerRef.current?.clipAction(currentAnimation)
@@ -40,16 +43,18 @@ export const Countdown: FC<CountdownProp> = props => {
       const timeout = setTimeout(() => {
         updateValue(value - 1)
         if (value === 0) {
-          updateRunning(false)
+          isRunning.current = false
           onAlarm()
         }
-      }, 1000)
+      }, startValue * 1000)
 
       return () => clearTimeout(timeout)
     }
-  }, [running])
+  }, [started])
 
   const position = [playerPosition[0], playerPosition[1] + 8, playerPosition[2]]
+
+  if (!isRunning.current) return
 
   return (
     <Suspense fallback={null}>

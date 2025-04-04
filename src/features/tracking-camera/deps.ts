@@ -1,11 +1,8 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
-import { Vector3 } from 'three'
-import { PositionType, RotationType } from './model/types'
 
 type TrackingCameraDeps = {
-  initPosition: PositionType
-  initRotation: RotationType
-  playerInitPosition: Vector3
+  initPosition: number[]
+  initRotation: number[]
 }
 
 export const trackingCameraDepsContext = createStrictContext<TrackingCameraDeps>()

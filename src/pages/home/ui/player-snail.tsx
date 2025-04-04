@@ -3,7 +3,10 @@ import { useLobbyEventsContext } from '@features/lobby-events'
 import { isObstacle } from '@features/obstacle'
 import { Player, playerDepsContext } from '@features/player-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
+
+import { useTrackCameraContext } from '@features/tracking-camera'
 import { Suspense } from 'react'
+import { Vector3 } from 'three'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
@@ -11,6 +14,7 @@ const STUN_TIMEOUT = 1500
 
 const PlayerSnail = () => {
   const moveable = useGameStore(s => s.moveable)
+  const { followTarget } = useTrackCameraContext()
 
   const {
     appendPosition,
@@ -32,7 +36,9 @@ const PlayerSnail = () => {
         getRotation: () => rotation,
         getIsAnimating: () => isAnimating,
         onJump: position => {
+          const { x, y, z } = position
           appendPosition(position)
+          followTarget(new Vector3(x, y, z))
           sendTargetPosition({ position: { ...position, hold_time: position.holdTime } })
         },
         onRotate: rotation => {
@@ -40,7 +46,6 @@ const PlayerSnail = () => {
           sendTargetRotation({ rotation })
         },
       }}>
-      {/* <PerspectiveCamera makeDefault position={[0, 35, -21]} rotation={[-Math.PI, 0, -Math.PI]} /> */}
       <Player>
         <Snail />
       </Player>
@@ -49,27 +54,31 @@ const PlayerSnail = () => {
 }
 
 const PlayerSuspense = () => {
-  const { moveable, updateMoveable, playerStatus } = useGameStore()
   const user = useUser(s => s.user)
+  const { moveable, updateMoveable, playerStatus } = useGameStore()
+
+  const onCollision = () => {
+    if (moveable) {
+      updateMoveable(false)
+      setTimeout(() => {
+        updateMoveable(true)
+      }, STUN_TIMEOUT)
+    }
+  }
 
   if (!playerStatus || !user) return
+
+  const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus))
 
   return (
     <Suspense fallback={null}>
       <snailDepsContext.Provider
         value={{
-          shouldHandleCollision: isObstacle,
-          modelPath: getModelPath(getPlayerSkin(playerStatus)),
-          startPosition: getStartPosition(getPlayerPosition(playerStatus)),
+          onCollision,
           username: user?.username,
-          onCollision: () => {
-            if (moveable) {
-              updateMoveable(false)
-              setTimeout(() => {
-                updateMoveable(true)
-              }, STUN_TIMEOUT)
-            }
-          },
+          shouldHandleCollision: isObstacle,
+          startPosition: playerStartPosition,
+          modelPath: getModelPath(getPlayerSkin(playerStatus)),
         }}>
         <SnailProvider>
           <PlayerSnail />

@@ -1,8 +1,9 @@
 import { useSpring } from '@react-spring/three'
-import { useThree } from '@react-three/fiber'
-import { SpringSettings } from './types'
+import { useFrame, useThree } from '@react-three/fiber'
+import { PositionType, SpringSettings } from './types'
 
-import { Euler, Matrix4, Object3D, Object3DEventMap, Vector3 } from 'three'
+import { useCallback } from 'react'
+import { Euler, Matrix4, Object3D, Object3DEventMap, Quaternion, Vector3 } from 'three'
 import { useTrackingCameraDeps } from '../deps'
 
 export const getGlobalRotation = (matrixWorld: Matrix4) => {
@@ -23,69 +24,84 @@ export const getGlobalPosition = (object: Object3D<Object3DEventMap>) => {
   return cameraVector
 }
 
-export const calcRotation: (
-  objectPosition: Vector3,
-  targetPosition: Vector3,
-  objectRotation?: Matrix4
-) => [number, number, number] = (objectPosition, targetPosition, objectRotation) => {
-  const camera = objectPosition.toArray()
-  const target = targetPosition.toArray()
-  const direction = [target[0] - camera[0], target[1] - camera[1], target[2] + 8 - camera[2]]
-  const length = Math.sqrt(direction[0] ** 2 + direction[1] ** 2 + direction[2] ** 2)
-  const [dx, dy, dz] = direction.map(v => v / length)
+const calcRotation = (objectPosition: Vector3, targetPosition: Vector3) => {
+  const direction = new Vector3().subVectors(objectPosition, targetPosition).normalize()
 
-  const cameraRotation = getGlobalRotation(objectRotation ?? new Matrix4())
-  const newYaw = Math.atan2(dx, dz) + cameraRotation.y
-  const newPitch = -Math.asin(dy) + cameraRotation.x
-  const newRoll = cameraRotation.z
+  const targetQuaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), direction)
 
-  return [newPitch, newYaw, newRoll]
+  const euler = new Euler().setFromQuaternion(targetQuaternion, 'XYZ')
+  return [euler.x, euler.y, -Math.PI + euler.z]
 }
 
 export const useTrack = () => {
   const { camera } = useThree()
-  const { initPosition, initRotation, playerInitPosition } = useTrackingCameraDeps()
+  const { initPosition, initRotation } = useTrackingCameraDeps()
 
   const [spring, api] = useSpring<SpringSettings>(() => ({
     position: initPosition,
     rotation: initRotation,
   }))
 
-  const initFocus = () => {
-    const targetPosition: [number, number, number] = [
-      playerInitPosition.x,
-      30,
-      playerInitPosition.z - 10,
-    ]
-
-    const targetRotation = calcRotation(
-      new Vector3(...targetPosition),
-      playerInitPosition,
-      camera.matrixWorld
-    )
-
-    api.start({
-      to: next => {
-        next({
-          position: targetPosition,
-          config: { mass: 1, tension: 20, friction: 40, duration: 2500 },
-        }).catch(() => {}),
-          next({
-            rotation: targetRotation,
-            config: { mass: 1, tension: 50, friction: 40 },
-          }).catch(() => {})
-      },
-    })
+  const getMoveToConfig = (position: PositionType) => {
+    return {
+      position: position,
+      config: { mass: 1, tension: 20, friction: 40, duration: 2500 },
+    }
   }
 
-  const followTarget = (targetPosition: Vector3) => {
-    const { x, y, z } = targetPosition
+  const getFocusToConfig = (focusPosition: Vector3, targetCameraPosition?: Vector3) => {
+    const cameraPosition = targetCameraPosition ?? new Vector3(...camera.position)
 
-    api.start({
-      position: [x, y + 30, z - 10],
-      config: { mass: 1, tension: 50, friction: 40 },
-    })
+    const targetRotation = calcRotation(cameraPosition, focusPosition)
+
+    return {
+      rotation: targetRotation,
+      config: { mass: 1, tension: 50, friction: 40, duration: 1400 },
+    }
   }
 
-  return { spring, followTarget, initFocus }
+  const moveTo = useCallback((position: PositionType) => {
+    api.start(getMoveToConfig(position))
+  }, [])
+
+  const focusTo = useCallback(
+    (position: Vector3) => {
+      api.start(getFocusToConfig(position))
+    },
+    [camera]
+  )
+
+  const followTarget = useCallback(
+    (targetPosition: Vector3) => {
+      const { x, y, z } = targetPosition.round()
+
+      const targetCameraPosition = new Vector3(x, y + 25, z - 15)
+
+      return new Promise<void>(resolve =>
+        api.start({
+          to: async next => {
+            await Promise.all([
+              next(getMoveToConfig(targetCameraPosition.toArray())).catch(() => {}),
+              next(getFocusToConfig(targetPosition, targetCameraPosition)).catch(() => {}),
+            ])
+            resolve()
+          },
+        })
+      )
+    },
+    [camera]
+  )
+
+  useFrame(() => {
+    camera.position.set(...spring.position.get())
+    camera.rotation.set(...spring.rotation.get())
+  })
+
+  return {
+    position: spring.position.get(),
+    rotation: spring.rotation.get(),
+    followTarget,
+    moveTo,
+    focusTo,
+  }
 }

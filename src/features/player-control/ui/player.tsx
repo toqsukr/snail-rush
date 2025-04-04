@@ -17,9 +17,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
-    console.log('hold time', holdTime)
     const koef = holdTime / SPACE_HOLD_TIME
-    console.log('koef', koef)
     if (!getIsAnimating() && getMoveable()) {
       const position = calcTargetPosition(koef)
       const duration = calcAnimationDuration(koef)
@@ -42,7 +40,6 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   const spaceCallback = (e: KeyboardEvent) => {
     if (e.key == ' ' || e.code == 'Space') {
       const duration = handleKeyUp(e)
-      console.log('duration', duration)
       handleJump(duration)
     }
   }
