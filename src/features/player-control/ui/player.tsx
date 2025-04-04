@@ -2,7 +2,7 @@ import { FC, PropsWithChildren, useEffect } from 'react'
 import { usePlayerDeps } from '../deps'
 import { useSpaceHold } from '../model/use-space-hold'
 
-const SPACE_HOLD_TIME = 1300
+const SPACE_HOLD_TIME = 1000
 
 export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { handleKeyUp, handleKeyDown } = useSpaceHold(SPACE_HOLD_TIME)
@@ -17,7 +17,9 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
+    console.log('hold time', holdTime)
     const koef = holdTime / SPACE_HOLD_TIME
+    console.log('koef', koef)
     if (!getIsAnimating() && getMoveable()) {
       const position = calcTargetPosition(koef)
       const duration = calcAnimationDuration(koef)
@@ -40,17 +42,16 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   const spaceCallback = (e: KeyboardEvent) => {
     if (e.key == ' ' || e.code == 'Space') {
       const duration = handleKeyUp(e)
+      console.log('duration', duration)
       handleJump(duration)
     }
   }
 
   const arrowCallback = (e: KeyboardEvent) => {
     if (e.code == 'ArrowRight') {
-      console.log('player recieved rotate log')
       handleRotate(-1)
     }
     if (e.code == 'ArrowLeft') {
-      console.log('player recieved rotate log')
       handleRotate(1)
     }
     handleKeyDown(e)

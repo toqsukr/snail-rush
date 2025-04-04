@@ -1,5 +1,5 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
-import { FC, PropsWithChildren, useMemo } from 'react'
+import { FC, PropsWithChildren, useMemo, useState } from 'react'
 import { Observable } from 'rxjs'
 import { Vector3 } from 'three'
 import { useAppendPosition } from '../model/sequential-position'
@@ -22,7 +22,7 @@ export const SnailContext = createStrictContext<SnailProvider>()
 export const useSnailContext = () => useStrictContext(SnailContext)
 
 export const SnailProvider: FC<PropsWithChildren> = ({ children }) => {
-  const useSnailStore = useMemo(() => createSnailStore(), [])
+  const [useSnailStore] = useState(() => createSnailStore())
   const storeData = useSnailStore()
 
   const positionThread = useMemo(useAppendPosition, [])

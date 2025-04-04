@@ -15,7 +15,6 @@ const OpponentSnail = () => {
       value={{
         onJump: appendPosition,
         onRotate: value => {
-          console.log('opponent rotate log', value)
           appendRotation(value)
         },
       }}>

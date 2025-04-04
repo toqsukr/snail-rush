@@ -36,7 +36,6 @@ const PlayerSnail = () => {
           sendTargetPosition({ position: { ...position, hold_time: position.holdTime } })
         },
         onRotate: rotation => {
-          console.log('player rotate log', rotation)
           appendRotation(rotation)
           sendTargetRotation({ rotation })
         },

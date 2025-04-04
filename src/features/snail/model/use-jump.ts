@@ -64,14 +64,8 @@ export const useJump = () => {
     config: { mass: 10, tension: 300, friction: 40 },
   }))
 
-  const getRotation = () => {
-    return springProps.rotation.get()
-  }
-
   const triggerRotate = (rotateY: number) => {
-    const currentRotation = getRotation()
-
-    console.log(rotateY)
+    const currentRotation = springProps.rotation.get()
 
     springAPI.start({
       rotation: [currentRotation[0], rotateY, currentRotation[2]],
@@ -82,7 +76,6 @@ export const useJump = () => {
           quaternion.setFromEuler(new THREE.Euler(...value.rotation))
           rigidBodyRef.current.setRotation(quaternion, true)
         }
-        console.log(value.rotation)
         updateRotation(value.rotation)
       },
     })

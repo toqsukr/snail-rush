@@ -5,8 +5,6 @@ import css from './lobby-board.module.scss'
 const LobbyBoard = () => {
   const lobbyPlayers = usePlayers(s => s.players)
 
-  console.log(lobbyPlayers)
-
   return (
     <section className={css.lobby}>
       <h1>LOBBY</h1>
