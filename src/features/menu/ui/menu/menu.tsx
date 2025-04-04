@@ -4,7 +4,7 @@ import { useIsLobbyCreating } from '@features/menu/model/use-create-lobby'
 import { useIsUserCreating } from '@features/menu/model/use-create-user'
 import { useIsDisconnectingLobby } from '@features/menu/model/use-disconnect-lobby'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { MenuMode, useMenu } from '../../model/store'
@@ -19,26 +19,20 @@ import css from './menu.module.scss'
 const MainMenu = () => {
   const user = useUser(s => s.user)
 
-  const [username, setUsername] = useState(user?.username ?? '')
-
   const formData = useForm<{ username: string }>({
     mode: 'onChange',
     defaultValues: { username: user?.username ?? '' },
     resolver: zodResolver(z.object({ username: z.string().min(1) })),
   })
 
+  const username = formData.watch('username')
+
   return (
     <>
       <Controller
         name='username'
         control={formData.control}
-        render={({ field: { ref: _ref, ...props } }) => (
-          <UsernameInput
-            {...props}
-            value={username}
-            onChange={e => setUsername(e.currentTarget.value)}
-          />
-        )}
+        render={({ field: { ref: _ref, ...props } }) => <UsernameInput {...props} />}
       />
       <CreateLobbyButton username={username} />
       <JoinLobbyButton username={username} />

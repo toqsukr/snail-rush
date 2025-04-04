@@ -2,16 +2,7 @@ import { useUser } from '@entities/user'
 import { useLobbyEventsContext } from '@features/lobby-events'
 import { isObstacle } from '@features/obstacle'
 import { Player, playerDepsContext } from '@features/player-control'
-import {
-  Snail,
-  snailDepsContext,
-  SnailOrientationProvider,
-  useCalcAnimationDuration,
-  useCalcTargetPosition,
-  useGetRotation,
-  useIsAnimating,
-  useSnailOrientationContext,
-} from '@features/snail'
+import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 import { Suspense } from 'react'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
@@ -21,27 +12,31 @@ const STUN_TIMEOUT = 1500
 const PlayerSnail = () => {
   const moveable = useGameStore(s => s.moveable)
 
-  const { appendPosition, appendRotation } = useSnailOrientationContext()
-  const { sendTargetPosition, sendTargetRotation } = useLobbyEventsContext()
+  const {
+    appendPosition,
+    appendRotation,
+    isAnimating,
+    rotation,
+    calcAnimationDuration,
+    calcTargetPosition,
+  } = useSnailContext()
 
-  const getRotation = useGetRotation()
-  const calcAnimationDuration = useCalcAnimationDuration()
-  const calcTargetPosition = useCalcTargetPosition()
-  const getIsAnimating = useIsAnimating()
+  const { sendTargetPosition, sendTargetRotation } = useLobbyEventsContext()
 
   return (
     <playerDepsContext.Provider
       value={{
-        getRotation,
-        getIsAnimating,
         calcTargetPosition,
+        calcAnimationDuration,
         getMoveable: () => moveable,
-        calcAnimationDuration: koef => calcAnimationDuration(0, koef),
+        getRotation: () => rotation,
+        getIsAnimating: () => isAnimating,
         onJump: position => {
           appendPosition(position)
           sendTargetPosition({ position: { ...position, hold_time: position.holdTime } })
         },
         onRotate: rotation => {
+          console.log('player rotate log', rotation)
           appendRotation(rotation)
           sendTargetRotation({ rotation })
         },
@@ -77,9 +72,9 @@ const PlayerSuspense = () => {
             }
           },
         }}>
-        <SnailOrientationProvider>
+        <SnailProvider>
           <PlayerSnail />
-        </SnailOrientationProvider>
+        </SnailProvider>
       </snailDepsContext.Provider>
     </Suspense>
   )

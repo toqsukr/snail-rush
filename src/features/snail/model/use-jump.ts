@@ -4,9 +4,9 @@ import { useFrame } from '@react-three/fiber'
 import { RapierRigidBody } from '@react-three/rapier'
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
+import { Vector3 } from 'three'
 import { useSnailDeps } from '../deps'
-import { useSnailOrientationContext } from '../ui/snail-provider'
-import { useSnailStore } from './store'
+import { useSnailContext } from '../ui/snail-provider'
 import { useAnimation } from './use-animation'
 
 const MAX_JUMP_LENGTH = 6
@@ -48,8 +48,13 @@ export const useJump = () => {
 
   const model = useGLTF(modelPath)
   const { animate, isAnimationRunning } = useAnimation(model)
-  const { updatePosition, updateRotation, updateIsAnimating } = useSnailStore()
-  const { sequentialPosition, sequentialRotation } = useSnailOrientationContext()
+  const {
+    sequentialPosition,
+    sequentialRotation,
+    updatePosition,
+    updateRotation,
+    updateIsAnimating,
+  } = useSnailContext()
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
 
@@ -151,9 +156,7 @@ export const useJump = () => {
   return { model, rigidBodyRef }
 }
 
-export const useCalcTargetPosition = () => {
-  const { position, rotation } = useSnailStore()
-
+export const useCalcTargetPosition = (position: Vector3, rotation: number[]) => {
   return (koef: number) => {
     const distance = calcJumpDistance(koef)
 
@@ -165,18 +168,6 @@ export const useCalcTargetPosition = () => {
 
     return targetPosition
   }
-}
-
-export const useGetRotation = () => {
-  const rotation = useSnailStore(s => s.rotation)
-
-  return () => rotation
-}
-
-export const useIsAnimating = () => {
-  const isAnimating = useSnailStore(s => s.isAnimating)
-
-  return () => isAnimating
 }
 
 export const useCalcAnimationDuration = () => {

@@ -21,7 +21,10 @@ const HomePage = () => {
       }}
       onKickMe={() => updatePlayerStatus(null)}
       onChangeLobbyPlayers={updatePlayers}
-      onChangeOpponentRotation={({ rotation }) => pushOpponentRotation(rotation)}
+      onChangeOpponentRotation={({ rotation }) => {
+        console.log('opponent recieved rotate log')
+        pushOpponentRotation(rotation)
+      }}
       onChangeOpponentPosition={({ position: { hold_time, ...rest } }) =>
         pushOpponentPosition({ ...rest, holdTime: hold_time })
       }>

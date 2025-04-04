@@ -46,9 +46,11 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
 
   const arrowCallback = (e: KeyboardEvent) => {
     if (e.code == 'ArrowRight') {
+      console.log('player recieved rotate log')
       handleRotate(-1)
     }
     if (e.code == 'ArrowLeft') {
+      console.log('player recieved rotate log')
       handleRotate(1)
     }
     handleKeyDown(e)
