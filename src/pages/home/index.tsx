@@ -7,7 +7,7 @@ import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from './lib/status'
 import { useGameStore } from './model/store'
 import CountdownWithDeps from './ui/countdown-with-deps'
-import GameMapWithDeps from './ui/game-map-with-deps'
+import GameMap from './ui/game-map'
 import MenuWithDeps from './ui/menu-with-deps'
 import OpponentSuspense from './ui/opponent-snail'
 import PlayerSuspense from './ui/player-snail'
@@ -15,7 +15,8 @@ import PlayerSuspense from './ui/player-snail'
 const START_TIMER_VALUE = 3
 
 const HomePage = () => {
-  const { startGame, updatePlayerStatus, allowMoving, playerStatus } = useGameStore()
+  const { startGame, updatePlayerStatus, allowMoving, playerStatus, updateMenuPosition } =
+    useGameStore()
   const updatePlayers = usePlayers(s => s.updatePlayers)
 
   const { followTarget } = useTrackCameraContext()
@@ -37,6 +38,7 @@ const HomePage = () => {
             onGameStart={async () => {
               startGame()
               await followTarget(new Vector3(...playerStartPosition))
+              // updateMenuPosition()
               startTimer()
             }}
             onChangeOpponentRotation={({ rotation }) => {
@@ -47,7 +49,7 @@ const HomePage = () => {
             }}>
             <TrackingCamera />
             <PlayerSuspense />
-            <GameMapWithDeps />
+            <GameMap />
             <OpponentSuspense />
             <CountdownWithDeps />
             <MenuWithDeps startTimer={startTimer} />

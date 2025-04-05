@@ -13,7 +13,7 @@ import { useGameStore } from '../model/store'
 const STUN_TIMEOUT = 1500
 
 const PlayerSnail = () => {
-  const moveable = useGameStore(s => s.moveable)
+  const { moveable, updateMenuPosition } = useGameStore()
   const { followTarget } = useTrackCameraContext()
 
   const {
@@ -38,6 +38,7 @@ const PlayerSnail = () => {
         onJump: position => {
           const { x, y, z } = position
           appendPosition(position)
+          updateMenuPosition([x, y, z])
           followTarget(new Vector3(x, y, z))
           sendTargetPosition({ position: { ...position, hold_time: position.holdTime } })
         },

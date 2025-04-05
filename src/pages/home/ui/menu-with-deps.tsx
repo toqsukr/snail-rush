@@ -1,6 +1,6 @@
 import { useIsHost } from '@features/auth/use-is-host'
 import { useLobbyEventsContext } from '@features/lobby-events'
-import { Menu, menuDepsContext } from '@features/menu'
+import { Menu, menuDepsContext, PauseButton } from '@features/menu'
 import { useTrackCameraContext } from '@features/tracking-camera'
 import { Html } from '@react-three/drei'
 import { queryClient } from '@shared/api/query-client'
@@ -10,13 +10,19 @@ import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
-const menuStartPosition = [3, 35, -10] satisfies [number, number, number]
 const menuStartRotation = [0, Math.PI, 0] satisfies [number, number, number]
 
 const MenuWithDeps: FC<{ startTimer: () => void }> = ({ startTimer }) => {
   const checkHost = useIsHost()
   const { sendStartGame } = useLobbyEventsContext()
-  const { pauseGame, resumeGame, updatePlayerStatus, playerStatus } = useGameStore()
+  const {
+    pauseGame,
+    resumeGame,
+    updatePlayerStatus,
+    playerStatus,
+    menuPosition,
+    resetMenuPosition,
+  } = useGameStore()
 
   const { followTarget } = useTrackCameraContext()
 
@@ -24,7 +30,7 @@ const MenuWithDeps: FC<{ startTimer: () => void }> = ({ startTimer }) => {
 
   return (
     <Html
-      position={menuStartPosition}
+      position={menuPosition}
       rotation={menuStartRotation}
       portal={{ current: document.body }}
       occlude='raycast'
@@ -32,24 +38,26 @@ const MenuWithDeps: FC<{ startTimer: () => void }> = ({ startTimer }) => {
       <menuDepsContext.Provider
         value={{
           isHost: checkHost,
+          onPause: pauseGame,
+          onContinue: resumeGame,
+          onBackToLobby: resetMenuPosition,
+          onConnectLobby: () => updatePlayerStatus('joined'),
+          onDisconnectLobby: () => updatePlayerStatus(null),
+          onCreateLobby: () => {
+            updatePlayerStatus('host')
+          },
+          onDeleteLobby: () => {
+            updatePlayerStatus(null)
+          },
           onPlay: async () => {
             sendStartGame()
             await followTarget(new Vector3(...playerStartPosition))
             startTimer()
           },
-          onPause: pauseGame,
-          onContinue: resumeGame,
-          onCreateLobby: () => {
-            updatePlayerStatus('host')
-          },
-          onConnectLobby: () => updatePlayerStatus('joined'),
-          onDeleteLobby: () => {
-            updatePlayerStatus(null)
-          },
-          onDisconnectLobby: () => updatePlayerStatus(null),
         }}>
         <QueryClientProvider client={queryClient}>
           <Menu />
+          <PauseButton />
         </QueryClientProvider>
       </menuDepsContext.Provider>
     </Html>

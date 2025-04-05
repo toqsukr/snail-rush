@@ -8,6 +8,7 @@ type MenuDeps = {
   onConnectLobby: () => void
   onDeleteLobby: () => void
   onDisconnectLobby: () => void
+  onBackToLobby: () => void
   isHost: (playerID: string) => boolean
 }
 

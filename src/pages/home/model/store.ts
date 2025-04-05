@@ -5,21 +5,26 @@ import { PlayerStatus } from '../lib/status'
 
 const GAME_STORE_KEY = 'game-data-store'
 
+const START_MENU_POSITION = [3, 35, -10] satisfies [number, number, number]
+
 type GameStore = {
   pause: boolean
   started: boolean
   moveable: boolean
   finished: boolean
+  menuPosition: [number, number, number]
   winner: TUser | null
   pauseGame: () => void
   startGame: () => void
   finishGame: () => void
   resumeGame: () => void
   allowMoving: () => void
+  resetMenuPosition: () => void
   playerStatus: PlayerStatus | null
   updateWinner: (winner: TUser) => void
   updateMoveable: (moveable: boolean) => void
   updatePlayerStatus: (playerStatus: PlayerStatus | null) => void
+  updateMenuPosition: (menuPosition: [number, number, number]) => void
 }
 
 export const useGameStore = create(
@@ -31,13 +36,16 @@ export const useGameStore = create(
       moveable: false,
       finished: false,
       playerStatus: null,
+      menuPosition: START_MENU_POSITION,
       startGame: () => set({ ...get(), started: true }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),
       updateMoveable: moveable => set({ ...get(), moveable }),
       pauseGame: () => set({ ...get(), pause: true, moveable: false }),
       resumeGame: () => set({ ...get(), pause: false, moveable: true }),
+      updateMenuPosition: menuPosition => set({ ...get(), menuPosition }),
       updatePlayerStatus: playerStatus => set({ ...get(), playerStatus }),
+      resetMenuPosition: () => set({ ...get(), menuPosition: START_MENU_POSITION }),
       finishGame: () => set({ ...get(), started: false, moveable: false, finished: true }),
     }),
     {
