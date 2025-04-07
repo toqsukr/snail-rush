@@ -1,14 +1,21 @@
 import { useGLTF } from '@react-three/drei'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
+import { Mesh } from 'three'
 
-const Stone = () => {
+const Stone = React.memo(() => {
   const { scene } = useGLTF('models/stone/stone.glb')
-
-  const clonedScene = useMemo(() => scene.clone(), [scene])
-
-  // const randomRotationY = useMemo(() => Math.random() * Math.PI * 2, [])
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone()
+    clone.traverse(child => {
+      if ((child as Mesh).isMesh) {
+        child.castShadow = true
+        child.receiveShadow = true
+      }
+    })
+    return clone
+  }, [scene])
 
   return <primitive object={clonedScene} />
-}
+})
 
 export default Stone

@@ -1,5 +1,8 @@
+import { usePlayers } from '@entities/players'
 import { FinishControl, finishControlDepsContext } from '@features/finish-control'
+import { useLobbyEventsContext } from '@features/lobby-events'
 import { StaticObstacle } from '@features/obstacle'
+import { useTrackCameraContext } from '@features/tracking-camera'
 import FinishLine from '@shared/primitives/finish-line'
 import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
@@ -7,7 +10,7 @@ import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
 
-export const stones = [
+const stones = [
   [62, 0, -19],
   [70, 0, -24],
   [65, 0, -31],
@@ -37,19 +40,42 @@ const finishProps = {
 }
 
 const GameMap = () => {
-  const finishGame = useGameStore(s => s.finishGame)
+  const { finishGame, updateWinner } = useGameStore()
+  const { followTarget } = useTrackCameraContext()
+  const { sendFinishGame } = useLobbyEventsContext()
+  const players = usePlayers(s => s.players)
+
   return (
     <>
       <GrassMap />
       <StartLine {...startProps} />
-      <finishControlDepsContext.Provider value={{ onFinish: finishGame }}>
+      <finishControlDepsContext.Provider
+        value={{
+          onFinish: async userData => {
+            // TODO
+            if (
+              typeof userData === 'object' &&
+              userData &&
+              'userID' in userData &&
+              typeof userData.userID === 'string'
+            ) {
+              sendFinishGame()
+              await followTarget(new Vector3(54, 0.1, -4))
+              const winner = players.find(({ id }) => id === userData.userID)
+              if (winner) {
+                updateWinner(winner)
+              }
+              finishGame()
+            }
+          },
+        }}>
         <FinishControl {...finishProps}>
           <FinishLine />
         </FinishControl>
       </finishControlDepsContext.Provider>
       {stones.map(position => (
         <StaticObstacle
-          key={position.join()}
+          key={`stone-${position.join()}`}
           model={<Stone />}
           position={new Vector3(...position)}
         />

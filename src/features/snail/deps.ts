@@ -1,7 +1,6 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 
 type SnailDeps = {
-  username: string
   modelPath: string
   shouldHandleCollision: (objectUserData: unknown) => boolean
   onCollision?: () => void

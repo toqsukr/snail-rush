@@ -1,7 +1,7 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 
 type FinishControlDeps = {
-  onFinish: () => void
+  onFinish: (userData: unknown) => void
 }
 
 export const finishControlDepsContext = createStrictContext<FinishControlDeps>()

@@ -6,6 +6,8 @@ import { LobbyEventsProviderProp } from '../ui/lobby-events-provider'
 import {
   ConnectPlayerMessageType,
   KickPlayerMessageType,
+  MessageSchema,
+  MessageType,
   Operations,
   OpponentPositionType,
   OpponentRotationType,
@@ -22,8 +24,9 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
   const { session, deleteSession } = useSession()
   const { user } = useUser()
   const {
-    onGameStart,
     onKickMe,
+    onGameStart,
+    onGameFinish,
     onChangeLobbyPlayers,
     onChangeOpponentPosition,
     onChangeOpponentRotation,
@@ -85,6 +88,12 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
               onGameStart()
               console.log('game started')
               break
+            case Operations.PLAYER_FINISH:
+              const finishData = MessageSchema.parse(responseData.data) as MessageType
+              console.log(finishData)
+              onGameFinish(finishData)
+              console.log('game finished')
+              break
             default:
               break
           }
@@ -103,9 +112,16 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
   const sendStartGame = () => {
     if (!user) return
 
-    console.log('start game', user.id)
     websocket.current?.send(
       JSON.stringify({ type: Operations.SESSION_START, data: { player_id: user.id } })
+    )
+  }
+
+  const sendFinishGame = () => {
+    if (!user) return
+
+    websocket.current?.send(
+      JSON.stringify({ type: Operations.PLAYER_FINISH, data: { player_id: user.id } })
     )
   }
 
@@ -131,5 +147,5 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
     )
   }
 
-  return { sendStartGame, sendTargetPosition, sendTargetRotation }
+  return { sendStartGame, sendFinishGame, sendTargetPosition, sendTargetRotation }
 }

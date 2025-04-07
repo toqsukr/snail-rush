@@ -1,19 +1,19 @@
-import { useUser } from '@entities/user'
+import { TUser, useUser } from '@entities/user'
 import { useLobbyEventsContext } from '@features/lobby-events'
 import { isObstacle } from '@features/obstacle'
 import { Player, playerDepsContext } from '@features/player-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 
 import { useTrackCameraContext } from '@features/tracking-camera'
-import { Suspense } from 'react'
+import { FC, Suspense } from 'react'
 import { Vector3 } from 'three'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
 const STUN_TIMEOUT = 1500
 
-const PlayerSnail = () => {
-  const { moveable, updateMenuPosition } = useGameStore()
+const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
+  const { moveable } = useGameStore()
   const { followTarget } = useTrackCameraContext()
 
   const {
@@ -38,7 +38,6 @@ const PlayerSnail = () => {
         onJump: position => {
           const { x, y, z } = position
           appendPosition(position)
-          updateMenuPosition([x, y, z])
           followTarget(new Vector3(x, y, z))
           sendTargetPosition({ position: { ...position, hold_time: position.holdTime } })
         },
@@ -48,7 +47,7 @@ const PlayerSnail = () => {
         },
       }}>
       <Player>
-        <Snail />
+        <Snail userID={user.id} username={user.username} />
       </Player>
     </playerDepsContext.Provider>
   )
@@ -76,12 +75,11 @@ const PlayerSuspense = () => {
       <snailDepsContext.Provider
         value={{
           onCollision,
-          username: user?.username,
           shouldHandleCollision: isObstacle,
           modelPath: getModelPath(getPlayerSkin(playerStatus)),
         }}>
         <SnailProvider initPosition={playerStartPosition} initRotation={[0, Math.PI, 0]}>
-          <PlayerSnail />
+          <PlayerSnail user={user} />
         </SnailProvider>
       </snailDepsContext.Provider>
     </Suspense>

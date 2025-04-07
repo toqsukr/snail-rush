@@ -8,6 +8,7 @@ export enum Operations {
   PLAYER_MOVE = 'player.move',
   PLAYER_ROTATION = 'player.rotate',
   PLAYER_KICK = 'player.kick',
+  PLAYER_FINISH = 'player.finish',
 }
 
 export const TransferPositionSchema = z.object({
@@ -63,6 +64,8 @@ export const PlayerRotateMessageSchema = MessageSchema.merge(
 export type PlayerMoveMessageType = z.infer<typeof PlayerMoveMessageSchema>
 
 export type PlayerRotateMessageType = z.infer<typeof PlayerRotateMessageSchema>
+
+export type MessageType = z.infer<typeof MessageSchema>
 
 export const ConnectPlayerMessageSchema = z
   .object({

@@ -2,9 +2,9 @@ import { FC, ReactNode } from 'react'
 import { useStartTimer } from '../model/use-start-timer'
 
 export const CountdownRenderLayout: FC<{
-  renderChildren: (startTimer: () => void) => ReactNode
+  renderChildren: (startTimer: () => void, resetTimer: () => void) => ReactNode
 }> = ({ renderChildren }) => {
-  const startTimer = useStartTimer()
+  const { startTimer, resetTimer } = useStartTimer()
 
-  return renderChildren(startTimer)
+  return renderChildren(startTimer, resetTimer)
 }

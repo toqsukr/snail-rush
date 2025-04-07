@@ -1,14 +1,16 @@
 import { usePlayers } from '@entities/players'
-import { useUser } from '@entities/user'
+import { TUser, useUser } from '@entities/user'
 import { isObstacle } from '@features/obstacle'
 import { Opponent, opponentDepsContext } from '@features/opponent-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
-import { Suspense } from 'react'
+import { FC, Suspense, useMemo } from 'react'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
-const OpponentSnail = () => {
+const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { appendPosition, appendRotation } = useSnailContext()
+  const players = usePlayers(s => s.players)
+  const opponent = useMemo(() => players.filter(({ id }) => id !== user?.id)[0], [user, players])
 
   return (
     <opponentDepsContext.Provider
@@ -19,7 +21,7 @@ const OpponentSnail = () => {
         },
       }}>
       <Opponent>
-        <Snail />
+        <Snail username={opponent.username} />
       </Opponent>
     </opponentDepsContext.Provider>
   )
@@ -27,17 +29,16 @@ const OpponentSnail = () => {
 
 const OpponentSuspense = () => {
   const user = useUser(s => s.user)
-  const players = usePlayers(s => s.players)
   const playerStatus = useGameStore(s => s.playerStatus)
+  const players = usePlayers(s => s.players)
 
-  if (!playerStatus || players.length < 2) return
+  if (!playerStatus || players.length < 2 || !user) return
 
   return (
     <Suspense fallback={null}>
       <snailDepsContext.Provider
         value={{
           shouldHandleCollision: isObstacle,
-          username: players.filter(({ id }) => id !== user?.id)[0].username,
           modelPath: getModelPath(getPlayerSkin(playerStatus === 'joined' ? 'host' : 'joined')),
         }}>
         <SnailProvider
@@ -45,7 +46,7 @@ const OpponentSuspense = () => {
             getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined')
           )}
           initRotation={[0, Math.PI, 0]}>
-          <OpponentSnail />
+          <OpponentSnail user={user} />
         </SnailProvider>
       </snailDepsContext.Provider>
     </Suspense>

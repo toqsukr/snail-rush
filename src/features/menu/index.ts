@@ -1,4 +1,5 @@
-export { menuDepsContext } from './deps'
+export { menuDepsContext, useMenuDeps } from './deps'
+export { usePlay } from './model/use-play'
 export { useUpdateLobbyPlayers } from './model/use-update-lobby-players'
 export { PauseButton } from './ui/action-buttons/pause-button'
-export { Menu } from './ui/menu/menu'
+export { GameOver, MainMenu, PauseMenu } from './ui/menu/menu'
