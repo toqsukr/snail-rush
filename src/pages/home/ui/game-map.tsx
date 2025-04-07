@@ -40,7 +40,7 @@ const finishProps = {
 }
 
 const GameMap = () => {
-  const { finishGame, updateWinner } = useGameStore()
+  const { finishGame, updateWinner, updateMoveable } = useGameStore()
   const { followTarget } = useTrackCameraContext()
   const { sendFinishGame } = useLobbyEventsContext()
   const players = usePlayers(s => s.players)
@@ -59,6 +59,7 @@ const GameMap = () => {
               'userID' in userData &&
               typeof userData.userID === 'string'
             ) {
+              updateMoveable(false)
               sendFinishGame()
               await followTarget(new Vector3(54, 0.1, -4))
               const winner = players.find(({ id }) => id === userData.userID)

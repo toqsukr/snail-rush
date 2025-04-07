@@ -21,8 +21,15 @@ const MAIN_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
 const MAIN_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
 
 const HomePage = () => {
-  const { startGame, updatePlayerStatus, allowMoving, playerStatus, finishGame, updateWinner } =
-    useGameStore()
+  const {
+    startGame,
+    updatePlayerStatus,
+    allowMoving,
+    updateMoveable,
+    playerStatus,
+    finishGame,
+    updateWinner,
+  } = useGameStore()
   const { players, updatePlayers } = usePlayers()
 
   const { followTarget } = useTrackCameraContext()
@@ -47,6 +54,7 @@ const HomePage = () => {
               startTimer()
             }}
             onGameFinish={async ({ actor_id }) => {
+              updateMoveable(false)
               await followTarget(new Vector3(54, 0.1, -4))
               finishGame()
               const winner = players.find(({ id }) => id === actor_id)

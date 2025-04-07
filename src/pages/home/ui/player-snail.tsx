@@ -3,8 +3,8 @@ import { useLobbyEventsContext } from '@features/lobby-events'
 import { isObstacle } from '@features/obstacle'
 import { Player, playerDepsContext } from '@features/player-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
-
 import { useTrackCameraContext } from '@features/tracking-camera'
+import { Preload } from '@react-three/drei'
 import { FC, Suspense } from 'react'
 import { Vector3 } from 'three'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
@@ -72,6 +72,7 @@ const PlayerSuspense = () => {
 
   return (
     <Suspense fallback={null}>
+      <Preload all />
       <snailDepsContext.Provider
         value={{
           onCollision,

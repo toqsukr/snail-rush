@@ -38,7 +38,10 @@ const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
           resetTimer()
           toMainMenu()
           await moveTo([mainMenuPosition[0], mainMenuPosition[1], mainMenuPosition[2] + 10])
-          focusTo(new Vector3(...mainMenuPosition))
+          const tempStatus = playerStatus
+          updatePlayerStatus(null)
+          await focusTo(new Vector3(...mainMenuPosition))
+          updatePlayerStatus(tempStatus)
         },
         onConnectLobby: () => updatePlayerStatus('joined'),
         onDisconnectLobby: () => updatePlayerStatus(null),

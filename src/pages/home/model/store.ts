@@ -32,7 +32,7 @@ export const useGameStore = create(
       moveable: false,
       finished: false,
       playerStatus: null,
-      startGame: () => set({ ...get(), started: true, finished: false }),
+      startGame: () => set({ ...get(), started: true, finished: false, winner: null }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),
       updateMoveable: moveable => set({ ...get(), moveable }),
