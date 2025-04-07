@@ -10,7 +10,7 @@ import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
-const menuStartRotation = [0, Math.PI, 0] satisfies [number, number, number]
+const menuStartRotation = [0, 0, 0] satisfies [number, number, number]
 
 const MenuWithDeps: FC<{ startTimer: () => void }> = ({ startTimer }) => {
   const checkHost = useIsHost()
@@ -24,7 +24,7 @@ const MenuWithDeps: FC<{ startTimer: () => void }> = ({ startTimer }) => {
     resetMenuPosition,
   } = useGameStore()
 
-  const { followTarget } = useTrackCameraContext()
+  const { followTarget, focusTo, moveTo } = useTrackCameraContext()
 
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus ?? 'host'))
 
@@ -40,7 +40,11 @@ const MenuWithDeps: FC<{ startTimer: () => void }> = ({ startTimer }) => {
           isHost: checkHost,
           onPause: pauseGame,
           onContinue: resumeGame,
-          onBackToLobby: resetMenuPosition,
+          onBackToLobby: async () => {
+            resetMenuPosition()
+            await moveTo([16.1, 35, 5])
+            focusTo(new Vector3(...[16.1, 35, -5]))
+          },
           onConnectLobby: () => updatePlayerStatus('joined'),
           onDisconnectLobby: () => updatePlayerStatus(null),
           onCreateLobby: () => {

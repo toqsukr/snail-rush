@@ -78,10 +78,9 @@ const PlayerSuspense = () => {
           onCollision,
           username: user?.username,
           shouldHandleCollision: isObstacle,
-          startPosition: playerStartPosition,
           modelPath: getModelPath(getPlayerSkin(playerStatus)),
         }}>
-        <SnailProvider>
+        <SnailProvider initPosition={playerStartPosition} initRotation={[0, Math.PI, 0]}>
           <PlayerSnail />
         </SnailProvider>
       </snailDepsContext.Provider>

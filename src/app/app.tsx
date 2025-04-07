@@ -5,8 +5,8 @@ import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 import { Perf } from 'r3f-perf'
 
-const cameraStartPosition = [3, 35, -21]
-const cameraStartRotation = [-Math.PI, 0, -Math.PI]
+const cameraStartPosition = [16.1, 35, 5]
+const cameraStartRotation = [0, 0, 0]
 
 const App = () => {
   return (

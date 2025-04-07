@@ -5,7 +5,7 @@ import { PlayerStatus } from '../lib/status'
 
 const GAME_STORE_KEY = 'game-data-store'
 
-const START_MENU_POSITION = [3, 35, -10] satisfies [number, number, number]
+const START_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
 
 type GameStore = {
   pause: boolean

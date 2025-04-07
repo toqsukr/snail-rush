@@ -1,14 +1,12 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 import { FC, PropsWithChildren } from 'react'
 import { Vector3 } from 'three'
-import { PositionType, RotationType } from '../model/types'
+import { PositionType } from '../model/types'
 import { useTrack } from '../model/use-track'
 
 type TrackCameraProvider = {
-  position: PositionType
-  rotation: RotationType
-  moveTo: (position: PositionType) => void
-  focusTo: (position: Vector3) => void
+  moveTo: (position: PositionType) => Promise<void>
+  focusTo: (position: Vector3) => Promise<void>
   followTarget: (position: Vector3) => Promise<void>
 }
 

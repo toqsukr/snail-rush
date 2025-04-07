@@ -1,19 +1,18 @@
-import { Vector3 } from 'three'
 import { create } from 'zustand'
 
 export type SnailStore = {
-  position: Vector3
+  position: number[]
   rotation: number[]
   isAnimating: boolean
-  updatePosition: (position: Vector3) => void
+  updatePosition: (position: number[]) => void
   updateRotation: (rotation: number[]) => void
   updateIsAnimating: (isAnimating: boolean) => void
 }
 
-export const createSnailStore = () => {
+export const createSnailStore = (initPosition: number[], initRotation: number[]) => {
   return create<SnailStore>((set, get) => ({
-    position: new Vector3(),
-    rotation: [0, 0, 0],
+    position: initPosition,
+    rotation: initRotation,
     isAnimating: false,
     updatePosition: position => set({ ...get(), position }),
     updateRotation: rotation => set({ ...get(), rotation }),

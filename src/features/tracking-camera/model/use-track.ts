@@ -1,36 +1,20 @@
 import { useSpring } from '@react-spring/three'
 import { useFrame, useThree } from '@react-three/fiber'
+import { useCallback } from 'react'
+import { Euler, Matrix4, Quaternion, Vector3 } from 'three'
+import { useTrackingCameraDeps } from '../deps'
 import { PositionType, SpringSettings } from './types'
 
-import { useCallback } from 'react'
-import { Euler, Matrix4, Object3D, Object3DEventMap, Quaternion, Vector3 } from 'three'
-import { useTrackingCameraDeps } from '../deps'
+const calcRotation = (position: Vector3, targetPosition: Vector3) => {
+  const matrix = new Matrix4()
 
-export const getGlobalRotation = (matrixWorld: Matrix4) => {
-  const rotationMatrix = new Matrix4()
-  rotationMatrix.extractRotation(matrixWorld)
+  matrix.lookAt(position, targetPosition, new Vector3(0, 1, 0))
 
-  const euler = new Euler()
-  euler.setFromRotationMatrix(rotationMatrix)
-  const { x, y, z } = euler
+  const targetQuaternion = Quaternion.prototype.setFromRotationMatrix(matrix)
 
-  return { x, y, z }
-}
+  const euler = Euler.prototype.setFromQuaternion(targetQuaternion, 'YXZ')
 
-export const getGlobalPosition = (object: Object3D<Object3DEventMap>) => {
-  const cameraVector = new Vector3()
-  object.getWorldPosition(cameraVector)
-
-  return cameraVector
-}
-
-const calcRotation = (objectPosition: Vector3, targetPosition: Vector3) => {
-  const direction = new Vector3().subVectors(objectPosition, targetPosition).normalize()
-
-  const targetQuaternion = new Quaternion().setFromUnitVectors(new Vector3(0, 0, 1), direction)
-
-  const euler = new Euler().setFromQuaternion(targetQuaternion, 'XYZ')
-  return [euler.x, euler.y, -Math.PI + euler.z]
+  return [euler.x, euler.y, euler.z]
 }
 
 export const useTrack = () => {
@@ -61,12 +45,26 @@ export const useTrack = () => {
   }
 
   const moveTo = useCallback((position: PositionType) => {
-    api.start(getMoveToConfig(position))
+    return new Promise<void>(resolve =>
+      api.start({
+        to: async next => {
+          await next(getMoveToConfig(position))
+          resolve()
+        },
+      })
+    )
   }, [])
 
   const focusTo = useCallback(
     (position: Vector3) => {
-      api.start(getFocusToConfig(position))
+      return new Promise<void>(resolve =>
+        api.start({
+          to: async next => {
+            await next(getFocusToConfig(position))
+            resolve()
+          },
+        })
+      )
     },
     [camera]
   )
@@ -75,7 +73,7 @@ export const useTrack = () => {
     (targetPosition: Vector3) => {
       const { x, y, z } = targetPosition.round()
 
-      const targetCameraPosition = new Vector3(x, y + 25, z - 15)
+      const targetCameraPosition = new Vector3(x, y + 25, z + 15)
 
       return new Promise<void>(resolve =>
         api.start({
@@ -98,8 +96,6 @@ export const useTrack = () => {
   })
 
   return {
-    position: spring.position.get(),
-    rotation: spring.rotation.get(),
     followTarget,
     moveTo,
     focusTo,

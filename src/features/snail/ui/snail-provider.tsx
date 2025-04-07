@@ -8,6 +8,11 @@ import { createSnailStore, SnailStore } from '../model/store'
 import { PositionType, RotationType } from '../model/types'
 import { useCalcAnimationDuration, useCalcTargetPosition } from '../model/use-jump'
 
+type SnailProviderProp = {
+  initPosition?: [number, number, number]
+  initRotation?: number[]
+}
+
 type SnailProvider = {
   sequentialPosition: Observable<PositionType>
   sequentialRotation: Observable<RotationType>
@@ -21,14 +26,21 @@ export const SnailContext = createStrictContext<SnailProvider>()
 
 export const useSnailContext = () => useStrictContext(SnailContext)
 
-export const SnailProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [useSnailStore] = useState(() => createSnailStore())
+export const SnailProvider: FC<PropsWithChildren<SnailProviderProp>> = ({
+  children,
+  initPosition = [0, 0, 0],
+  initRotation = [0, 0, 0],
+}) => {
+  const [useSnailStore] = useState(() => createSnailStore(initPosition, initRotation))
   const storeData = useSnailStore()
 
   const positionThread = useMemo(useAppendPosition, [])
   const rotationThread = useMemo(useAppendRotation, [])
-  const calcTargetPosition = useCalcTargetPosition(storeData.position, storeData.rotation)
   const calcAnimationDuration = useCalcAnimationDuration()
+  const calcTargetPosition = useCalcTargetPosition(
+    new Vector3(...storeData.position),
+    storeData.rotation
+  )
 
   const value = {
     calcTargetPosition,

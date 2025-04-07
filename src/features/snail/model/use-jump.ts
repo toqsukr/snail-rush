@@ -26,7 +26,7 @@ const calculateLandingPosition = (
   rotation: THREE.Euler,
   distance: number
 ) => {
-  const localDirection = new THREE.Vector3(0, 0, -1)
+  const localDirection = new THREE.Vector3(0, 0, 1)
 
   const quaternion = new THREE.Quaternion().setFromEuler(rotation)
 
@@ -44,7 +44,7 @@ const calculateLandingPosition = (
  */
 
 export const useJump = () => {
-  const { modelPath, startPosition } = useSnailDeps()
+  const { modelPath } = useSnailDeps()
 
   const model = useGLTF(modelPath)
   const { animate, isAnimationRunning } = useAnimation(model)
@@ -54,13 +54,15 @@ export const useJump = () => {
     updatePosition,
     updateRotation,
     updateIsAnimating,
+    position,
+    rotation,
   } = useSnailContext()
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
 
   const [springProps, springAPI] = useSpring(() => ({
-    position: startPosition ?? [0, 0, 0],
-    rotation: [0, 0, 0],
+    position,
+    rotation,
     config: { mass: 10, tension: 300, friction: 40 },
   }))
 
@@ -68,7 +70,7 @@ export const useJump = () => {
     const currentRotation = springProps.rotation.get()
 
     springAPI.start({
-      rotation: [currentRotation[0], rotateY, currentRotation[2]],
+      rotation: [currentRotation[0], currentRotation[1] + rotateY, currentRotation[2]],
       config: { duration: 0 },
       onChange: ({ value }) => {
         if (rigidBodyRef.current) {
@@ -119,9 +121,7 @@ export const useJump = () => {
 
         springAPI.start({
           position: [position.x, position.y, position.z],
-          onChange: ({ value }) => {
-            updatePosition(new THREE.Vector3(...value.position))
-          },
+          onChange: ({ value }) => updatePosition(value.position),
         })
       }
     }, 16)
@@ -155,7 +155,7 @@ export const useCalcTargetPosition = (position: Vector3, rotation: number[]) => 
 
     const targetPosition = calculateLandingPosition(
       position,
-      new THREE.Euler(Math.PI - rotation[0], -rotation[1], rotation[2]),
+      new THREE.Euler(rotation[0], rotation[1], rotation[2]),
       distance
     )
 

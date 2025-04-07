@@ -30,7 +30,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
     const koef = 0.2 * directionKoef
     if (!getIsAnimating() && getMoveable()) {
       const rotationArr = getRotation()
-      const updatedPitch = rotationArr[1] + koef
+      const updatedPitch = koef
       const rotation = { roll: rotationArr[0], pitch: updatedPitch, yaw: rotationArr[2] }
       const targetRotation = { ...rotation, duration: 0 }
       onRotate(targetRotation)

@@ -39,11 +39,12 @@ const OpponentSuspense = () => {
           shouldHandleCollision: isObstacle,
           username: players.filter(({ id }) => id !== user?.id)[0].username,
           modelPath: getModelPath(getPlayerSkin(playerStatus === 'joined' ? 'host' : 'joined')),
-          startPosition: getStartPosition(
-            getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined')
-          ),
         }}>
-        <SnailProvider>
+        <SnailProvider
+          initPosition={getStartPosition(
+            getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined')
+          )}
+          initRotation={[0, Math.PI, 0]}>
           <OpponentSnail />
         </SnailProvider>
       </snailDepsContext.Provider>

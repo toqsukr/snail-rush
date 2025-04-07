@@ -8,32 +8,32 @@ import { Euler, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
 
 export const stones = [
-  [-3, 0, 13],
-  [5, 0, 18],
-  [0, 0, 25],
-  [8, 0, 30],
-  [-4, 0, 33],
-  [5, 0, 40],
-  [-10, 0, 48],
-  [5, 0, 55],
-  [-25, 0, 60],
-  [-43, 0, 58],
-  [-38, 0, 47],
-  [-49, 0, 43],
-  [-45, 0, 33],
-  [-48, 0, 25],
-  [-56, 0, 18],
-  [-46, 0, 13],
+  [62, 0, -19],
+  [70, 0, -24],
+  [65, 0, -31],
+  [73, 0, -36],
+  [61, 0, -39],
+  [70, 0, -46],
+  [55, 0, -54],
+  [65, 0, -61],
+  [40, 0, -66],
+  [22, 0, -64],
+  [27, 0, -53],
+  [16, 0, -49],
+  [20, 0, -39],
+  [17, 0, -31],
+  [12, 0, -24],
+  [19, 0, -19],
 ]
 
 const startProps = {
-  position: [3, 0.1, 4],
-  rotation: [0, Math.PI / 2, 0],
+  position: [15.5, 0.1, -12],
+  rotation: [0, -Math.PI / 2, 0],
 }
 
 const finishProps = {
-  position: new Vector3(-35, 0.1, -4),
-  rotation: new Euler(0, Math.PI / 2.8, 0),
+  position: new Vector3(54, 0.1, -4),
+  rotation: new Euler(0, Math.PI + Math.PI / 2.8, 0),
 }
 
 const GameMap = () => {

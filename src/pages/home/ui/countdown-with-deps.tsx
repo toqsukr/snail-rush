@@ -9,7 +9,7 @@ const CountdownWithDeps = () => {
 
   return (
     <Suspense fallback={null}>
-      <Countdown rotation={[-Math.PI / 8, Math.PI, 0]} />
+      <Countdown rotation={[Math.PI / 8, 0, 0]} />
     </Suspense>
   )
 }
