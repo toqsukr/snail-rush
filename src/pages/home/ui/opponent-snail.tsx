@@ -16,8 +16,8 @@ const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
     <opponentDepsContext.Provider
       value={{
         onJump: appendPosition,
-        onRotate: value => {
-          appendRotation(value)
+        onRotate: rotation => {
+          appendRotation(rotation)
         },
       }}>
       <Opponent>

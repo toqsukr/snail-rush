@@ -7,6 +7,7 @@ import * as THREE from 'three'
 import { Vector3 } from 'three'
 import { useSnailDeps } from '../deps'
 import { useSnailContext } from '../ui/snail-provider'
+import { PositionType, RotationType } from './types'
 import { useAnimation } from './use-animation'
 
 const MAX_JUMP_LENGTH = 6
@@ -66,12 +67,12 @@ export const useJump = () => {
     config: { mass: 10, tension: 300, friction: 40 },
   }))
 
-  const triggerRotate = (rotateY: number) => {
-    const currentRotation = springProps.rotation.get()
-
+  const triggerRotate = (rotation: RotationType) => {
+    const { duration, roll, pitch, yaw } = rotation
+    const euler = [roll, pitch, yaw]
     springAPI.start({
-      rotation: [currentRotation[0], currentRotation[1] + rotateY, currentRotation[2]],
-      config: { duration: 0 },
+      rotation: euler,
+      config: { duration },
       onChange: ({ value }) => {
         if (rigidBodyRef.current) {
           const quaternion = new THREE.Quaternion()
@@ -83,11 +84,12 @@ export const useJump = () => {
     })
   }
 
-  const triggerJump = (targetPosition: THREE.Vector3, duration: number) => {
+  const triggerJump = (position: PositionType) => {
+    const { duration, x, y, z } = position
+    const targetPosition = new Vector3(x, y, z)
     animate(duration)
     if (rigidBodyRef.current) {
       const rigidBody = rigidBodyRef.current
-
       const currentPosition = rigidBody.translation()
       const direction = new THREE.Vector3()
         .subVectors(targetPosition, currentPosition)
@@ -131,13 +133,11 @@ export const useJump = () => {
 
   useEffect(() => {
     const subscriptionPosition = sequentialPosition.subscribe(position => {
-      const { x, y, z, duration } = position
-      triggerJump(new THREE.Vector3(x, y, z), duration)
+      triggerJump(position)
     })
 
     const subscriptionRotation = sequentialRotation.subscribe(rotation => {
-      const { pitch } = rotation
-      triggerRotate(pitch)
+      triggerRotate(rotation)
     })
 
     return () => {
