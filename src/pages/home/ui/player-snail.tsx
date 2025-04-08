@@ -19,10 +19,12 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const {
     appendPosition,
     appendRotation,
-    isAnimating,
+    isJumping,
     rotation,
     calcAnimationDuration,
     calcTargetPosition,
+    startShrinkAnimation,
+    stopShrinkAnimation,
   } = useSnailContext()
 
   const { sendTargetPosition, sendTargetRotation } = useLobbyEventsContext()
@@ -34,7 +36,9 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
         calcAnimationDuration,
         getMoveable: () => moveable,
         getRotation: () => rotation,
-        getIsAnimating: () => isAnimating,
+        getIsJumping: () => isJumping,
+        onStartShrink: startShrinkAnimation,
+        onStopShrink: stopShrinkAnimation,
         onJump: position => {
           const { x, y, z } = position
           appendPosition(position)

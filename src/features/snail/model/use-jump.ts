@@ -53,7 +53,7 @@ export const useJump = (
     sequentialRotation,
     updatePosition,
     updateRotation,
-    updateIsAnimating,
+    updateIsJumping,
     position,
     rotation,
   } = useSnailContext()
@@ -101,7 +101,7 @@ export const useJump = (
 
   //TODO
   useFrame(() => {
-    updateIsAnimating(isJumpAnimating())
+    updateIsJumping(isJumpAnimating())
   })
 
   useEffect(() => {

@@ -10,7 +10,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { incrementX, decrementX, resetX, calcRotationIncrement } = useAdditiveRotation()
 
   const {
-    getIsAnimating,
+    getIsJumping,
     onJump,
     onRotate,
     calcTargetPosition,
@@ -21,7 +21,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
 
   const handleJump = (holdTime: number) => {
     const koef = holdTime / SPACE_HOLD_TIME
-    if (!getIsAnimating() && getMoveable()) {
+    if (!getIsJumping() && getMoveable()) {
       const position = calcTargetPosition(koef)
       const duration = calcAnimationDuration(koef)
       const targetPosition = { ...position, duration, holdTime }
@@ -30,7 +30,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const handleRotate = (directionKoef: number) => {
-    if (!getIsAnimating() && getMoveable()) {
+    if (!getIsJumping() && getMoveable()) {
       const rotationArr = getRotation()
       const updatedPitch = directionKoef
       const rotation = {

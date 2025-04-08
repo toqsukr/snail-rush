@@ -7,29 +7,44 @@ import {
   RigidBody,
   RoundCuboidCollider,
 } from '@react-three/rapier'
-import { FC, useMemo, useRef } from 'react'
+import { FC, useEffect, useMemo, useRef } from 'react'
 import { useSnailDeps } from '../deps'
 import { useAnimation } from '../model/use-animation'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
+import { useShrink } from '../model/use-shrink'
+import { useSnailContext } from './snail-provider'
 
 export const Snail: FC<{ username: string; userID?: string }> = ({ username, userID }) => {
   const { modelPath } = useSnailDeps()
   const model = useGLTF(modelPath)
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
-  const { animate, isAnimationRunning } = useAnimation(model)
+  const { animate, stopAnimation, isAnimationRunning } = useAnimation(model)
+  const { updateStartShrinkAnimation, updateStopShrinkAnimation } = useSnailContext()
 
   const getRigidBody = () => rigidBodyRef.current
 
   useJump(
     getRigidBody,
     () => isAnimationRunning(0),
-    (duration: number) => animate(0, duration)
+    (duration: number) => animate(0, { duration })
   )
-  const handleCollision = useCollision(getRigidBody, (duration: number) => animate(2, duration))
+
+  const { startShrinkAnimation, stopShrinkAnimation } = useShrink(
+    () => isAnimationRunning(1),
+    () => animate(1, { pauseOnEnd: true, loop: false }),
+    () => stopAnimation(1)
+  )
+
+  const handleCollision = useCollision(getRigidBody, (duration: number) => animate(2, { duration }))
 
   const { camera } = useThree()
   const textRef = useRef<any>(null)
+
+  useEffect(() => {
+    updateStartShrinkAnimation(startShrinkAnimation)
+    updateStopShrinkAnimation(stopShrinkAnimation)
+  }, [])
 
   useFrame(() => {
     if (textRef.current) {
