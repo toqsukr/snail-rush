@@ -1,6 +1,6 @@
-export const HOST_START_POSITION = [19, 0, -10] satisfies [number, number, number]
+export const HOST_START_POSITION = [19, 0.1, -10] satisfies [number, number, number]
 
-export const JOINED_START_POSITION = [12.2, 0, -10] satisfies [number, number, number]
+export const JOINED_START_POSITION = [12.2, 0.1, -10] satisfies [number, number, number]
 
 export type PlayerStatus = 'host' | 'joined'
 

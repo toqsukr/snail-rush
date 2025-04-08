@@ -58,6 +58,7 @@ const HomePage = () => {
               await followTarget(new Vector3(54, 0.1, -4))
               finishGame()
               const winner = players.find(({ id }) => id === actor_id)
+              console.log(winner)
               winner && updateWinner(winner)
             }}
             onChangeOpponentRotation={({ rotation }) => {

@@ -1,5 +1,5 @@
 import { useGLTF } from '@react-three/drei'
-import { RigidBody } from '@react-three/rapier'
+import { interactionGroups, RigidBody } from '@react-three/rapier'
 
 const GrassMap = () => {
   const mapPlane = useGLTF('models/map1/map1.glb')
@@ -10,7 +10,12 @@ const GrassMap = () => {
       <ambientLight intensity={3} color='white' />
       <directionalLight intensity={3} position={[10, 10, 10]} castShadow />
       <directionalLight intensity={3} position={[-10, 10, -10]} castShadow />
-      <RigidBody colliders='cuboid' type='fixed' position={[0, 0, 0]} rotation={[0, 0, 0]}>
+      <RigidBody
+        colliders='cuboid'
+        type='fixed'
+        collisionGroups={interactionGroups(1, 0b11)}
+        position={[0, 0, 0]}
+        rotation={[0, 0, 0]}>
         <primitive object={mapPlane.scene} />
       </RigidBody>
       <RigidBody
@@ -18,7 +23,9 @@ const GrassMap = () => {
         colliders='trimesh'
         rotation={[0, 0, 0]}
         position={[0, 0, 0]}
-        userData={{ isObstacle: true }}>
+        restitution={1}
+        userData={{ isObstacle: true }}
+        collisionGroups={interactionGroups(1, 0b11)}>
         <primitive object={mapWalls.scene} />
       </RigidBody>
     </>

@@ -14,7 +14,7 @@ const App = () => {
 
   return (
     <Canvas>
-      <Physics debug>
+      <Physics debug gravity={[0, -20, 0]} timeStep={1 / 60} interpolate={false}>
         <trackingCameraDepsContext.Provider
           value={{
             initPosition: cameraStartPosition,

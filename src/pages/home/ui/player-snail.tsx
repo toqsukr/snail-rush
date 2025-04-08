@@ -10,7 +10,7 @@ import { Vector3 } from 'three'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
-const STUN_TIMEOUT = 1500
+const STUN_TIMEOUT = 2000
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
