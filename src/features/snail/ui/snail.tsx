@@ -1,20 +1,34 @@
-import { Text } from '@react-three/drei'
+import { Text, useGLTF } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import {
   CoefficientCombineRule,
   CuboidCollider,
+  RapierRigidBody,
   RigidBody,
   RoundCuboidCollider,
 } from '@react-three/rapier'
 import { FC, useMemo, useRef } from 'react'
+import { useSnailDeps } from '../deps'
+import { useAnimation } from '../model/use-animation'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
 
 export const Snail: FC<{ username: string; userID?: string }> = ({ username, userID }) => {
-  const { rigidBodyRef, model } = useJump()
-  const handleCollision = useCollision(rigidBodyRef)
-  const { camera } = useThree()
+  const { modelPath } = useSnailDeps()
+  const model = useGLTF(modelPath)
+  const rigidBodyRef = useRef<RapierRigidBody | null>(null)
+  const { animate, isAnimationRunning } = useAnimation(model)
 
+  const getRigidBody = () => rigidBodyRef.current
+
+  useJump(
+    getRigidBody,
+    () => isAnimationRunning(0),
+    (duration: number) => animate(0, duration)
+  )
+  const handleCollision = useCollision(getRigidBody, (duration: number) => animate(2, duration))
+
+  const { camera } = useThree()
   const textRef = useRef<any>(null)
 
   useFrame(() => {
@@ -27,17 +41,15 @@ export const Snail: FC<{ username: string; userID?: string }> = ({ username, use
 
   return (
     <RigidBody
-      type='dynamic'
       mass={10}
+      type='dynamic'
       colliders={false}
       ref={rigidBodyRef}
       userData={userData}
-      restitution={1}
-      restitutionCombineRule={CoefficientCombineRule.Max}
       linearDamping={1.2}
-      onContactForce={() => {}}
       onCollisionEnter={handleCollision}
-      enabledRotations={[false, false, false]}>
+      enabledRotations={[false, false, false]}
+      restitutionCombineRule={CoefficientCombineRule.Max}>
       <RoundCuboidCollider
         name='neck'
         args={[0.05, 0.05, 0.5, 0.2]}

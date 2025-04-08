@@ -11,22 +11,19 @@ import { Euler, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
 
 const stones = [
-  [62, 0, -19],
-  [70, 0, -24],
-  [65, 0, -31],
-  [73, 0, -36],
-  [61, 0, -39],
-  [70, 0, -46],
-  [55, 0, -54],
-  [65, 0, -61],
-  [40, 0, -66],
-  [22, 0, -64],
-  [27, 0, -53],
-  [16, 0, -49],
-  [20, 0, -39],
-  [17, 0, -31],
-  [12, 0, -24],
-  [19, 0, -19],
+  { position: [62, 0, -19], rotation: [0, 0, 0] },
+  { position: [63, 0, -31], rotation: [0, Math.PI / 3, 0] },
+  { position: [73, 0, -36], rotation: [0, -Math.PI / 2.5, 0] },
+  { position: [61, 0, -42], rotation: [0, 0, 0] },
+  { position: [70, 0, -49], rotation: [0, Math.PI / 3.5, 0] },
+  { position: [57, 0, -58], rotation: [0, Math.PI / 4, 0] },
+  { position: [61, 0, -62], rotation: [0, Math.PI / 4, 0] },
+  { position: [26, 0, -68], rotation: [0, 0, 0] },
+  { position: [28, 0, -60], rotation: [0, 0, 0] },
+  { position: [34, 0, -53], rotation: [0, Math.PI / 4, 0] },
+  { position: [15, 0, -44], rotation: [0, 0, 0] },
+  { position: [11, 0, -32], rotation: [0, Math.PI / 2.5, 0] },
+  { position: [20, 0, -28], rotation: [0, -Math.PI / 3, 0] },
 ]
 
 const startProps = {
@@ -74,10 +71,11 @@ const GameMap = () => {
           <FinishLine />
         </FinishControl>
       </finishControlDepsContext.Provider>
-      {stones.map(position => (
+      {stones.map(({ position, rotation }) => (
         <StaticObstacle
           key={`stone-${position.join()}`}
           model={<Stone />}
+          rotation={new Euler(...rotation)}
           position={new Vector3(...position)}
         />
       ))}

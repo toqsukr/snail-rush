@@ -7,6 +7,8 @@ import { FC, Suspense, useMemo } from 'react'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
 
+const STUN_TIMEOUT = 2000
+
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { appendPosition, appendRotation } = useSnailContext()
   const players = usePlayers(s => s.players)
@@ -38,6 +40,7 @@ const OpponentSuspense = () => {
     <Suspense fallback={null}>
       <snailDepsContext.Provider
         value={{
+          stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,
           modelPath: getModelPath(getPlayerSkin(playerStatus === 'joined' ? 'host' : 'joined')),
         }}>

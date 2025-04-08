@@ -19,7 +19,7 @@ export const useAnimation = (model: GLTF & ObjectMap) => {
     return model.animations[animationIdx ?? 0].duration ?? 0
   }
 
-  const animate = (animationDuration?: number, animationIdx?: number) => {
+  const animate = (animationIdx?: number, animationDuration?: number) => {
     if (!mixerRef.current) return
 
     const currentAnimation = model.animations[animationIdx ?? 0]

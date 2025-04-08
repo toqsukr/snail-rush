@@ -2,6 +2,7 @@ import { createStrictContext, useStrictContext } from '@shared/lib/react'
 
 type SnailDeps = {
   modelPath: string
+  stunTimeout: number
   shouldHandleCollision: (objectUserData: unknown) => boolean
   onCollision?: () => void
   startPosition?: [number, number, number]

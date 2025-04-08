@@ -24,8 +24,8 @@ export const getStartPosition = (playerPosition: PlayerPositions) => {
 
 export const getModelPath = (skin: PlayerSkins) => {
   const defineModelPath: Record<PlayerSkins, string> = {
-    herbivore: '/animations/full-jump-static-light.glb',
-    predator: '/animations/full-jump-static-opponent.glb',
+    herbivore: '/animations/player-snail.glb',
+    predator: '/animations/opponent-snail.glb',
   }
   return defineModelPath[skin]
 }

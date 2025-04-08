@@ -5,7 +5,7 @@ import { Player, playerDepsContext } from '@features/player-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 import { useTrackCameraContext } from '@features/tracking-camera'
 import { Preload } from '@react-three/drei'
-import { FC, Suspense } from 'react'
+import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
 import { useGameStore } from '../model/store'
@@ -57,16 +57,18 @@ const PlayerSuspense = () => {
   const user = useUser(s => s.user)
   const { moveable, updateMoveable, playerStatus } = useGameStore()
 
-  const onCollision = () => {
+  const onCollision = useCallback(() => {
     if (moveable) {
       updateMoveable(false)
       setTimeout(() => {
         updateMoveable(true)
       }, STUN_TIMEOUT)
     }
-  }
+  }, [moveable])
 
   if (!playerStatus || !user) return
+
+  const modelPath = getModelPath(getPlayerSkin(playerStatus))
 
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus))
 
@@ -75,9 +77,10 @@ const PlayerSuspense = () => {
       <Preload all />
       <snailDepsContext.Provider
         value={{
+          modelPath,
           onCollision,
+          stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,
-          modelPath: getModelPath(getPlayerSkin(playerStatus)),
         }}>
         <SnailProvider initPosition={playerStartPosition} initRotation={[0, Math.PI, 0]}>
           <PlayerSnail user={user} />

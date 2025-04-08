@@ -37,9 +37,9 @@ export const SnailProvider: FC<PropsWithChildren<SnailProviderProp>> = ({
   const positionThread = useMemo(useAppendPosition, [])
   const rotationThread = useMemo(useAppendRotation, [])
   const calcAnimationDuration = useCalcAnimationDuration()
-  const calcTargetPosition = useCalcTargetPosition(
-    new Vector3(...storeData.position),
-    storeData.rotation
+  const calcTargetPosition = useMemo(
+    () => useCalcTargetPosition(new Vector3(...storeData.position), storeData.rotation),
+    [storeData]
   )
 
   const value = {

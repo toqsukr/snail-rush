@@ -2,15 +2,14 @@ import { useSpring } from '@react-spring/three'
 import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { RapierRigidBody } from '@react-three/rapier'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
 import { useSnailDeps } from '../deps'
 import { useSnailContext } from '../ui/snail-provider'
 import { PositionType, RotationType } from './types'
-import { useAnimation } from './use-animation'
 
-const MAX_JUMP_LENGTH = 6
+const MAX_JUMP_LENGTH = 8
 
 const MIN_JUMP_LENGTH = 2
 
@@ -44,11 +43,11 @@ const calculateLandingPosition = (
  * Управляет как анимацией, так и физической составляющей
  */
 
-export const useJump = () => {
-  const { modelPath } = useSnailDeps()
-
-  const model = useGLTF(modelPath)
-  const { animate, isAnimationRunning } = useAnimation(model)
+export const useJump = (
+  getRigidBody: () => RapierRigidBody | null,
+  isJumpAnimating: () => boolean,
+  animateJump: (duration: number) => void
+) => {
   const {
     sequentialPosition,
     sequentialRotation,
@@ -58,8 +57,6 @@ export const useJump = () => {
     position,
     rotation,
   } = useSnailContext()
-
-  const rigidBodyRef = useRef<RapierRigidBody | null>(null)
 
   const [springProps, springAPI] = useSpring(() => ({
     position,
@@ -74,10 +71,12 @@ export const useJump = () => {
       rotation: euler,
       config: { duration },
       onChange: ({ value }) => {
-        if (rigidBodyRef.current) {
+        const rigidBody = getRigidBody()
+
+        if (rigidBody) {
           const quaternion = new THREE.Quaternion()
           quaternion.setFromEuler(new THREE.Euler(...value.rotation))
-          rigidBodyRef.current.setRotation(quaternion, true)
+          rigidBody.setRotation(quaternion, true)
         }
         updateRotation(value.rotation)
       },
@@ -87,9 +86,9 @@ export const useJump = () => {
   const triggerJump = (position: PositionType) => {
     const { duration, x, y, z } = position
     const targetPosition = new Vector3(x, y, z)
-    animate(duration)
-    if (rigidBodyRef.current) {
-      const rigidBody = rigidBodyRef.current
+    animateJump(duration)
+    const rigidBody = getRigidBody()
+    if (rigidBody) {
       const currentPosition = rigidBody.translation()
       const direction = new THREE.Vector3()
         .subVectors(targetPosition, currentPosition)
@@ -102,23 +101,24 @@ export const useJump = () => {
 
   //TODO
   useFrame(() => {
-    updateIsAnimating(isAnimationRunning(0))
+    updateIsAnimating(isJumpAnimating())
   })
 
   useEffect(() => {
-    if (rigidBodyRef.current) {
+    const rigidBody = getRigidBody()
+    if (rigidBody) {
       const position = springProps.position.get()
       const rotation = springProps.rotation.get()
 
-      rigidBodyRef.current.setTranslation(new THREE.Vector3(...position), true)
+      rigidBody.setTranslation(new THREE.Vector3(...position), true)
       const quaternion = new THREE.Quaternion()
       quaternion.setFromEuler(new THREE.Euler(...rotation))
-      rigidBodyRef.current.setRotation(quaternion, true)
+      rigidBody.setRotation(quaternion, true)
     }
 
     const interval = setInterval(() => {
-      if (rigidBodyRef.current) {
-        const rigidBody = rigidBodyRef.current
+      const rigidBody = getRigidBody()
+      if (rigidBody) {
         const position = rigidBody.translation()
 
         springAPI.start({
@@ -145,8 +145,6 @@ export const useJump = () => {
       subscriptionRotation.unsubscribe()
     }
   }, [])
-
-  return { model, rigidBodyRef }
 }
 
 export const useCalcTargetPosition = (position: Vector3, rotation: number[]) => {
