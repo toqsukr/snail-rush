@@ -1,5 +1,6 @@
 import { Countdown } from '@features/countdown'
 import { Suspense } from 'react'
+import { COUNTDOWN_ROTATION } from '../model/constants'
 import { useGameStore } from '../model/store'
 
 const CountdownWithDeps = () => {
@@ -9,7 +10,7 @@ const CountdownWithDeps = () => {
 
   return (
     <Suspense fallback={null}>
-      <Countdown rotation={[Math.PI / 8, 0, 0]} />
+      <Countdown rotation={COUNTDOWN_ROTATION} />
     </Suspense>
   )
 }

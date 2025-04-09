@@ -8,9 +8,8 @@ import { Preload } from '@react-three/drei'
 import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
 import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
+import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../model/constants'
 import { useGameStore } from '../model/store'
-
-const STUN_TIMEOUT = 2000
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
@@ -37,6 +36,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
         getMoveable: () => moveable,
         getRotation: () => rotation,
         getIsJumping: () => isJumping,
+        maxSpaceHold: MAX_SPACE_HOLD_TIME,
         onStartShrink: startShrinkAnimation,
         onStopShrink: stopShrinkAnimation,
         onJump: position => {
@@ -85,6 +85,7 @@ const PlayerSuspense = () => {
           onCollision,
           stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,
+          shrinkDuration: MAX_SPACE_HOLD_TIME,
         }}>
         <SnailProvider initPosition={playerStartPosition} initRotation={[0, Math.PI, 0]}>
           <PlayerSnail user={user} />

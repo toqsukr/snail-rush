@@ -16,7 +16,7 @@ import { useShrink } from '../model/use-shrink'
 import { useSnailContext } from './snail-provider'
 
 export const Snail: FC<{ username: string; userID?: string }> = ({ username, userID }) => {
-  const { modelPath } = useSnailDeps()
+  const { modelPath, shrinkDuration } = useSnailDeps()
   const model = useGLTF(modelPath)
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
   const { animate, stopAnimation, isAnimationRunning } = useAnimation(model)
@@ -32,7 +32,7 @@ export const Snail: FC<{ username: string; userID?: string }> = ({ username, use
 
   const { startShrinkAnimation, stopShrinkAnimation } = useShrink(
     () => isAnimationRunning(1),
-    () => animate(1, { pauseOnEnd: true, loop: false }),
+    () => animate(1, { pauseOnEnd: true, loop: false, duration: shrinkDuration / 1000 }),
     () => stopAnimation(1)
   )
 

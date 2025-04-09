@@ -1,4 +1,5 @@
 import { usePlayers } from '@entities/players'
+import { TUser } from '@entities/user'
 import { FinishControl, finishControlDepsContext } from '@features/finish-control'
 import { useLobbyEventsContext } from '@features/lobby-events'
 import { StaticObstacle } from '@features/obstacle'
@@ -8,6 +9,7 @@ import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
 import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
+import { FINISH_POSITION } from '../model/constants'
 import { useGameStore } from '../model/store'
 
 const stones = [
@@ -32,8 +34,21 @@ const startProps = {
 }
 
 const finishProps = {
-  position: new Vector3(54, 0.1, -4),
+  position: FINISH_POSITION,
   rotation: new Euler(0, Math.PI + Math.PI / 2.8, 0),
+}
+
+type TUserData = {
+  userID: TUser['id']
+}
+
+const containsUserdata = (userData: unknown): userData is TUserData => {
+  return (
+    !!userData &&
+    typeof userData === 'object' &&
+    'userID' in userData &&
+    typeof userData.userID === 'string'
+  )
 }
 
 const GameMap = () => {
@@ -49,16 +64,10 @@ const GameMap = () => {
       <finishControlDepsContext.Provider
         value={{
           onFinish: async userData => {
-            // TODO
-            if (
-              typeof userData === 'object' &&
-              userData &&
-              'userID' in userData &&
-              typeof userData.userID === 'string'
-            ) {
+            if (containsUserdata(userData)) {
               updateMoveable(false)
               sendFinishGame()
-              await followTarget(new Vector3(54, 0.1, -4))
+              await followTarget(FINISH_POSITION)
               const winner = players.find(({ id }) => id === userData.userID)
               if (winner) {
                 updateWinner(winner)

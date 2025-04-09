@@ -5,6 +5,7 @@ import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-c
 import { TrackingCamera, useTrackCameraContext } from '@features/tracking-camera'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from './lib/status'
+import { FINISH_POSITION, LIGHT_POSITION, START_TIMER_VALUE } from './model/constants'
 import { useGameStore } from './model/store'
 import CountdownWithDeps from './ui/countdown-with-deps'
 import GameMap from './ui/game-map'
@@ -14,11 +15,6 @@ import MenuLayout from './ui/menu-layout'
 import OpponentSuspense from './ui/opponent-snail'
 import PauseMenu from './ui/pause-menu-with-deps'
 import PlayerSuspense from './ui/player-snail'
-
-const START_TIMER_VALUE = 3
-
-const MAIN_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
-const MAIN_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
 
 const HomePage = () => {
   const {
@@ -55,7 +51,7 @@ const HomePage = () => {
             }}
             onGameFinish={async ({ actor_id }) => {
               updateMoveable(false)
-              await followTarget(new Vector3(54, 0.1, -4))
+              await followTarget(FINISH_POSITION)
               finishGame()
               const winner = players.find(({ id }) => id === actor_id)
               winner && updateWinner(winner)
@@ -72,15 +68,12 @@ const HomePage = () => {
             <OpponentSuspense />
             <GameMap />
             <CountdownWithDeps />
-            <MenuLayout
-              startTimer={startTimer}
-              resetTimer={resetTimer}
-              mainMenuPosition={MAIN_MENU_POSITION}>
-              <MainMenu position={MAIN_MENU_POSITION} rotation={MAIN_MENU_ROTATION} />
-              <PauseMenu position={MAIN_MENU_POSITION} rotation={MAIN_MENU_ROTATION} />
-              <GameOver position={MAIN_MENU_POSITION} rotation={MAIN_MENU_ROTATION} />
+            <MenuLayout startTimer={startTimer} resetTimer={resetTimer}>
+              <MainMenu />
+              <PauseMenu />
+              <GameOver />
             </MenuLayout>
-            <ambientLight position={[5, 1, 0]} intensity={1} />
+            <ambientLight position={LIGHT_POSITION} intensity={1} />
           </LobbyEventsProvider>
         )}
       />

@@ -3,10 +3,8 @@ import { usePlayerDeps } from '../deps'
 import { useAdditiveRotation } from '../model/use-additive-rotation'
 import { useSpaceHold } from '../model/use-space-hold'
 
-const SPACE_HOLD_TIME = 1000
-
 export const Player: FC<PropsWithChildren> = ({ children }) => {
-  const { handleKeyUp, handleKeyDown } = useSpaceHold(SPACE_HOLD_TIME)
+  const { handleKeyUp, handleKeyDown } = useSpaceHold()
   const { incrementX, decrementX, resetX, calcRotationIncrement } = useAdditiveRotation()
 
   const {
@@ -17,10 +15,11 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
     calcAnimationDuration,
     getRotation,
     getMoveable,
+    maxSpaceHold,
   } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
-    const koef = holdTime / SPACE_HOLD_TIME
+    const koef = holdTime / maxSpaceHold
     if (!getIsJumping() && getMoveable()) {
       const position = calcTargetPosition(koef)
       const duration = calcAnimationDuration(koef)

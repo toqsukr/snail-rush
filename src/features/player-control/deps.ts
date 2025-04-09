@@ -3,6 +3,7 @@ import { Vector3 } from 'three'
 import { PositionType, RotationType } from './model/types'
 
 type PlayerDeps = {
+  maxSpaceHold: number
   getMoveable: () => boolean
   getRotation: () => number[]
   getIsJumping: () => boolean

@@ -3,19 +3,15 @@ import { Html } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { FC, useRef } from 'react'
+import { useRef } from 'react'
+import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../model/constants'
 import { useGameStore } from '../model/store'
 
-type MainMenuProp = {
-  position: [number, number, number]
-  rotation: [number, number, number]
-}
-
-const GameOver: FC<MainMenuProp> = ({ position, rotation }) => {
+const GameOver = () => {
   const contextValue = useMenuDeps()
   const { started, finished, winner } = useGameStore()
-  const positionRef = useRef(position)
-  const rotationRef = useRef(rotation)
+  const positionRef = useRef(MAIN_MENU_POSITION)
+  const rotationRef = useRef(MAIN_MENU_ROTATION)
   const camera = useThree(s => s.camera)
 
   useFrame(() => {

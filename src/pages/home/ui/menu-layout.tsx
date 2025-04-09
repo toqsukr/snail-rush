@@ -5,19 +5,18 @@ import { useTrackCameraContext } from '@features/tracking-camera'
 import { FC, PropsWithChildren } from 'react'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../lib/status'
+import { MAIN_MENU_POSITION } from '../model/constants'
 import { useGameStore } from '../model/store'
 
 export type MenuWithDepsProp = {
   startTimer: () => void
   resetTimer: () => void
-  mainMenuPosition: [number, number, number]
 }
 
 const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
   children,
   startTimer,
   resetTimer,
-  mainMenuPosition,
 }) => {
   const checkHost = useIsHost()
   const { sendStartGame } = useLobbyEventsContext()
@@ -37,10 +36,10 @@ const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
         onBackToLobby: async () => {
           resetTimer()
           toMainMenu()
-          await moveTo([mainMenuPosition[0], mainMenuPosition[1], mainMenuPosition[2] + 10])
+          await moveTo([MAIN_MENU_POSITION[0], MAIN_MENU_POSITION[1], MAIN_MENU_POSITION[2] + 10])
           const tempStatus = playerStatus
           updatePlayerStatus(null)
-          await focusTo(new Vector3(...mainMenuPosition))
+          await focusTo(new Vector3(...MAIN_MENU_POSITION))
           updatePlayerStatus(tempStatus)
         },
         onConnectLobby: () => updatePlayerStatus('joined'),
