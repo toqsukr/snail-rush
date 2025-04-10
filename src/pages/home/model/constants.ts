@@ -1,8 +1,8 @@
 import { Vector3 } from 'three'
 
-export const STUN_TIMEOUT = 2000
+export const STUN_TIMEOUT = 1600
 export const START_TIMER_VALUE = 3
-export const MAX_SPACE_HOLD_TIME = 600
+export const MAX_SPACE_HOLD_TIME = 400
 export const MAIN_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
 export const MAIN_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
 export const LIGHT_POSITION = [5, 1, 0] satisfies [number, number, number]

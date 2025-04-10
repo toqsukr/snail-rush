@@ -44,7 +44,7 @@ export const SnailProvider: FC<PropsWithChildren<SnailProviderProp>> = ({
 
   const value = {
     calcTargetPosition,
-    calcAnimationDuration: (koef: number) => calcAnimationDuration(0, koef),
+    calcAnimationDuration: () => calcAnimationDuration(0),
     ...positionThread,
     ...rotationThread,
     ...storeData,

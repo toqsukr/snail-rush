@@ -1,54 +1,45 @@
-import { ObjectMap, useFrame } from '@react-three/fiber'
+import { useFrame } from '@react-three/fiber'
 import { useEffect, useRef } from 'react'
-import { AnimationAction, AnimationMixer, LoopOnce, LoopRepeat } from 'three'
-import { GLTF } from 'three-stdlib'
+import { AnimationAction, LoopOnce, LoopRepeat } from 'three'
 
 type AnimationConfig = {
-  /** Длительность анимации в секундах (переопределяет оригинальную длительность) */
+  /** Желаемая длительность анимации в секундах */
   duration?: number
   /** Зациклить анимацию */
   loop?: boolean
   /** Остановить другие анимации перед запуском */
   stopOthers?: boolean
-  /** Оставить модель в конечном состоянии анимации вместо сброса */
+  /** Оставить модель в конечном состоянии анимации */
   pauseOnEnd?: boolean
-  /** Вес анимации (влияет на смешивание) */
+  /** Вес анимации (для смешивания) */
   weight?: number
-  /** Время начала анимации (0-1) */
+  /** Начальное время анимации (0-1) */
   startAt?: number
-  /** Скорость воспроизведения */
-  playbackSpeed?: number
 }
 
-export const useAnimation = (model: GLTF & ObjectMap) => {
-  const mixerRef = useRef<AnimationMixer | null>(null)
-  const actionsRef = useRef<Map<number, AnimationAction>>(new Map())
-  const configsRef = useRef<Map<number, AnimationConfig>>(new Map())
+export const useAnimation = (actions: { [key: string]: AnimationAction | null }) => {
+  const configsRef = useRef<Map<string, AnimationConfig>>(new Map())
+  const originalDurations = useRef<Map<string, number>>(new Map())
 
-  // Инициализация миксера
   useEffect(() => {
-    mixerRef.current = new AnimationMixer(model.scene)
-    return () => {
-      actionsRef.current.forEach(action => {
-        action.stop()
-        action.getMixer().uncacheAction(action.getClip(), action.getRoot())
-      })
-      mixerRef.current?.stopAllAction()
-    }
-  }, [model])
+    if (!actions) return
 
-  useFrame((_, delta) => {
-    if (!mixerRef.current) return
+    Object.entries(actions).forEach(([name, action]) => {
+      if (action) {
+        originalDurations.current.set(name, action.getClip().duration)
+      }
+    })
+  }, [actions])
 
-    // Обновление миксера и проверка завершения анимаций
-    mixerRef.current.update(delta)
+  useFrame(() => {
+    if (!actions) return
 
-    actionsRef.current.forEach((action, idx) => {
-      const config = configsRef.current.get(idx)
-      const clipDuration = action.getClip().duration
+    Object.entries(actions).forEach(([name, action]) => {
+      const config = configsRef.current.get(name)
+      if (!config || !action) return
 
-      // Автоматическая пауза при завершении
-      if (config?.pauseOnEnd && !config?.loop && action.time >= clipDuration - 0.1) {
+      // Проверка завершения анимации
+      if (config.pauseOnEnd && !config.loop && action.time >= action.getClip().duration - 0.1) {
         action.paused = true
       }
     })
@@ -56,35 +47,29 @@ export const useAnimation = (model: GLTF & ObjectMap) => {
 
   /**
    * Запускает или обновляет анимацию
-   * @param animationIdx Индекс анимации в модели
+   * @param animationName Имя анимации (из GLTF)
    * @param config Конфигурация анимации
    */
-  const animate = (animationIdx: number = 0, config: AnimationConfig = {}) => {
-    if (!mixerRef.current || !model.animations[animationIdx]) {
-      console.error(`Animation ${animationIdx} not found`)
+  const animate = (animationName: string, config: AnimationConfig = {}) => {
+    if (!actions || !actions[animationName]) {
+      console.error(`Animation ${animationName} not found`)
       return
     }
 
-    // Остановка других анимаций если требуется
+    const action = actions[animationName]
+
+    // Остановка других анимаций
     if (config.stopOthers) {
       stopAllAnimations()
     }
 
     // Сохраняем конфиг
-    configsRef.current.set(animationIdx, {
+    configsRef.current.set(animationName, {
       loop: false,
       pauseOnEnd: false,
       weight: 1,
-      playbackSpeed: 1,
       ...config,
     })
-
-    // Получаем или создаем действие
-    let action = actionsRef.current.get(animationIdx)
-    if (!action) {
-      action = mixerRef.current.clipAction(model.animations[animationIdx])
-      actionsRef.current.set(animationIdx, action)
-    }
 
     // Настройка действия
     action.reset()
@@ -92,16 +77,16 @@ export const useAnimation = (model: GLTF & ObjectMap) => {
     action.setEffectiveWeight(config.weight ?? 1)
     action.paused = false
 
+    // Управление длительностью
     if (config.duration) {
-      action.setDuration(config.duration)
-    }
-
-    if (config.playbackSpeed) {
-      action.timeScale = config.playbackSpeed
+      const originalDuration = originalDurations.current.get(animationName) || 1
+      action.timeScale = originalDuration / config.duration
+    } else {
+      action.timeScale = 1
     }
 
     if (config.startAt !== undefined) {
-      action.time = config.startAt * action.getClip().duration
+      action.time = config.startAt * (originalDurations.current.get(animationName) || 1)
     }
 
     action.play()
@@ -109,18 +94,16 @@ export const useAnimation = (model: GLTF & ObjectMap) => {
 
   /**
    * Останавливает анимацию
-   * @param animationIdx Индекс анимации
-   * @param reset Сбросить состояние модели в исходное положение
+   * @param animationName Имя анимации
+   * @param reset Сбросить в исходное состояние
    */
-  const stopAnimation = (animationIdx: number, reset: boolean = false) => {
-    const action = actionsRef.current.get(animationIdx)
-    if (!action) return
+  const stopAnimation = (animationName: string, reset: boolean = false) => {
+    if (!actions || !actions[animationName]) return
 
+    const action = actions[animationName]
     if (reset) {
-      action.stop()
-      action.reset()
-      actionsRef.current.delete(animationIdx)
-      configsRef.current.delete(animationIdx)
+      action.stop().reset()
+      configsRef.current.delete(animationName)
     } else {
       action.stop()
     }
@@ -128,28 +111,29 @@ export const useAnimation = (model: GLTF & ObjectMap) => {
 
   /**
    * Останавливает все анимации
-   * @param reset Сбросить состояния моделей в исходное положение
+   * @param reset Сбросить состояния
    */
   const stopAllAnimations = (reset: boolean = false) => {
-    actionsRef.current.forEach((_, idx) => stopAnimation(idx, reset))
+    if (!actions) return
+    Object.keys(actions).forEach(name => stopAnimation(name, reset))
   }
 
   /**
    * Проверяет, активна ли анимация
    */
-  const isAnimationRunning = (animationIdx: number) => {
-    const action = actionsRef.current.get(animationIdx)
-    return action ? action.isRunning() : false
+  const isAnimationRunning = (animationName: string) => {
+    return actions?.[animationName]?.isRunning() ?? false
   }
 
   /**
    * Возвращает состояние анимации
    */
-  const getAnimationState = (animationIdx: number) => {
-    const action = actionsRef.current.get(animationIdx)
-    if (!action) return null
+  const getAnimationState = (animationName: string) => {
+    if (!actions || !actions[animationName]) return null
 
+    const action = actions[animationName]
     const clip = action.getClip()
+
     return {
       progress: action.time / clip.duration,
       paused: action.paused,
@@ -165,7 +149,6 @@ export const useAnimation = (model: GLTF & ObjectMap) => {
     stopAllAnimations,
     isAnimationRunning,
     getAnimationState,
-    getActiveAnimations: () => Array.from(actionsRef.current.keys()),
-    getMixer: () => mixerRef.current,
+    getActiveAnimations: () => (actions ? Object.keys(actions) : []),
   }
 }

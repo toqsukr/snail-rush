@@ -5,17 +5,12 @@ import { RapierRigidBody } from '@react-three/rapier'
 import { useEffect } from 'react'
 import * as THREE from 'three'
 import { Vector3 } from 'three'
-import { useSnailDeps } from '../deps'
 import { useSnailContext } from '../ui/snail-provider'
 import { PositionType, RotationType } from './types'
 
-const MAX_JUMP_LENGTH = 8
+const MAX_JUMP_LENGTH = 12
 
-const MIN_JUMP_LENGTH = 2
-
-const MAX_ANIMATION_DURATION = 1
-
-const MIN_ANIMATION_DURATION = 0.5
+const MIN_JUMP_LENGTH = 6
 
 const calcJumpDistance = (koef: number) => {
   return Math.max(MIN_JUMP_LENGTH, koef * MAX_JUMP_LENGTH)
@@ -86,16 +81,18 @@ export const useJump = (
   const triggerJump = (position: PositionType) => {
     const { duration, x, y, z } = position
     const targetPosition = new Vector3(x, y, z)
+    console.log('animation duration', duration)
     animateJump(duration)
     const rigidBody = getRigidBody()
     if (rigidBody) {
-      const currentPosition = rigidBody.translation()
-      const direction = new THREE.Vector3()
-        .subVectors(targetPosition, currentPosition)
-        .normalize()
-        .multiplyScalar(duration * 16)
+      const currentPosition = new THREE.Vector3(...springProps.position.get())
+      const direction = new THREE.Vector3().subVectors(targetPosition, currentPosition)
 
-      rigidBody.setLinvel(direction, true)
+      const desiredSpeed = direction.length() * 2
+
+      const impulse = direction.normalize().multiplyScalar(desiredSpeed * rigidBody.mass())
+
+      rigidBody.applyImpulse(impulse, true)
     }
   }
 
@@ -162,15 +159,9 @@ export const useCalcTargetPosition = (position: Vector3, rotation: number[]) => 
 }
 
 export const useCalcAnimationDuration = () => {
-  const { modelPath } = useSnailDeps()
-  const model = useGLTF(modelPath)
+  const model = useGLTF('/models/snail.glb')
 
-  return (index: number, koef: number) => {
-    if (!modelPath) return 0
-
-    return Math.min(
-      Math.max(MIN_ANIMATION_DURATION, koef * model.animations[index].duration),
-      MAX_ANIMATION_DURATION
-    )
+  return (index: number) => {
+    return model.animations[index].duration * 0.5
   }
 }

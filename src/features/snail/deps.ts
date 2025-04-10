@@ -1,7 +1,7 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 
 type SnailDeps = {
-  modelPath: string
+  texturePath: string
   stunTimeout: number
   shrinkDuration: number
   shouldHandleCollision: (objectUserData: unknown) => boolean

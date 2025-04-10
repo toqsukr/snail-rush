@@ -2,8 +2,8 @@ import { useGLTF } from '@react-three/drei'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
 
 const GrassMap = () => {
-  const mapPlane = useGLTF('models/map1/map1.glb')
-  const mapWalls = useGLTF('models/map1/walls1.glb')
+  const mapPlane = useGLTF('models/grass-map.glb')
+  const mapWalls = useGLTF('models/grass-walls.glb')
 
   return (
     <>

@@ -22,10 +22,10 @@ export const getStartPosition = (playerPosition: PlayerPositions) => {
   return definePosition[playerPosition]
 }
 
-export const getModelPath = (skin: PlayerSkins) => {
+export const getTexturePath = (skin: PlayerSkins) => {
   const defineModelPath: Record<PlayerSkins, string> = {
-    herbivore: '/animations/player-snail.glb',
-    predator: '/animations/opponent-snail.glb',
+    herbivore: '/textures/herbivore.png',
+    predator: '/textures/predator.png',
   }
   return defineModelPath[skin]
 }

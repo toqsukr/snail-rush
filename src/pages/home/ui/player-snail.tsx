@@ -4,10 +4,9 @@ import { isObstacle } from '@features/obstacle'
 import { Player, playerDepsContext } from '@features/player-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 import { useTrackCameraContext } from '@features/tracking-camera'
-import { Preload } from '@react-three/drei'
 import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
-import { getModelPath, getPlayerPosition, getPlayerSkin, getStartPosition } from '../lib/status'
+import { getPlayerPosition, getPlayerSkin, getStartPosition, getTexturePath } from '../lib/status'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../model/constants'
 import { useGameStore } from '../model/store'
 
@@ -72,16 +71,15 @@ const PlayerSuspense = () => {
 
   if (!playerStatus || !user) return
 
-  const modelPath = getModelPath(getPlayerSkin(playerStatus))
+  const texturePath = getTexturePath(getPlayerSkin(playerStatus))
 
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus))
 
   return (
     <Suspense fallback={null}>
-      <Preload all />
       <snailDepsContext.Provider
         value={{
-          modelPath,
+          texturePath,
           onCollision,
           stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,

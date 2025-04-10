@@ -13,7 +13,7 @@ export const Countdown: FC<CountdownProp> = props => {
 
   const isRunning = useRef(false)
 
-  const model = useGLTF('animations/start-timer.glb')
+  const model = useGLTF('models/start-timer.glb')
 
   const mixerRef = useRef<AnimationMixer | null>(null)
 
