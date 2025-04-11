@@ -16,9 +16,7 @@ class SessionService {
 
   async getSession(sessionID: string) {
     return baseTemplate
-      .get<SessionDTO>(this.SESSION_PREFIX, {
-        params: { sessionID },
-      })
+      .get<SessionDTO>(`${this.SESSION_PREFIX}/${sessionID}/`)
       .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
