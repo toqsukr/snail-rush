@@ -10,7 +10,13 @@ const cameraStartRotation = [0, 0, 0]
 const App = () => {
   return (
     <Canvas>
-      <Physics gravity={[0, -20, 0]} timeStep={1 / 60} interpolate={false}>
+      <Physics
+        gravity={[0, -20, 0]}
+        timeStep={1 / 60}
+        interpolate={false}
+        numSolverIterations={10}
+        numAdditionalFrictionIterations={0}
+        numInternalPgsIterations={10}>
         <trackingCameraDepsContext.Provider
           value={{
             initPosition: cameraStartPosition,

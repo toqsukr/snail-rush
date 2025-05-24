@@ -15,6 +15,8 @@ import {
   PlayerMoveMessageType,
   PlayerRotateMessageSchema,
   PlayerRotateMessageType,
+  PlayerStartJumpMessageSchema,
+  PlayerStartJumpMessageType,
   WebSocketResponse,
   WebSocketResponseSchema,
 } from './types'
@@ -25,8 +27,10 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
   const { user } = useUser()
   const {
     onKickMe,
+    onGameStop,
     onGameStart,
     onGameFinish,
+    onStartJump,
     onChangeLobbyPlayers,
     onChangeOpponentPosition,
     onChangeOpponentRotation,
@@ -80,6 +84,17 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
               onChangeOpponentRotation({ rotation })
               console.log('player rotated', rotation)
               break
+            case Operations.SESSION_STOP_GAME:
+              onGameStop()
+              console.log('game stop')
+              break
+            case Operations.PLAYER_START_JUMP:
+              const startJumpData = PlayerStartJumpMessageSchema.parse(
+                responseData.data
+              ) as PlayerStartJumpMessageType
+              onStartJump({ position: startJumpData.position })
+              console.log('player start jump')
+              break
             case Operations.SESSION_DELETE:
               onSessionExit()
               console.log('session deleted')
@@ -107,7 +122,16 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
     return () => {
       websocket.current?.close()
     }
-  }, [session?.id])
+  }, [
+    session?.id,
+    onChangeLobbyPlayers,
+    onChangeOpponentPosition,
+    onChangeOpponentRotation,
+    onGameStart,
+    onGameFinish,
+    onGameStop,
+    onKickMe,
+  ])
 
   const sendStartGame = () => {
     if (!user) return
@@ -122,6 +146,24 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
 
     websocket.current?.send(
       JSON.stringify({ type: Operations.PLAYER_FINISH, data: { player_id: user.id } })
+    )
+  }
+
+  const sendShrink = () => {
+    if (!user) return
+
+    websocket.current?.send(
+      JSON.stringify({
+        type: Operations.PLAYER_START_JUMP,
+      })
+    )
+  }
+
+  const sendStopGame = () => {
+    if (!user) return
+
+    websocket.current?.send(
+      JSON.stringify({ type: Operations.SESSION_STOP_GAME, data: { player_id: user.id } })
     )
   }
 
@@ -147,5 +189,12 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
     )
   }
 
-  return { sendStartGame, sendFinishGame, sendTargetPosition, sendTargetRotation }
+  return {
+    sendStartGame,
+    sendFinishGame,
+    sendTargetPosition,
+    sendTargetRotation,
+    sendShrink,
+    sendStopGame,
+  }
 }

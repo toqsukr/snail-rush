@@ -6,6 +6,8 @@ export enum Operations {
   SESSION_DELETE = 'session.delete',
   PLAYER_CONNECT = 'player.connect',
   PLAYER_MOVE = 'player.move',
+  PLAYER_START_JUMP = 'player.jump',
+  SESSION_STOP_GAME = 'session.stop',
   PLAYER_ROTATION = 'player.rotate',
   PLAYER_KICK = 'player.kick',
   PLAYER_FINISH = 'player.finish',
@@ -19,6 +21,12 @@ export const TransferPositionSchema = z.object({
   duration: z.number(),
 })
 
+export const TransferStartJumpSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  z: z.number(),
+})
+
 export const TransferRotationSchema = z.object({
   roll: z.number(),
   pitch: z.number(),
@@ -30,11 +38,17 @@ export const OpponentPositionSchema = z.object({
   position: TransferPositionSchema,
 })
 
+export const OpponentStartJumpSchema = z.object({
+  position: TransferStartJumpSchema,
+})
+
 export const OpponentRotationSchema = z.object({
   rotation: TransferRotationSchema,
 })
 
 export type OpponentPositionType = z.infer<typeof OpponentPositionSchema>
+
+export type OpponentStartJumpType = z.infer<typeof OpponentStartJumpSchema>
 
 export type OpponentRotationType = z.infer<typeof OpponentRotationSchema>
 
@@ -55,6 +69,8 @@ export const PlayerMoveMessageSchema = MessageSchema.merge(
   })
 )
 
+export const PlayerStartJumpMessageSchema = MessageSchema.merge(OpponentStartJumpSchema)
+
 export const PlayerRotateMessageSchema = MessageSchema.merge(
   z.object({
     rotation: TransferRotationSchema,
@@ -62,6 +78,8 @@ export const PlayerRotateMessageSchema = MessageSchema.merge(
 )
 
 export type PlayerMoveMessageType = z.infer<typeof PlayerMoveMessageSchema>
+
+export type PlayerStartJumpMessageType = z.infer<typeof PlayerStartJumpMessageSchema>
 
 export type PlayerRotateMessageType = z.infer<typeof PlayerRotateMessageSchema>
 

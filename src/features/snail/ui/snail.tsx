@@ -1,8 +1,8 @@
 import { Text, useAnimations, useGLTF, useTexture } from '@react-three/drei'
 import { useFrame, useGraph, useThree } from '@react-three/fiber'
 import {
-  CoefficientCombineRule,
   CuboidCollider,
+  interactionGroups,
   RapierRigidBody,
   RigidBody,
   RoundCuboidCollider,
@@ -103,9 +103,10 @@ export const Snail: FC<{ username: string; userID?: string }> = ({ username, use
       userData={userData}
       friction={1.5}
       linearDamping={1.2}
+      collisionGroups={interactionGroups(0b10, 0b01)}
       onCollisionEnter={handleCollision}
       enabledRotations={[false, false, false]}
-      restitutionCombineRule={CoefficientCombineRule.Max}>
+      restitution={1}>
       <RoundCuboidCollider
         name='neck'
         args={[0.05, 0.05, 0.5, 0.2]}

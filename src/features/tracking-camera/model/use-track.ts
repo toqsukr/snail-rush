@@ -24,11 +24,12 @@ export const useTrack = () => {
   const [spring, api] = useSpring<SpringSettings>(() => ({
     position: initPosition,
     rotation: initRotation,
+    zoom: 0.9,
   }))
 
   const getMoveToConfig = (position: PositionType) => {
     return {
-      position: position,
+      position,
       config: { mass: 1, tension: 20, friction: 40, duration: 2500 },
     }
   }
@@ -43,6 +44,24 @@ export const useTrack = () => {
       config: { mass: 1, tension: 50, friction: 40, duration: 1400 },
     }
   }
+
+  const getZoomToConfig = (zoom: number) => {
+    return {
+      zoom,
+      config: { mass: 1, tension: 20, friction: 40, duration: 700 },
+    }
+  }
+
+  const zoomTo = useCallback((zoom: number) => {
+    return new Promise<void>(resolve =>
+      api.start({
+        to: async next => {
+          await next(getZoomToConfig(zoom))
+          resolve()
+        },
+      })
+    )
+  }, [])
 
   const moveTo = useCallback((position: PositionType) => {
     return new Promise<void>(resolve =>
@@ -93,11 +112,13 @@ export const useTrack = () => {
   useFrame(() => {
     camera.position.set(...spring.position.get())
     camera.rotation.set(...spring.rotation.get())
+    camera.zoom = spring.zoom.get()
   })
 
   return {
     followTarget,
     moveTo,
     focusTo,
+    zoomTo,
   }
 }

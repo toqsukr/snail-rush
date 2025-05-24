@@ -23,13 +23,13 @@ export const useDisconnectLobby = () => {
   const user = useUser(s => s.user)
   const { onDisconnectLobby } = useMenuDeps()
 
-  return () => {
+  return async () => {
     if (!user || !session) return
 
     disconnectLobby()
-    deleteSession()
+    await disconnectYourself.mutateAsync({ sessionID: session.id, playerID: user.id })
+    deleteSession() // ?
     onDisconnectLobby()
-    disconnectYourself.mutate({ sessionID: session.id, playerID: user.id })
   }
 }
 

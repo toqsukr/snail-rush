@@ -43,6 +43,20 @@ const HomePage = () => {
         renderChildren={(startTimer, resetTimer) => (
           <LobbyEventsProvider
             onChangeLobbyPlayers={updatePlayers}
+            onGameStop={async () => {
+              // resetTimer()
+              // toMainMenu()
+              // await moveTo([
+              //   MAIN_MENU_POSITION[0],
+              //   MAIN_MENU_POSITION[1],
+              //   MAIN_MENU_POSITION[2] + 10,
+              // ])
+              // const tempStatus = playerStatus
+              // updatePlayerStatus(null)
+              // await focusTo(new Vector3(...MAIN_MENU_POSITION))
+              // updatePlayerStatus(tempStatus)
+            }}
+            onStartJump={() => {}}
             onKickMe={() => updatePlayerStatus(null)}
             onGameStart={async () => {
               startGame()
@@ -54,6 +68,7 @@ const HomePage = () => {
               await followTarget(FINISH_POSITION)
               finishGame()
               const winner = players.find(({ id }) => id === actor_id)
+              console.log('winner', winner, players)
               winner && updateWinner(winner)
             }}
             onChangeOpponentRotation={({ rotation }) => {

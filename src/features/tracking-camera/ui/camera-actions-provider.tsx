@@ -7,6 +7,7 @@ import { useTrack } from '../model/use-track'
 type TrackCameraProvider = {
   moveTo: (position: PositionType) => Promise<void>
   focusTo: (position: Vector3) => Promise<void>
+  zoomTo: (zoom: number) => Promise<void>
   followTarget: (position: Vector3) => Promise<void>
 }
 

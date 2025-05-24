@@ -9,15 +9,27 @@ export const useCollision = (
   const { onCollision, shouldHandleCollision } = useSnailDeps()
 
   return (event: CollisionEnterPayload) => {
-    const { other } = event
+    const { manifold, other } = event
     const targetUserData = other.rigidBody?.userData
     if (shouldHandleCollision(targetUserData)) {
       console.log('Столкновение с препятствием!')
       animateCollision()
-      const linvel = getRigidBody()?.linvel()
-      const vector = linvel ? new Vector3(linvel.x, linvel.y, linvel.z) : new Vector3()
-      const normalized = vector.normalize().multiplyScalar(10)
-      getRigidBody()?.setLinvel(normalized, true)
+
+      const { x, y, z } = manifold.normal()
+
+      const normal = new Vector3(x, y, z)
+
+      const FORCE_MAGNITUDE = 10
+      const BOUNCE_FACTOR = 0.7
+
+      const {
+        x: impulseX,
+        y: impulseY,
+        z: impulseZ,
+      } = normal.multiplyScalar(FORCE_MAGNITUDE * BOUNCE_FACTOR)
+
+      getRigidBody()?.setLinvel({ x: impulseX, y: impulseY, z: impulseZ }, true)
+
       onCollision?.()
     }
   }

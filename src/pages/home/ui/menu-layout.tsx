@@ -19,9 +19,16 @@ const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
   resetTimer,
 }) => {
   const checkHost = useIsHost()
-  const { sendStartGame } = useLobbyEventsContext()
-  const { startGame, pauseGame, resumeGame, updatePlayerStatus, playerStatus, toMainMenu } =
-    useGameStore()
+  const { sendStartGame, sendStopGame } = useLobbyEventsContext()
+  const {
+    finished,
+    startGame,
+    pauseGame,
+    resumeGame,
+    updatePlayerStatus,
+    playerStatus,
+    toMainMenu,
+  } = useGameStore()
 
   const { followTarget, focusTo, moveTo } = useTrackCameraContext()
 
@@ -36,6 +43,7 @@ const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
         onBackToLobby: async () => {
           resetTimer()
           toMainMenu()
+          finished || sendStopGame()
           await moveTo([MAIN_MENU_POSITION[0], MAIN_MENU_POSITION[1], MAIN_MENU_POSITION[2] + 10])
           const tempStatus = playerStatus
           updatePlayerStatus(null)
