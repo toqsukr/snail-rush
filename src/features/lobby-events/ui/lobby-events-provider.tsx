@@ -15,7 +15,8 @@ export type LobbyEventsProviderProp = {
   onGameStop: () => void
   onStartJump: (position: OpponentStartJumpType) => void
   onGameFinish: (data: MessageType) => void
-  onChangeLobbyPlayers: (players: TUser[]) => void
+  onPlayerKicked: (players: TUser[]) => void
+  onPlayerConnected: (players: TUser[]) => void
   onChangeOpponentPosition: (position: OpponentPositionType) => void
   onChangeOpponentRotation: (position: OpponentRotationType) => void
 }

@@ -33,7 +33,11 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
   if (isConnecting || isDisconnecting || isLobbyCreating || isUserCreating)
     return <div>Loading...</div>
 
-  return <section className={css.menu}>{children}</section>
+  return (
+    <section className='h-full relative'>
+      <div className={css.menu}>{children}</div>
+    </section>
+  )
 }
 
 export const MainMenu = () => {

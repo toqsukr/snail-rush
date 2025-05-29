@@ -1,4 +1,4 @@
-export type { OpponentPositionType, OpponentRotationType } from './model/types'
+export type { MessageType, OpponentPositionType, OpponentRotationType } from './model/types'
 export {
   lobbyEventsContext,
   LobbyEventsProvider,

@@ -24,7 +24,6 @@ export const useTrack = () => {
   const [spring, api] = useSpring<SpringSettings>(() => ({
     position: initPosition,
     rotation: initRotation,
-    zoom: 0.9,
   }))
 
   const getMoveToConfig = (position: PositionType) => {
@@ -112,7 +111,7 @@ export const useTrack = () => {
   useFrame(() => {
     camera.position.set(...spring.position.get())
     camera.rotation.set(...spring.rotation.get())
-    camera.zoom = spring.zoom.get()
+    // camera.zoom = spring.zoom.get()
   })
 
   return {

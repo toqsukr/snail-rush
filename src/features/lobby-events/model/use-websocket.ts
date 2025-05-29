@@ -31,7 +31,8 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
     onGameStart,
     onGameFinish,
     onStartJump,
-    onChangeLobbyPlayers,
+    onPlayerKicked,
+    onPlayerConnected,
     onChangeOpponentPosition,
     onChangeOpponentRotation,
   } = props
@@ -56,19 +57,15 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
           switch (responseData.type) {
             case Operations.PLAYER_CONNECT:
               const connectData = responseData.data as ConnectPlayerMessageType
-              console.log('connected!', connectData)
-              onChangeLobbyPlayers(connectData.players.map(player => parseFromPlayerDTO(player)))
-              console.log('player connected')
+              onPlayerConnected(connectData.players.map(player => parseFromPlayerDTO(player)))
               break
             case Operations.PLAYER_KICK:
               const { kicked_id, players } = responseData.data as KickPlayerMessageType
-              console.log('kicked!', players)
               if (user.id === kicked_id) {
                 onSessionExit()
               } else {
-                onChangeLobbyPlayers(players.map(player => parseFromPlayerDTO(player)))
+                onPlayerKicked(players.map(player => parseFromPlayerDTO(player)))
               }
-              console.log('player kicked')
               break
             case Operations.PLAYER_MOVE:
               const { position } = PlayerMoveMessageSchema.parse(
@@ -124,7 +121,9 @@ export const useWebSocket = (props: LobbyEventsProviderProp) => {
     }
   }, [
     session?.id,
-    onChangeLobbyPlayers,
+    onSessionExit,
+    onPlayerKicked,
+    onPlayerConnected,
     onChangeOpponentPosition,
     onChangeOpponentRotation,
     onGameStart,

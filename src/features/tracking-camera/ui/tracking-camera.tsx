@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from '@react-three/drei'
 
 export const TrackingCamera = () => {
-  return <PerspectiveCamera makeDefault />
+  return <PerspectiveCamera makeDefault zoom={0.7} />
 }

@@ -3,17 +3,11 @@ import { useEffect, useRef } from 'react'
 import { AnimationAction, LoopOnce, LoopRepeat } from 'three'
 
 type AnimationConfig = {
-  /** Желаемая длительность анимации в секундах */
   duration?: number
-  /** Зациклить анимацию */
   loop?: boolean
-  /** Остановить другие анимации перед запуском */
   stopOthers?: boolean
-  /** Оставить модель в конечном состоянии анимации */
   pauseOnEnd?: boolean
-  /** Вес анимации (для смешивания) */
   weight?: number
-  /** Начальное время анимации (0-1) */
   startAt?: number
 }
 

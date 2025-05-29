@@ -1,5 +1,6 @@
 import { useIsHost } from '@features/auth/use-is-host'
 import { useLobbyEventsContext } from '@features/lobby-events'
+import { useAppendLog, useClearLogs } from '@features/logflow'
 import { menuDepsContext } from '@features/menu'
 import { useTrackCameraContext } from '@features/tracking-camera'
 import { FC, PropsWithChildren } from 'react'
@@ -20,6 +21,9 @@ const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
 }) => {
   const checkHost = useIsHost()
   const { sendStartGame, sendStopGame } = useLobbyEventsContext()
+  const clearLogs = useClearLogs()
+  const appendLog = useAppendLog()
+
   const {
     finished,
     startGame,
@@ -34,36 +38,55 @@ const MenuLayout: FC<PropsWithChildren<MenuWithDepsProp>> = ({
 
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus ?? 'host'))
 
+  const onBackToLobby = async () => {
+    resetTimer()
+    toMainMenu()
+    finished || sendStopGame()
+    await moveTo([MAIN_MENU_POSITION[0], MAIN_MENU_POSITION[1], MAIN_MENU_POSITION[2] + 10])
+    const tempStatus = playerStatus
+    updatePlayerStatus(null)
+    await focusTo(new Vector3(...MAIN_MENU_POSITION))
+    updatePlayerStatus(tempStatus)
+  }
+  const onConnectLobby = () => {
+    updatePlayerStatus('joined')
+    appendLog('YOU were connected!')
+  }
+
+  const onDisconnectLobby = () => {
+    updatePlayerStatus(null)
+    clearLogs()
+  }
+
+  const onCreateLobby = () => {
+    updatePlayerStatus('host')
+    appendLog('Lobby was created!')
+  }
+
+  const onDeleteLobby = () => {
+    updatePlayerStatus(null)
+    clearLogs()
+  }
+
+  const onPlay = async () => {
+    sendStartGame()
+    startGame()
+    await followTarget(new Vector3(...playerStartPosition))
+    startTimer()
+  }
+
   return (
     <menuDepsContext.Provider
       value={{
         isHost: checkHost,
         onPause: pauseGame,
         onContinue: resumeGame,
-        onBackToLobby: async () => {
-          resetTimer()
-          toMainMenu()
-          finished || sendStopGame()
-          await moveTo([MAIN_MENU_POSITION[0], MAIN_MENU_POSITION[1], MAIN_MENU_POSITION[2] + 10])
-          const tempStatus = playerStatus
-          updatePlayerStatus(null)
-          await focusTo(new Vector3(...MAIN_MENU_POSITION))
-          updatePlayerStatus(tempStatus)
-        },
-        onConnectLobby: () => updatePlayerStatus('joined'),
-        onDisconnectLobby: () => updatePlayerStatus(null),
-        onCreateLobby: () => {
-          updatePlayerStatus('host')
-        },
-        onDeleteLobby: () => {
-          updatePlayerStatus(null)
-        },
-        onPlay: async () => {
-          sendStartGame()
-          startGame()
-          await followTarget(new Vector3(...playerStartPosition))
-          startTimer()
-        },
+        onBackToLobby,
+        onConnectLobby,
+        onDisconnectLobby,
+        onCreateLobby,
+        onDeleteLobby,
+        onPlay,
       }}>
       {children}
     </menuDepsContext.Provider>
