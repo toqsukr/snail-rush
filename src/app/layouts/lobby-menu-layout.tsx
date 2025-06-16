@@ -1,4 +1,4 @@
-import { useIsHost } from '@features/auth/use-is-host'
+import { useIsHost } from '@features/auth/model/use-is-host'
 import { useResetTimer, useStartTimer } from '@features/countdown'
 import { useSendStartGame, useSendStopGame } from '@features/lobby-events'
 import { useClearLogs } from '@features/logflow'
@@ -7,8 +7,8 @@ import { useFocusTo, useFollowTarget, useMoveTo } from '@features/tracking-camer
 import { FC, PropsWithChildren, Suspense } from 'react'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../../pages/home/lib/status'
-import { MAIN_MENU_POSITION } from '../../pages/home/model/constants'
 import { useGameStore } from '../../pages/home/model/store'
+import { MAIN_MENU_POSITION } from '../constants'
 
 const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const {

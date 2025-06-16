@@ -4,7 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useRef } from 'react'
-import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../model/constants'
+import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../../../app/constants'
 import { useGameStore } from '../model/store'
 
 const GameOver = () => {
@@ -22,8 +22,6 @@ const GameOver = () => {
   })
 
   if ((!started && finished) || !winner) return
-
-  console.log(positionRef.current, rotationRef.current)
 
   return (
     <Html

@@ -1,3 +1,4 @@
+import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
 import { useSendTargetPosition, useSendTargetRotation } from '@features/lobby-events'
 import { isObstacle } from '@features/obstacle'
@@ -6,8 +7,8 @@ import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@featur
 import { useFollowTarget } from '@features/tracking-camera'
 import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
-import { getPlayerPosition, getPlayerSkin, getStartPosition, getTexturePath } from '../lib/status'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../model/constants'
+import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../../../app/constants'
+import { getPlayerPosition, getStartPosition, getTexturePath } from '../lib/status'
 import { useGameStore } from '../model/store'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
@@ -59,6 +60,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 const PlayerSuspense = () => {
   const user = useUser(s => s.user)
   const { moveable, updateMoveable, playerStatus } = useGameStore()
+  const { data: skin } = useSkinById(user?.skinID ?? '')
 
   const onCollision = useCallback(() => {
     if (moveable) {
@@ -71,7 +73,7 @@ const PlayerSuspense = () => {
 
   if (!playerStatus || !user) return
 
-  const texturePath = getTexturePath(getPlayerSkin(playerStatus))
+  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? '')
 
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus))
 

@@ -1,10 +1,10 @@
-import { MainMenu as Menu, mainMenuDepsContext, useMainMenuDeps } from '@features/menu'
+import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '@app/constants'
+import { AuthMenu as Menu, mainMenuDepsContext, useMainMenuDeps } from '@features/menu'
 import { Html } from '@react-three/drei'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../../../app/constants'
 
-const MainMenu = () => {
+export const AuthPage = () => {
   const mainMenuContextValue = useMainMenuDeps()
 
   return (
@@ -22,5 +22,3 @@ const MainMenu = () => {
     </Html>
   )
 }
-
-export default MainMenu

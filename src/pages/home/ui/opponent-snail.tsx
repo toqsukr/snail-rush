@@ -1,11 +1,12 @@
 import { usePlayers } from '@entities/players'
+import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
 import { isObstacle } from '@features/obstacle'
 import { Opponent, opponentDepsContext } from '@features/opponent-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 import { FC, Suspense, useMemo } from 'react'
-import { getPlayerPosition, getPlayerSkin, getStartPosition, getTexturePath } from '../lib/status'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../model/constants'
+import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../../../app/constants'
+import { getPlayerPosition, getStartPosition, getTexturePath } from '../lib/status'
 import { useGameStore } from '../model/store'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
@@ -32,8 +33,12 @@ const OpponentSuspense = () => {
   const user = useUser(s => s.user)
   const playerStatus = useGameStore(s => s.playerStatus)
   const players = usePlayers(s => s.players)
+  const opponentPlayer = players.find(({ id }) => id !== user?.id)
+  const { data: skin } = useSkinById(opponentPlayer?.skinID ?? '')
 
   if (!playerStatus || players.length < 2 || !user) return
+
+  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? '')
 
   return (
     <Suspense fallback={null}>
@@ -42,7 +47,7 @@ const OpponentSuspense = () => {
           stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,
           shrinkDuration: MAX_SPACE_HOLD_TIME,
-          texturePath: getTexturePath(getPlayerSkin(playerStatus === 'joined' ? 'host' : 'joined')),
+          texturePath,
         }}>
         <SnailProvider
           initPosition={getStartPosition(

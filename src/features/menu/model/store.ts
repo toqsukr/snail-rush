@@ -1,10 +1,20 @@
 import { create } from 'zustand'
 
-export type MenuMode = 'auth' | 'main-menu' | 'join-lobby' | 'lobby' | 'game-pause' | 'game-over'
+export type MenuMode =
+  | 'auth-username'
+  | 'auth-password'
+  | 'main-menu'
+  | 'main-menu-skin'
+  | 'join-lobby'
+  | 'lobby'
+  | 'game-pause'
+  | 'game-over'
 
 type MenuStore = {
   mode: MenuMode
   visibility: boolean
+  toAuthPassword: () => void
+  toAuthUsername: () => void
   completeAuth: () => void
   joinLobby: () => void
   connectLobby: () => void
@@ -15,16 +25,20 @@ type MenuStore = {
   pauseGame: () => void
   resumeGame: () => void
   finishGame: () => void
+  toSkins: () => void
   updateMenuMode: (mode: MenuMode) => void
 }
 
 export const useMenu = create<MenuStore>((set, get) => ({
-  mode: 'main-menu',
+  mode: 'auth-username',
   visibility: true,
+  toAuthUsername: () => set({ ...get(), mode: 'auth-username' }),
+  toAuthPassword: () => set({ ...get(), mode: 'auth-password' }),
   updateMenuMode: mode => set({ ...get(), mode }),
   completeAuth: () => set({ ...get(), mode: 'main-menu' }),
   connectLobby: () => set({ ...get(), mode: 'lobby' }),
   joinLobby: () => set({ ...get(), mode: 'join-lobby' }),
+  toSkins: () => set({ ...get(), mode: 'main-menu-skin' }),
   disconnectLobby: () => set({ ...get(), mode: 'main-menu', visibility: true }),
   backToMainMenu: () => set({ ...get(), mode: 'main-menu', visibility: true }),
   backToLobby: () => set({ ...get(), mode: 'lobby', visibility: true }),

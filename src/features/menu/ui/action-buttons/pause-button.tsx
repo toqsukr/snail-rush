@@ -21,7 +21,6 @@ const AnimatedPauseIcon: FC<HTMLAttributes<HTMLDivElement>> = props => {
 
 export const PauseButton = () => {
   const pauseGame = usePause()
-  console.log('pause button')
 
   const portalParentElement = document.getElementById('root')
 

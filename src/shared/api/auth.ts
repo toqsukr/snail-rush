@@ -12,6 +12,8 @@ const RegisterResponseSchema = z.object({
   token: TokenDTOSchema,
 })
 
+export type RegisterDTO = z.infer<typeof RegisterResponseSchema>
+
 class AuthService {
   readonly AUTH_PREFIX = '/auth'
 

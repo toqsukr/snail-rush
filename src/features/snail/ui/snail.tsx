@@ -23,7 +23,7 @@ const textures = [
   '/textures/snail-roughness.png',
 ]
 
-export const Snail: FC<{ username: string; userID?: string }> = ({ username, userID }) => {
+export const Snail: FC<{ username?: string; userID?: string }> = ({ username, userID }) => {
   const { texturePath, shrinkDuration, stunTimeout } = useSnailDeps()
   const { scene, animations } = useGLTF('/models/snail.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
@@ -103,7 +103,7 @@ export const Snail: FC<{ username: string; userID?: string }> = ({ username, use
       userData={userData}
       friction={1.5}
       linearDamping={1.2}
-      collisionGroups={interactionGroups(0b10, 0b01)}
+      collisionGroups={interactionGroups(0b01, 0b10)}
       onCollisionEnter={handleCollision}
       enabledRotations={[false, false, false]}
       restitution={1}>
@@ -142,3 +142,6 @@ export const Snail: FC<{ username: string; userID?: string }> = ({ username, use
 }
 
 useGLTF.preload('/models/snail.glb')
+useTexture.preload(textures[0])
+useTexture.preload(textures[1])
+useTexture.preload(textures[2])

@@ -10,7 +10,9 @@ class SkinService {
   readonly SKIN_PREFIX = '/skin'
 
   async getAllSkins() {
-    return baseTemplate.get(`${this.SKIN_PREFIX}/`).then(({ data }) => SkinDTOSchema.parse(data))
+    return baseTemplate
+      .get(`${this.SKIN_PREFIX}/`)
+      .then(({ data }) => SkinDTOSchema.array().parse(data))
   }
 
   async createSkin(name: string) {

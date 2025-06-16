@@ -1,3 +1,4 @@
+import { AuthPage } from '@pages/auth'
 import HomePage from '@pages/home'
 import GameMap from '@pages/home/ui/game-map'
 import GameOver from '@pages/home/ui/game-over'
@@ -9,22 +10,22 @@ import { Routes } from '@shared/model/routes'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { createBrowserRouter, Outlet } from 'react-router-dom'
 import AppLayout from './layouts/app-layout'
+import AuthLayout from './layouts/auth-layout'
 import CountdownLayout from './layouts/countdown-layout'
 import LobbyMenuLayout from './layouts/lobby-menu-layout'
 import MainMenuLayout from './layouts/main-menu-layout'
+import NonAuthLayout from './layouts/non-auth-layout'
 import TrackCameraLayout from './layouts/track-camera-layout'
 import WebSocketLayout from './layouts/websocket-layout'
 
 export const router = createBrowserRouter([
   {
-    path: Routes.HOME,
     element: (
       <QueryClientProvider client={queryClient}>
         <AppLayout>
           <TrackCameraLayout>
             <CountdownLayout>
               <MainMenuLayout>
-                <HomePage />
                 <Outlet />
               </MainMenuLayout>
             </CountdownLayout>
@@ -34,17 +35,36 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
-        path: Routes.LOBBY,
+        path: Routes.HOME,
         element: (
-          <WebSocketLayout>
-            <LobbyMenuLayout>
-              <LobbyMenu />
-              <GameMap />
-              <PauseMenu />
-              <GameOver />
-              <PlayerSuspense />
-            </LobbyMenuLayout>
-          </WebSocketLayout>
+          <AuthLayout>
+            <HomePage />
+            <Outlet />
+          </AuthLayout>
+        ),
+        children: [
+          {
+            path: Routes.LOBBY,
+            element: (
+              <WebSocketLayout>
+                <LobbyMenuLayout>
+                  <LobbyMenu />
+                  <GameMap />
+                  <PauseMenu />
+                  <GameOver />
+                  <PlayerSuspense />
+                </LobbyMenuLayout>
+              </WebSocketLayout>
+            ),
+          },
+        ],
+      },
+      {
+        path: Routes.AUTH,
+        element: (
+          <NonAuthLayout>
+            <AuthPage />
+          </NonAuthLayout>
         ),
       },
     ],

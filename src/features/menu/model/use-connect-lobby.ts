@@ -1,6 +1,6 @@
-import { usePlayers } from '@entities/players'
+import { parseFromPlayerDTO, usePlayers } from '@entities/players'
 import { parseFromSessionDTO, useSession } from '@entities/session'
-import { parseFromPlayerDTO, useUser } from '@entities/user'
+import { useUser } from '@entities/user'
 import { useConnectSession } from '../api/connect-session'
 import { useMainMenuDeps } from '../deps'
 import { useMenu } from './store'
@@ -16,8 +16,8 @@ export const useConnectLobby = () => {
   return async (sessionID: string) => {
     if (!user?.id) return
 
-    connectLobby()
     const session = await connectSession.mutateAsync({ sessionID, playerID: user.id })
+    connectLobby()
     onConnectLobby(user.id, session.session_id)
     updateSession(parseFromSessionDTO(session))
     updatePlayers(session.players.map(player => parseFromPlayerDTO(player)))

@@ -1,7 +1,7 @@
 import { TPlayer } from '@entities/players'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { PlayerStatus } from '../lib/status'
+import { PlayerSkins, PlayerStatus } from '../lib/status'
 
 const GAME_STORE_KEY = 'game-data-store'
 
@@ -32,6 +32,7 @@ export const useGameStore = create(
       moveable: false,
       finished: false,
       playerStatus: null,
+      skin: PlayerSkins.HERBIVORE,
       startGame: () => set({ ...get(), started: true, finished: false, winner: null }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),

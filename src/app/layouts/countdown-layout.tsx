@@ -1,6 +1,6 @@
+import { START_TIMER_VALUE } from '@app/constants'
 import { CountdownProvider } from '@features/countdown'
 import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
-import { START_TIMER_VALUE } from '@pages/home/model/constants'
 import { useGameStore } from '@pages/home/model/store'
 import { FC, PropsWithChildren } from 'react'
 

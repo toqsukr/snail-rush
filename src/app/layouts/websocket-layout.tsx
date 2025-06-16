@@ -1,6 +1,7 @@
-import { usePlayers } from '@entities/players'
+import { FINISH_POSITION } from '@app/constants'
+import { TPlayer, usePlayers } from '@entities/players'
 import { useSession } from '@entities/session'
-import { TUser, useUser } from '@entities/user'
+import { useUser } from '@entities/user'
 import { useStartTimer } from '@features/countdown'
 import {
   MessageType,
@@ -13,7 +14,6 @@ import { useMenuMode } from '@features/menu'
 import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
 import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
-import { FINISH_POSITION } from '@pages/home/model/constants'
 import { useGameStore } from '@pages/home/model/store'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
@@ -48,17 +48,16 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     startTimer()
   }
 
-  const onPlayerConnected = (updatedPlayers: TUser[], timestamp: number) => {
+  const onPlayerConnected = (updatedPlayers: TPlayer[], timestamp: number) => {
     const connected = updatedPlayers.find(({ id }) => players.every(player => id !== player.id))
     if (connected) {
       updatePlayers(updatedPlayers)
       const time = unixFloatToDate(timestamp)
-      console.log(time.toISOString())
       appendLog(`Player ${connected.username} was connected!`, time)
     }
   }
 
-  const onPlayerKicked = (updatedPlayers: TUser[], timestamp: number) => {
+  const onPlayerKicked = (updatedPlayers: TPlayer[], timestamp: number) => {
     const kicked = players.find(({ id }) => updatedPlayers.every(player => id !== player.id))
     if (kicked) {
       updatePlayers(updatedPlayers)

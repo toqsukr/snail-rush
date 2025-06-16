@@ -22,7 +22,6 @@ export const useAdditiveRotation = () => {
   const calcRotationIncrement = () => {
     const sign = Math.sign(x.current)
     const y = (MAX_INCREMENT / Math.PI) * Math.atan(x.current)
-    console.log(MAX_INCREMENT / Math.PI, Math.atan(x.current), [x.current, y])
 
     if (sign > 0) {
       return Math.max(MIN_INCREMENT, y)

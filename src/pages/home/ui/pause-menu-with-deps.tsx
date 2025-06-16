@@ -4,7 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useRef } from 'react'
-import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../model/constants'
+import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../../../app/constants'
 import { useGameStore } from '../model/store'
 
 const PauseMenu = () => {

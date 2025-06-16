@@ -9,7 +9,7 @@ import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
 import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
-import { FINISH_POSITION } from '../model/constants'
+import { FINISH_POSITION } from '../../../app/constants'
 import { useGameStore } from '../model/store'
 
 const stones = [
@@ -55,7 +55,7 @@ const GameMap = () => {
   const followTarget = useFollowTarget()
   const sendFinishGame = useSendFinishGame()
   const players = usePlayers(s => s.players)
-  const { finishGame, updateWinner, updateMoveable } = useGameStore()
+  const { finishGame, updateWinner, updateMoveable, winner } = useGameStore()
 
   return (
     <>
@@ -64,7 +64,7 @@ const GameMap = () => {
       <finishControlDepsContext.Provider
         value={{
           onFinish: async userData => {
-            if (containsUserdata(userData)) {
+            if (containsUserdata(userData) && !winner) {
               updateMoveable(false)
               sendFinishGame()
               await followTarget(FINISH_POSITION)

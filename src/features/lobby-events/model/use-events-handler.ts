@@ -1,5 +1,6 @@
+import { parseFromPlayerDTO, TPlayer } from '@entities/players'
 import { useSession } from '@entities/session'
-import { parseFromPlayerDTO, TUser, useUser } from '@entities/user'
+import { useUser } from '@entities/user'
 import { useEventCallback } from '@shared/lib/react'
 import {
   ConnectPlayerMessageType,
@@ -26,8 +27,8 @@ type LobbyEventsProviderProp = {
   onGameStop: () => void
   onStartJump: (position: OpponentStartJumpType) => void
   onGameFinish: (data: MessageType) => void
-  onPlayerKicked: (players: TUser[], timestamp: number) => void
-  onPlayerConnected: (players: TUser[], timestamp: number) => void
+  onPlayerKicked: (players: TPlayer[], timestamp: number) => void
+  onPlayerConnected: (players: TPlayer[], timestamp: number) => void
   onChangeOpponentPosition: (position: OpponentPositionType) => void
   onChangeOpponentRotation: (position: OpponentRotationType) => void
 }
@@ -55,12 +56,8 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
       deleteSession()
     }
 
-    console.log(websocket, event)
-
     try {
       const responseData: WebSocketResponse = WebSocketResponseSchema.parse(JSON.parse(event.data))
-
-      console.log(responseData)
 
       switch (responseData.type) {
         case Operations.PLAYER_CONNECT:

@@ -1,8 +1,13 @@
+import { TSkin } from '@entities/skin'
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 
 type MainMenuDeps = {
   onCreateLobby: (userID: string, sessionID: string) => void
   onConnectLobby: (userID: string, sessionID: string) => void
+  onToSkins: () => void
+  onBackToMainMenu: () => void
+  onChangeSkin: (skin: TSkin) => void
+  onRegister: (username: string, password: string) => void
 }
 
 type LobbyMenuDeps = {
