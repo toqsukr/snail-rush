@@ -1,6 +1,8 @@
 export type { MessageType, OpponentPositionType, OpponentRotationType } from './model/types'
-export {
-  lobbyEventsContext,
-  LobbyEventsProvider,
-  useLobbyEventsContext,
-} from './ui/lobby-events-provider'
+export { useEventsHandler } from './model/use-events-handler'
+export { useSendFinishGame } from './model/use-send-finish-game'
+export { useSendShrink } from './model/use-send-shrink'
+export { useSendStartGame } from './model/use-send-start-game'
+export { useSendStopGame } from './model/use-send-stop-game'
+export { useSendTargetPosition } from './model/use-send-target-position'
+export { useSendTargetRotation } from './model/use-send-target-rotation'

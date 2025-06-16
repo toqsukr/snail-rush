@@ -1,4 +1,4 @@
-import { GameOver as Menu, menuDepsContext, useMenuDeps } from '@features/menu'
+import { GameOver as Menu, lobbyMenuDepsContext, useLobbyMenuDeps } from '@features/menu'
 import { Html } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
@@ -8,7 +8,7 @@ import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../model/constants'
 import { useGameStore } from '../model/store'
 
 const GameOver = () => {
-  const contextValue = useMenuDeps()
+  const contextValue = useLobbyMenuDeps()
   const { started, finished, winner } = useGameStore()
   const positionRef = useRef(MAIN_MENU_POSITION)
   const rotationRef = useRef(MAIN_MENU_ROTATION)
@@ -23,6 +23,8 @@ const GameOver = () => {
 
   if ((!started && finished) || !winner) return
 
+  console.log(positionRef.current, rotationRef.current)
+
   return (
     <Html
       transform
@@ -31,9 +33,9 @@ const GameOver = () => {
       rotation={rotationRef.current}
       portal={{ current: document.body }}>
       <QueryClientProvider client={queryClient}>
-        <menuDepsContext.Provider value={contextValue}>
+        <lobbyMenuDepsContext.Provider value={contextValue}>
           <Menu winnerName={winner.username} />
-        </menuDepsContext.Provider>
+        </lobbyMenuDepsContext.Provider>
       </QueryClientProvider>
     </Html>
   )

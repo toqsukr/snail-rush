@@ -1,9 +1,9 @@
 import { usePlayers } from '@entities/players'
 import { TUser } from '@entities/user'
 import { FinishControl, finishControlDepsContext } from '@features/finish-control'
-import { useLobbyEventsContext } from '@features/lobby-events'
+import { useSendFinishGame } from '@features/lobby-events'
 import { StaticObstacle } from '@features/obstacle'
-import { useTrackCameraContext } from '@features/tracking-camera'
+import { useFollowTarget } from '@features/tracking-camera'
 import FinishLine from '@shared/primitives/finish-line'
 import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
@@ -52,10 +52,10 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
 }
 
 const GameMap = () => {
-  const { finishGame, updateWinner, updateMoveable } = useGameStore()
-  const { followTarget } = useTrackCameraContext()
-  const { sendFinishGame } = useLobbyEventsContext()
+  const followTarget = useFollowTarget()
+  const sendFinishGame = useSendFinishGame()
   const players = usePlayers(s => s.players)
+  const { finishGame, updateWinner, updateMoveable } = useGameStore()
 
   return (
     <>

@@ -1,4 +1,4 @@
-export { countdownDepsContext } from './deps'
+export { useResetTimer } from './model/use-reset-timer'
 export { useStartTimer } from './model/use-start-timer'
 export { Countdown } from './ui/countdown'
-export { CountdownRenderLayout } from './ui/countdown-render-layout'
+export { CountdownProvider } from './ui/countdown-provider'

@@ -1,4 +1,4 @@
-import { PauseMenu as Menu, PauseButton, menuDepsContext, useMenuDeps } from '@features/menu'
+import { PauseMenu as Menu, lobbyMenuDepsContext, useLobbyMenuDeps } from '@features/menu'
 import { Html } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
@@ -20,7 +20,7 @@ const PauseMenu = () => {
     rotationRef.current = [roll, pitch, yaw]
   })
 
-  const contextValue = useMenuDeps()
+  const contextValue = useLobbyMenuDeps()
 
   if (!started || finished) return
 
@@ -33,10 +33,9 @@ const PauseMenu = () => {
         rotation={rotationRef.current}
         portal={{ current: document.body }}>
         <QueryClientProvider client={queryClient}>
-          <menuDepsContext.Provider value={contextValue}>
+          <lobbyMenuDepsContext.Provider value={contextValue}>
             <Menu />
-            <PauseButton />
-          </menuDepsContext.Provider>
+          </lobbyMenuDepsContext.Provider>
         </QueryClientProvider>
       </Html>
     </Suspense>

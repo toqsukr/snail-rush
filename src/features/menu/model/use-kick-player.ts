@@ -2,20 +2,7 @@ import { usePlayers } from '@entities/players'
 import { parseFromSessionDTO, useSession } from '@entities/session'
 import { useUser } from '@entities/user'
 import sessionService from '@shared/api/session'
-import { useMutation } from '@tanstack/react-query'
-import { KickPlayer } from './types'
-
-const kickPlayerMutationKey = 'kick-player'
-
-const useKickPlayer = () => {
-  return useMutation({
-    mutationKey: [kickPlayerMutationKey],
-    mutationFn: async (data: KickPlayer) => {
-      const { sessionID, actorID, dependentID } = data
-      return await sessionService.kickPlayer(sessionID, actorID, dependentID)
-    },
-  })
-}
+import { useKickPlayer } from '../api/kick-player'
 
 export const useKickLobbyPlayer = () => {
   const kickPlayer = useKickPlayer()

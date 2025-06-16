@@ -1,9 +1,9 @@
-import { useMenuDeps } from '../deps'
+import { useLobbyMenuDeps } from '../deps'
 import { useMenu } from './store'
 
 export const usePause = () => {
   const pauseGame = useMenu(s => s.pauseGame)
-  const { onPause } = useMenuDeps()
+  const { onPause } = useLobbyMenuDeps()
 
   return () => {
     pauseGame()

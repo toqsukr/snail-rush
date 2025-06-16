@@ -1,26 +1,14 @@
 import { useSession } from '@entities/session'
 import { useUser } from '@entities/user'
-import sessionService from '@shared/api/session'
-import { useMutation } from '@tanstack/react-query'
-import { useMenuDeps } from '../deps'
+import { useDeleteSession } from '../api/delete-session'
+import { useLobbyMenuDeps } from '../deps'
 import { useMenu } from './store'
-
-const deleteLobbyMutationKey = 'delete-lobby'
-
-const useDeleteSession = () => {
-  return useMutation({
-    mutationKey: [deleteLobbyMutationKey],
-    mutationFn: async (sessionID: string) => {
-      return await sessionService.deleteSession(sessionID)
-    },
-  })
-}
 
 export const useDeleteLobby = () => {
   const disconnectLobby = useMenu(s => s.disconnectLobby)
   const { session, deleteSession } = useSession()
   const user = useUser(s => s.user)
-  const { isHost, onDeleteLobby } = useMenuDeps()
+  const { isHost, onDeleteLobby } = useLobbyMenuDeps()
   const removeSession = useDeleteSession()
 
   return () => {

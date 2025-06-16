@@ -1,22 +1,47 @@
+import { SpringRef, SpringValues, useSpring } from '@react-spring/three'
+import { useFrame, useThree } from '@react-three/fiber'
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 import { FC, PropsWithChildren } from 'react'
-import { Vector3 } from 'three'
-import { PositionType } from '../model/types'
-import { useTrack } from '../model/use-track'
+import { PositionType, RotationType } from '../model/types'
 
-type TrackCameraProvider = {
-  moveTo: (position: PositionType) => Promise<void>
-  focusTo: (position: Vector3) => Promise<void>
-  zoomTo: (zoom: number) => Promise<void>
-  followTarget: (position: Vector3) => Promise<void>
+type TrackingCameraDeps = {
+  initPosition: number[]
+  initRotation: number[]
 }
 
-export const trackCameraContext = createStrictContext<TrackCameraProvider>()
+type SpringSettings = {
+  position: PositionType
+  rotation: RotationType
+  zoom: number
+}
+
+type TrackCameraProvider = {
+  api: SpringRef<SpringSettings>
+  spring: SpringValues<SpringSettings>
+}
+
+const trackCameraContext = createStrictContext<TrackCameraProvider>()
 
 export const useTrackCameraContext = () => useStrictContext(trackCameraContext)
 
-export const TrackCameraProvider: FC<PropsWithChildren> = ({ children }) => {
-  const trackData = useTrack()
+export const TrackCameraProvider: FC<PropsWithChildren<TrackingCameraDeps>> = ({
+  children,
+  initPosition,
+  initRotation,
+}) => {
+  const { camera } = useThree()
+  const [spring, api] = useSpring<SpringSettings>(() => ({
+    position: initPosition,
+    rotation: initRotation,
+  }))
+
+  useFrame(() => {
+    camera.position.set(...spring.position.get())
+    camera.rotation.set(...spring.rotation.get())
+    // camera.zoom = spring.zoom.get()
+  })
+
+  const trackData = { spring, api }
 
   return <trackCameraContext.Provider value={trackData}>{children}</trackCameraContext.Provider>
 }

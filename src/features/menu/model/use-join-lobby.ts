@@ -1,17 +1,12 @@
 import { useMenu } from './store'
-import { useCreateUser, useIsUserCreating } from './use-create-user'
+import { useCreateUser } from './use-create-user'
 
 export const useJoinLobby = () => {
-  const connectLobby = useMenu(s => s.connectLobby)
+  const joinLobby = useMenu(s => s.joinLobby)
   const createUser = useCreateUser()
 
   return async (username: string) => {
-    connectLobby()
+    joinLobby()
     createUser(username)
   }
-}
-
-export const useIsLobbyJoining = () => {
-  const isUserCreating = useIsUserCreating()
-  return isUserCreating
 }

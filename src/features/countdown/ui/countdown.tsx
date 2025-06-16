@@ -2,8 +2,8 @@ import { useGLTF } from '@react-three/drei'
 import { PrimitiveProps, useFrame } from '@react-three/fiber'
 import { FC, Suspense, useEffect, useRef } from 'react'
 import { AnimationMixer } from 'three'
-import { useCountdownDeps } from '../deps'
 import { useCountdownStore } from '../model/store'
+import { useCountdownDeps } from './countdown-provider'
 
 type CountdownProp = Omit<PrimitiveProps, 'object'>
 

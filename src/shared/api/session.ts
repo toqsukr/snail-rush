@@ -14,33 +14,31 @@ export type SessionDTO = z.infer<typeof SessionDTOSchema>
 class SessionService {
   readonly SESSION_PREFIX = `/session`
 
-  async getSession(sessionID: string) {
+  async getSession(session_id: string) {
     return baseTemplate
-      .get<SessionDTO>(`${this.SESSION_PREFIX}/${sessionID}/`)
+      .get(`${this.SESSION_PREFIX}/${session_id}/`)
       .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
-  async createSession(playerID: string) {
+  async createSession(player_id: string) {
     return baseTemplate
-      .post<SessionDTO>(`${this.SESSION_PREFIX}`, {
-        player_id: playerID,
-      })
+      .post(`${this.SESSION_PREFIX}/`, { player_id })
       .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
-  async deleteSession(sessionID: string) {
-    return baseTemplate.delete(`${this.SESSION_PREFIX}/${sessionID}`)
+  async deleteSession(session_id: string) {
+    return baseTemplate.delete(`${this.SESSION_PREFIX}/${session_id}/`)
   }
 
-  async connectSession(sessionID: string, playerID: string) {
+  async connectSession(session_id: string, player_id: string) {
     return baseTemplate
-      .post<SessionDTO>(`${this.SESSION_PREFIX}/${sessionID}/connect/${playerID}`, null)
+      .post(`${this.SESSION_PREFIX}/${session_id}/connect/${player_id}/`, null)
       .then(({ data }) => SessionDTOSchema.parse(data))
   }
 
-  async kickPlayer(sessionID: string, actionID: string, dependentID: string) {
+  async kickPlayer(session_id: string, action_id: string, dependent_id: string) {
     return baseTemplate.delete(
-      `${this.SESSION_PREFIX}/${sessionID}/player/${actionID}/kick/${dependentID}`
+      `${this.SESSION_PREFIX}/${session_id}/player/${action_id}/kick/${dependent_id}/`
     )
   }
 }

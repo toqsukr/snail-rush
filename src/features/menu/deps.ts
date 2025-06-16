@@ -1,17 +1,22 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 
-type MenuDeps = {
+type MainMenuDeps = {
+  onCreateLobby: (userID: string, sessionID: string) => void
+  onConnectLobby: (userID: string, sessionID: string) => void
+}
+
+type LobbyMenuDeps = {
   onPlay: () => void
   onPause: () => void
   onContinue: () => void
-  onCreateLobby: () => void
-  onConnectLobby: () => void
   onDeleteLobby: () => void
-  onDisconnectLobby: () => void
   onBackToLobby: () => void
+  onDisconnectLobby: () => void
   isHost: (playerID: string) => boolean
 }
 
-export const menuDepsContext = createStrictContext<MenuDeps>()
+export const mainMenuDepsContext = createStrictContext<MainMenuDeps>()
+export const lobbyMenuDepsContext = createStrictContext<LobbyMenuDeps>()
 
-export const useMenuDeps = () => useStrictContext(menuDepsContext)
+export const useMainMenuDeps = () => useStrictContext(mainMenuDepsContext)
+export const useLobbyMenuDeps = () => useStrictContext(lobbyMenuDepsContext)

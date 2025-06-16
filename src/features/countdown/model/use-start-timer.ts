@@ -1,11 +1,9 @@
 import { useCountdownStore } from './store'
 
 export const useStartTimer = () => {
-  const { updateStarted, resetTimer } = useCountdownStore()
+  const { updateStarted } = useCountdownStore()
 
-  const startTimer = () => {
+  return () => {
     updateStarted(true)
   }
-
-  return { startTimer, resetTimer }
 }

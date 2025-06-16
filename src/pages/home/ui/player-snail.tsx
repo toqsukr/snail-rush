@@ -1,9 +1,9 @@
 import { TUser, useUser } from '@entities/user'
-import { useLobbyEventsContext } from '@features/lobby-events'
+import { useSendTargetPosition, useSendTargetRotation } from '@features/lobby-events'
 import { isObstacle } from '@features/obstacle'
 import { Player, playerDepsContext } from '@features/player-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
-import { useTrackCameraContext } from '@features/tracking-camera'
+import { useFollowTarget } from '@features/tracking-camera'
 import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getPlayerSkin, getStartPosition, getTexturePath } from '../lib/status'
@@ -12,7 +12,9 @@ import { useGameStore } from '../model/store'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
-  const { followTarget } = useTrackCameraContext()
+  const followTarget = useFollowTarget()
+  const sendTargetPosition = useSendTargetPosition()
+  const sendTargetRotation = useSendTargetRotation()
 
   const {
     appendPosition,
@@ -24,8 +26,6 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
     startShrinkAnimation,
     stopShrinkAnimation,
   } = useSnailContext()
-
-  const { sendTargetPosition, sendTargetRotation } = useLobbyEventsContext()
 
   return (
     <playerDepsContext.Provider

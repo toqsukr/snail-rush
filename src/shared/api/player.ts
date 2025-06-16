@@ -4,6 +4,10 @@ import baseTemplate from './base-template'
 export const PlayerDTOSchema = z.object({
   player_id: z.string(),
   username: z.string().min(1),
+  // wins: z.number(),
+  // losses: z.number(),
+  // total_games: z.number(),
+  // skin_id: z.string(),
 })
 
 export type PlayerDTO = z.infer<typeof PlayerDTOSchema>
@@ -11,29 +15,27 @@ export type PlayerDTO = z.infer<typeof PlayerDTOSchema>
 class PlayerService {
   readonly PLAYER_PREFIX = '/player'
 
-  async getPlayer(playerID: string) {
+  async getPlayer(player_id: string) {
     return baseTemplate
-      .get<PlayerDTO>(this.PLAYER_PREFIX, {
-        params: { playerID },
-      })
+      .get(`${this.PLAYER_PREFIX}/${player_id}/`)
       .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
   async createPlayer(username: string) {
     return baseTemplate
-      .post<PlayerDTO>(this.PLAYER_PREFIX, { username })
+      .post(this.PLAYER_PREFIX, { username })
       .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
   async updatePlayer(user: PlayerDTO) {
-    const { player_id, username } = user
+    const { player_id, ...rest } = user
     return baseTemplate
-      .put<PlayerDTO>(`${this.PLAYER_PREFIX}/${player_id}`, { username })
+      .put(`${this.PLAYER_PREFIX}/${player_id}/`, rest)
       .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
-  async deletePlayer(playerID: string) {
-    return baseTemplate.post<null>(`${this.PLAYER_PREFIX}/${playerID}`, null)
+  async deletePlayer(player_id: string) {
+    return baseTemplate.post<null>(`${this.PLAYER_PREFIX}/${player_id}/`, null)
   }
 }
 

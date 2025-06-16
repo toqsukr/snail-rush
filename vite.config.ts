@@ -1,3 +1,4 @@
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path' // npm i --save-dev @types/node
 import Unfonts from 'unplugin-fonts/vite'
@@ -7,18 +8,13 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [
     react(),
+    basicSsl(),
     Unfonts({
       google: { families: ['Jersey 25'], preconnect: true },
     }),
   ],
   resolve: {
     alias: {
-      '@assets': path.resolve(__dirname, './src/assets'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@layouts': path.resolve(__dirname, './src/layouts'),
-      '@modules': path.resolve(__dirname, './src/modules'),
-      '@scenes': path.resolve(__dirname, './src/scenes'),
-      '@objects': path.resolve(__dirname, './src/objects'),
       '@app': path.resolve(__dirname, './src/app'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@widgets': path.resolve(__dirname, './src/widgets'),

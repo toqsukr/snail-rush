@@ -3,9 +3,10 @@ import { useLogFlow } from './store'
 export const useAppendLog = () => {
   const { logFlow, setLogFlow } = useLogFlow()
 
-  const timeTag = new Date().toISOString()
+  const localTime = new Date().toISOString()
 
-  return (log: string) => {
+  return (log: string, time?: Date) => {
+    const timeTag = time ? time.toISOString() : localTime
     setLogFlow([...logFlow, `${timeTag.slice(11, 19)}: ${log}`])
   }
 }

@@ -1,4 +1,4 @@
-import { TUser } from '@entities/user'
+import { TPlayer } from '@entities/players'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { PlayerStatus } from '../lib/status'
@@ -10,7 +10,7 @@ type GameStore = {
   started: boolean
   moveable: boolean
   finished: boolean
-  winner: TUser | null
+  winner: TPlayer | null
   pauseGame: () => void
   startGame: () => void
   finishGame: () => void
@@ -18,7 +18,7 @@ type GameStore = {
   resumeGame: () => void
   allowMoving: () => void
   playerStatus: PlayerStatus | null
-  updateWinner: (winner: TUser) => void
+  updateWinner: (winner: TPlayer) => void
   updateMoveable: (moveable: boolean) => void
   updatePlayerStatus: (playerStatus: PlayerStatus | null) => void
 }

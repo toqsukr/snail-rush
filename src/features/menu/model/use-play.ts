@@ -1,9 +1,9 @@
 import { usePlayers } from '@entities/players'
-import { useMenuDeps } from '../deps'
+import { useLobbyMenuDeps } from '../deps'
 import { useMenu } from './store'
 
 export const usePlay = () => {
-  const { onPlay } = useMenuDeps()
+  const { onPlay } = useLobbyMenuDeps()
   const playGame = useMenu(s => s.playGame)
   const players = usePlayers(s => s.players)
 

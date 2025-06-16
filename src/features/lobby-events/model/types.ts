@@ -6,12 +6,25 @@ export enum Operations {
   SESSION_DELETE = 'session.delete',
   PLAYER_CONNECT = 'player.connect',
   PLAYER_MOVE = 'player.move',
-  PLAYER_START_JUMP = 'player.jump',
+  PLAYER_SHRINK = 'player.shrink',
   SESSION_STOP_GAME = 'session.stop',
   PLAYER_ROTATION = 'player.rotate',
   PLAYER_KICK = 'player.kick',
   PLAYER_FINISH = 'player.finish',
 }
+
+export const SessionSchema = z.object({
+  host_id: z.string(),
+  is_active: z.boolean(),
+  session_id: z.string(),
+  players: PlayerDTOSchema.array(),
+  score: z.record(z.number()),
+})
+
+export const MessageDataSchema = z.object({
+  session: SessionSchema,
+  timestamp: z.number(),
+})
 
 export const TransferPositionSchema = z.object({
   x: z.number(),
@@ -57,9 +70,11 @@ export const WebSocketResponseSchema = z.object({
   data: z.unknown(),
 })
 
-export const MessageSchema = z.object({
-  actor_id: z.string(),
-})
+export const MessageSchema = MessageDataSchema.merge(
+  z.object({
+    actor_id: z.string(),
+  })
+)
 
 export type WebSocketResponse = z.infer<typeof WebSocketResponseSchema>
 
@@ -85,16 +100,18 @@ export type PlayerRotateMessageType = z.infer<typeof PlayerRotateMessageSchema>
 
 export type MessageType = z.infer<typeof MessageSchema>
 
-export const ConnectPlayerMessageSchema = z
-  .object({
+export const ConnectPlayerMessageSchema = MessageSchema.merge(
+  z.object({
     players: PlayerDTOSchema.array(),
   })
-  .merge(MessageSchema)
+)
 
 export const KickPlayerMessageSchema = ConnectPlayerMessageSchema.merge(
-  z.object({
-    kicked_id: z.string(),
-  })
+  z
+    .object({
+      kicked_id: z.string(),
+    })
+    .merge(MessageSchema)
 )
 
 export type ConnectPlayerMessageType = z.infer<typeof ConnectPlayerMessageSchema>
