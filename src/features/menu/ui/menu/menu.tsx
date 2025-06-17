@@ -100,9 +100,6 @@ export const SkinMenu = () => {
 
   if (!visibility || !mode.includes('main-menu')) return
 
-  // TODO
-  // disabled={mode !== 'main-menu-skin'}
-
   const choseSkin = (skin: TSkin) => {
     skin.skinID !== user?.skinID && onChangeSkin(skin)
   }

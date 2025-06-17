@@ -140,8 +140,3 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     </RigidBody>
   )
 }
-
-useGLTF.preload('/models/snail.glb')
-useTexture.preload(textures[0])
-useTexture.preload(textures[1])
-useTexture.preload(textures[2])

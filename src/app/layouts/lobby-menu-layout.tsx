@@ -4,11 +4,11 @@ import { useSendStartGame, useSendStopGame } from '@features/lobby-events'
 import { useClearLogs } from '@features/logflow'
 import { lobbyMenuDepsContext } from '@features/menu'
 import { useFocusTo, useFollowTarget, useMoveTo } from '@features/tracking-camera'
+import { MAIN_MENU_POSITION } from '@pages/home'
 import { FC, PropsWithChildren, Suspense } from 'react'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../../pages/home/lib/status'
 import { useGameStore } from '../../pages/home/model/store'
-import { MAIN_MENU_POSITION } from '../constants'
 
 const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const {

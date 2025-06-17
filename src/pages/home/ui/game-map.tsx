@@ -9,8 +9,9 @@ import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
 import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
-import { FINISH_POSITION } from '../../../app/constants'
 import { useGameStore } from '../model/store'
+
+export const FINISH_POSITION = new Vector3(54, 0.5, -4)
 
 const stones = [
   { position: [62, 0, -19], rotation: [0, 0, 0] },

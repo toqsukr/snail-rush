@@ -2,7 +2,9 @@ import { MainMenu as Menu, mainMenuDepsContext, useMainMenuDeps } from '@feature
 import { Html } from '@react-three/drei'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../../../app/constants'
+
+export const MAIN_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
+export const MAIN_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
 
 const MainMenu = () => {
   const mainMenuContextValue = useMainMenuDeps()

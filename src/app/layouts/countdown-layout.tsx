@@ -1,8 +1,9 @@
-import { START_TIMER_VALUE } from '@app/constants'
 import { CountdownProvider } from '@features/countdown'
 import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
 import { useGameStore } from '@pages/home/model/store'
 import { FC, PropsWithChildren } from 'react'
+
+const START_TIMER_VALUE = 3
 
 const CountdownLayout: FC<PropsWithChildren> = ({ children }) => {
   const { allowMoving, playerStatus } = useGameStore()

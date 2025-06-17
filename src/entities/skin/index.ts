@@ -1,2 +1,2 @@
-export { useSkins } from './query'
+export { useSkinById, useSkins } from './query'
 export type { TSkin } from './type'

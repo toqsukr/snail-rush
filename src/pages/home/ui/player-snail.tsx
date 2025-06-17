@@ -7,9 +7,11 @@ import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@featur
 import { useFollowTarget } from '@features/tracking-camera'
 import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../../../app/constants'
 import { getPlayerPosition, getStartPosition, getTexturePath } from '../lib/status'
 import { useGameStore } from '../model/store'
+
+export const STUN_TIMEOUT = 1600
+export const MAX_SPACE_HOLD_TIME = 400
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()

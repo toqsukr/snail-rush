@@ -4,12 +4,14 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Suspense, useRef } from 'react'
-import { MAIN_MENU_POSITION, MAIN_MENU_ROTATION } from '../../../app/constants'
 import { useGameStore } from '../model/store'
 
+const PAUSE_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
+const PAUSE_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
+
 const PauseMenu = () => {
-  const positionRef = useRef(MAIN_MENU_POSITION)
-  const rotationRef = useRef(MAIN_MENU_ROTATION)
+  const positionRef = useRef(PAUSE_MENU_POSITION)
+  const rotationRef = useRef(PAUSE_MENU_ROTATION)
   const camera = useThree(s => s.camera)
   const { started, finished } = useGameStore()
 

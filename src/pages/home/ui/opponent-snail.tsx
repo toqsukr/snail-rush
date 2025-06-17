@@ -5,9 +5,9 @@ import { isObstacle } from '@features/obstacle'
 import { Opponent, opponentDepsContext } from '@features/opponent-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 import { FC, Suspense, useMemo } from 'react'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '../../../app/constants'
 import { getPlayerPosition, getStartPosition, getTexturePath } from '../lib/status'
 import { useGameStore } from '../model/store'
+import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from './player-snail'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { appendPosition, appendRotation } = useSnailContext()
