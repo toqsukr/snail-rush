@@ -1,0 +1,22 @@
+{
+  "create_lobby_text": "CREATE LOBBY",
+  "join_text": "JOIN",
+  "register_text": "REGISTER",
+  "change_skin_text": "CHANGE SKIN",
+  "next_text": "NEXT",
+  "back_text": "BACK",
+  "username_input_placeholder": "Enter username",
+  "password_input_placeholder": "Enter пароль",
+  "lobby_code_input_placeholder": "Enter lobby code",
+  "connect_text": "CONNECT",
+  "disconnect_text": "DISCONNECT",
+  "continue_text": "CONTINUE",
+  "back_to_lobby_text": "BACK TO LOBBY",
+  "play_text": "PLAY",
+  "delete_lobby_text": "DELETE LOBBY",
+  "lobby_text": "LOBBY",
+  "connect_tip_text": "Let your friend connect by code",
+  "game_over_text": "GAME OVER",
+  "won_text": "WON",
+  "loading_text": "Loading..."
+}

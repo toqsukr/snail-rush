@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import authTemplate from './auth-template'
 import baseTemplate from './base-template'
 import { PlayerDTOSchema } from './player'
 
@@ -29,15 +30,9 @@ class AuthService {
       .then(({ data }) => TokenDTOSchema.parse(data))
   }
 
-  async getPlayerByToken() {
-    const token = localStorage.getItem('player-token')
-    return baseTemplate
-      .get(`${this.AUTH_PREFIX}/me/`, {
-        headers: {
-          ...baseTemplate.defaults.headers.common,
-          Authorization: `Bearer ${token}`,
-        },
-      })
+  async getUserByToken() {
+    return authTemplate
+      .get(`${this.AUTH_PREFIX}/me/`)
       .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 }

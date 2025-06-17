@@ -6,9 +6,11 @@ import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 import { Perf } from 'r3f-perf'
 import { FC, PropsWithChildren } from 'react'
+import '../i18n'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const started = useGameStore(s => s.started)
+
   return (
     <div className='h-full relative'>
       {started || <Logflow />}

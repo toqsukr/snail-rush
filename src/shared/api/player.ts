@@ -4,9 +4,9 @@ import baseTemplate from './base-template'
 export const PlayerDTOSchema = z.object({
   player_id: z.string(),
   username: z.string().min(1),
-  wins: z.number(),
-  losses: z.number(),
-  total_games: z.number(),
+  // wins: z.number(),
+  // losses: z.number(),
+  // total_games: z.number(),
   skin_id: z.string(),
 })
 

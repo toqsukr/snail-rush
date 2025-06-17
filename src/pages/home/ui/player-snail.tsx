@@ -7,7 +7,7 @@ import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@featur
 import { useFollowTarget } from '@features/tracking-camera'
 import { FC, Suspense, useCallback } from 'react'
 import { Vector3 } from 'three'
-import { getPlayerPosition, getStartPosition, getTexturePath } from '../lib/status'
+import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../lib/status'
 import { useGameStore } from '../model/store'
 
 export const STUN_TIMEOUT = 1600
@@ -75,7 +75,7 @@ const PlayerSuspense = () => {
 
   if (!playerStatus || !user) return
 
-  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? '')
+  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? PlayerSkins.HERBIVORE)
 
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus))
 

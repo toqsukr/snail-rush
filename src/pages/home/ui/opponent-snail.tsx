@@ -5,7 +5,7 @@ import { isObstacle } from '@features/obstacle'
 import { Opponent, opponentDepsContext } from '@features/opponent-control'
 import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
 import { FC, Suspense, useMemo } from 'react'
-import { getPlayerPosition, getStartPosition, getTexturePath } from '../lib/status'
+import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../lib/status'
 import { useGameStore } from '../model/store'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from './player-snail'
 
@@ -38,7 +38,7 @@ const OpponentSuspense = () => {
 
   if (!playerStatus || players.length < 2 || !user) return
 
-  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? '')
+  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? PlayerSkins.HERBIVORE)
 
   return (
     <Suspense fallback={null}>

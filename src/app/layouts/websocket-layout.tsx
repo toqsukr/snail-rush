@@ -18,10 +18,12 @@ import { useGameStore } from '@pages/home/model/store'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
 import { FC, PropsWithChildren, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Navigate } from 'react-router-dom'
 import { Vector3 } from 'three'
 
 const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
+  const { t } = useTranslation()
   const user = useUser(s => s.user)
   const session = useSession(s => s.session)
   const gameStore = useGameStore()
@@ -53,7 +55,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     if (connected) {
       updatePlayers(updatedPlayers)
       const time = unixFloatToDate(timestamp)
-      appendLog(`Player ${connected.username} was connected!`, time)
+      appendLog(`${connected.username} ${t('connected_lobby_text')}`, time)
     }
   }
 
@@ -62,7 +64,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     if (kicked) {
       updatePlayers(updatedPlayers)
       const time = unixFloatToDate(timestamp)
-      appendLog(`Player ${kicked.username} was kicked!`, time)
+      appendLog(`${kicked.username} ${t('kick_player_text')}!`, time)
     }
   }
 

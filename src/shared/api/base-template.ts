@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 
 export const HTTP_HOST_URL = 'https://snails.pakulove.ru:10000'
 export const WS_HOST_URL = 'wss://snails.pakulove.ru:10000'
@@ -9,10 +9,6 @@ const baseTemplate = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-})
-
-baseTemplate.interceptors.response.use((response: AxiosResponse) => {
-  return response
 })
 
 export default baseTemplate

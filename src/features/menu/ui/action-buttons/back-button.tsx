@@ -1,6 +1,7 @@
 import { useMainMenuDeps } from '@features/menu/deps'
 import Button from '@shared/uikit/button/Button'
 import { FC } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useBack } from '../../model/use-back'
 
 const BackButton: FC<
@@ -8,6 +9,7 @@ const BackButton: FC<
 > = props => {
   const goBack = useBack()
   const { onBackToMainMenu } = useMainMenuDeps()
+  const { t } = useTranslation()
 
   const onClick = () => {
     goBack()
@@ -16,7 +18,7 @@ const BackButton: FC<
 
   return (
     <Button {...props} onClick={onClick}>
-      BACK
+      {t('back_text')}
     </Button>
   )
 }

@@ -10,7 +10,7 @@ export default defineConfig({
     react(),
     basicSsl(),
     Unfonts({
-      google: { families: ['Jersey 25'], preconnect: true },
+      google: { families: ['Jersey 25', 'Roboto'], preconnect: true },
     }),
   ],
   resolve: {

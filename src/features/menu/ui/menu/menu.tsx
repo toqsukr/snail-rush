@@ -9,6 +9,7 @@ import Button from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
 import { FC, PropsWithChildren, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useIsConnectingSession } from '../../api/connect-session'
 import { useIsLobbyCreating } from '../../api/create-session'
@@ -28,6 +29,7 @@ import UsernameInput from '../username-input'
 import css from './menu.module.scss'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
+  const { t } = useTranslation()
   const isConnecting = useIsConnectingSession()
   const isDisconnecting = useIsDisconnectingSession()
   const isLobbyCreating = useIsLobbyCreating()
@@ -35,7 +37,7 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { isLoading: isSkinsLoading } = useSkins()
 
   if (isConnecting || isDisconnecting || isLobbyCreating || isUserCreating || isSkinsLoading)
-    return <div>Loading...</div>
+    return <div>{t('loading_text')}</div>
 
   return (
     <section className='h-full relative'>
@@ -45,6 +47,7 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
 }
 
 export const MainMenu = () => {
+  const { t } = useTranslation()
   const joinLobby = useJoinLobby()
   const user = useUser(s => s.user)
   const { visibility, mode } = useMenu()
@@ -78,15 +81,15 @@ export const MainMenu = () => {
         render={({ field: { ref: _ref, ...props } }) => <UsernameInput {...props} />}
       />
       <Button onClick={createLobby} disabled={!username.length || mode !== 'main-menu'}>
-        {session ? 'LOBBY' : 'CREATE LOBBY'}
+        {session ? t('lobby_text') : t('create_lobby_text')}
       </Button>
 
       <Button onClick={joinLobby} disabled={!username.length || !!session || mode !== 'main-menu'}>
-        JOIN
+        {t('join_text')}
       </Button>
 
       <Button onClick={toSkins} disabled={mode !== 'main-menu'}>
-        CHANGE SKIN
+        {t('change_skin_text')}
       </Button>
     </Menu>
   )
@@ -128,6 +131,7 @@ export const SkinMenu = () => {
 }
 
 export const PauseMenu = () => {
+  const { t } = useTranslation()
   const continueGame = useContinue()
 
   const { visibility, mode } = useMenu()
@@ -136,17 +140,21 @@ export const PauseMenu = () => {
 
   return (
     <Menu>
-      <Button onClick={continueGame}>CONTINUE</Button>
+      <Button onClick={continueGame}>{t('continue_text')}</Button>
       <BackToLobbyButton />
     </Menu>
   )
 }
 
 export const GameOver: FC<{ winnerName: string }> = ({ winnerName }) => {
+  const { t } = useTranslation()
+
   return (
     <Menu>
-      <div>GAME OVER!</div>
-      <div>{winnerName} WON!</div>
+      <div>{t('game_over_text')}</div>
+      <div>
+        {winnerName} {t('won_text')}!
+      </div>
       <BackToLobbyButton />
     </Menu>
   )
@@ -166,34 +174,38 @@ export const LobbyMenu = () => {
 }
 
 export const HostLobby: FC<{ sessionID: string }> = ({ sessionID }) => {
+  const { t } = useTranslation()
   const deleteLobby = useDeleteLobby()
   const { playAction, disabled } = usePlay()
   return (
     <Menu>
-      <h1>Let your friend connect by code: {sessionID}</h1>
+      <h1>
+        {t('connect_tip_text')}: {sessionID}
+      </h1>
       <LobbyBoard />
       <Button disabled={disabled} onClick={playAction}>
-        PLAY
+        {t('play_text')}
       </Button>
-      <Button onClick={deleteLobby}>DELETE LOBBY</Button>
+      <Button onClick={deleteLobby}>{t('delete_lobby_text')}</Button>
       <BackButton />
     </Menu>
   )
 }
 
 export const JoinLobby = () => {
-  const [lobbyCode, setLobbyCode] = useState('')
+  const { t } = useTranslation()
   const connectLobby = useConnectLobby()
+  const [lobbyCode, setLobbyCode] = useState('')
 
   return (
     <Menu>
       <Input
         value={lobbyCode}
         onChange={e => setLobbyCode(e.currentTarget.value)}
-        placeholder='Lobby code'
+        placeholder={t('lobby_code_input_placeholder')}
       />
       <Button disabled={lobbyCode.length !== 4} onClick={() => connectLobby(lobbyCode)}>
-        CONNECT
+        {t('connect_text')}
       </Button>
       <BackButton />
     </Menu>
@@ -201,21 +213,23 @@ export const JoinLobby = () => {
 }
 
 export const JoinLobbyConnected = () => {
+  const { t } = useTranslation()
   const disconnectYourself = useDisconnectLobby()
 
   return (
     <Menu>
       <LobbyBoard />
-      <Button onClick={disconnectYourself}>DISCONNECT</Button>
+      <Button onClick={disconnectYourself}>{t('disconnect_text')}</Button>
     </Menu>
   )
 }
 
 export const AuthMenu = () => {
-  const { mode, toAuthUsername, backToMainMenu } = useMenu()
+  const { t } = useTranslation()
+  const { onRegister } = useMainMenuDeps()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const { onRegister } = useMainMenuDeps()
+  const { mode, toAuthUsername, backToMainMenu } = useMenu()
 
   const formData = useForm<{ password: string }>({
     mode: 'onChange',
@@ -248,14 +262,14 @@ export const AuthMenu = () => {
           <Input
             {...props}
             onChange={e => onInputChange(e, props.onChange)}
-            placeholder='Enter password'
+            placeholder={t('password_input_placeholder')}
           />
         )}
       />
       <Button onClick={onRegisterClick} disabled={!password.length}>
-        REGISTER
+        {t('register_text')}
       </Button>
-      <Button onClick={toAuthUsername}>BACK</Button>
+      <Button onClick={toAuthUsername}>{t('back_text')}</Button>
     </Menu>
   )
 }
@@ -264,6 +278,7 @@ const UsernameMenu: FC<{ username: string; updateUsername: (username: string) =>
   username,
   updateUsername,
 }) => {
+  const { t } = useTranslation()
   const toAuthPassword = useMenu(s => s.toAuthPassword)
   const formData = useForm<{ username: string }>({
     mode: 'onChange',
@@ -288,12 +303,12 @@ const UsernameMenu: FC<{ username: string; updateUsername: (username: string) =>
           <Input
             {...props}
             onChange={e => onInputChange(e, props.onChange)}
-            placeholder='Enter username'
+            placeholder={t('username_input_placeholder')}
           />
         )}
       />
       <Button onClick={toAuthPassword} disabled={!username.length}>
-        NEXT
+        {t('next_text')}
       </Button>
     </Menu>
   )

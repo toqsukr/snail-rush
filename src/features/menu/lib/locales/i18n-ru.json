@@ -1,0 +1,22 @@
+{
+  "create_lobby_text": "Создать вестибюль",
+  "join_text": "Присоединиться",
+  "register_text": "Зарегистрироваться",
+  "change_skin_text": "Поменять раскраску",
+  "next_text": "Далее",
+  "back_text": "Назад",
+  "username_input_placeholder": "Введите имя пользователя",
+  "password_input_placeholder": "Введите пароль",
+  "lobby_code_input_placeholder": "Введите код для подключения",
+  "connect_text": "Подключиться",
+  "disconnect_text": "Отключиться",
+  "continue_text": "Продолжить",
+  "back_to_lobby_text": "В вестибюль",
+  "play_text": "Играть",
+  "delete_lobby_text": "Удалить вестибюль",
+  "lobby_text": "Вестибюль",
+  "connect_tip_text": "Код для подключения",
+  "game_over_text": "Игра окончена",
+  "won_text": "Победил",
+  "loading_text": "Загрузка..."
+}
