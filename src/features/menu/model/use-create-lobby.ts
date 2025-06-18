@@ -8,16 +8,17 @@ import { useMenu } from './store'
 export const useCreateLobby = () => {
   const createSession = useCreateSession()
   const connectLobby = useMenu(s => s.connectLobby)
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { session, updateSession } = useSession()
   const updatePlayers = usePlayers(s => s.updatePlayers)
   const { onCreateLobby } = useMainMenuDeps()
 
   return async () => {
+    if (!user) return
+
     if (session) {
       connectLobby()
     } else {
-      if (!user) return
       const createdSession = await createSession.mutateAsync(user.id)
       connectLobby()
 

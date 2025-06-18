@@ -7,7 +7,7 @@ import { useMenu } from './store'
 
 export const useConnectLobby = () => {
   const updateSession = useSession(s => s.updateSession)
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const updatePlayers = usePlayers(s => s.updatePlayers)
   const connectSession = useConnectSession()
   const connectLobby = useMenu(s => s.connectLobby)

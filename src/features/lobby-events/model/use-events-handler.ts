@@ -35,7 +35,7 @@ type LobbyEventsProviderProp = {
 
 export const useEventsHandler = (props: LobbyEventsProviderProp) => {
   const deleteSession = useSession(s => s.deleteSession)
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
 
   const {
     onKickMe,

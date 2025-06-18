@@ -5,5 +5,4 @@ export type TUser = {
   // losses: number
   // totalGames: number
   skinID: string
-  token: string
 }

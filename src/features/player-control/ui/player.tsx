@@ -1,4 +1,6 @@
-import { FC, PropsWithChildren, useEffect } from 'react'
+import { useKeyboardControls } from '@react-three/drei'
+import { useFrame } from '@react-three/fiber'
+import { FC, PropsWithChildren, useRef } from 'react'
 import { usePlayerDeps } from '../deps'
 import { useAdditiveRotation } from '../model/use-additive-rotation'
 import { useSpaceHold } from '../model/use-space-hold'
@@ -6,6 +8,11 @@ import { useSpaceHold } from '../model/use-space-hold'
 export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { handleKeyUp, handleKeyDown } = useSpaceHold()
   const { incrementX, decrementX, resetX, calcRotationIncrement } = useAdditiveRotation()
+
+  const [_, getKeys] = useKeyboardControls<'left' | 'right' | 'jump'>()
+  const wasLeft = useRef(false)
+  const wasRight = useRef(false)
+  const wasJumping = useRef(false)
 
   const {
     getIsJumping,
@@ -42,38 +49,38 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
     }
   }
 
-  const spaceCallback = (e: KeyboardEvent) => {
-    if (e.key == ' ' || e.code == 'Space') {
-      const duration = handleKeyUp(e)
-      handleJump(duration)
-    }
+  useFrame(() => {
+    const keys = getKeys()
 
-    if (e.code == 'ArrowRight' || e.code == 'ArrowLeft') {
+    if ((keys.left && wasRight.current) || (keys.right && wasLeft.current)) {
       resetX()
     }
-  }
 
-  const arrowCallback = (e: KeyboardEvent) => {
-    if (e.code == 'ArrowRight') {
-      decrementX()
-      handleRotate(calcRotationIncrement())
-    }
-    if (e.code == 'ArrowLeft') {
+    if (keys.left) {
       incrementX()
       handleRotate(calcRotationIncrement())
+      wasLeft.current = true
+      wasRight.current = false
+    } else if (keys.right) {
+      decrementX()
+      handleRotate(calcRotationIncrement())
+      wasRight.current = true
+      wasLeft.current = false
+    } else {
+      resetX()
+      wasLeft.current = false
+      wasRight.current = false
     }
-    handleKeyDown(e)
-  }
 
-  useEffect(() => {
-    window.addEventListener('keydown', arrowCallback)
-    window.addEventListener('keyup', spaceCallback)
-
-    return () => {
-      window.removeEventListener('keydown', arrowCallback)
-      window.removeEventListener('keyup', spaceCallback)
+    if (keys.jump) {
+      handleKeyDown()
+      wasJumping.current = true
+    } else if (wasJumping.current) {
+      const duration = handleKeyUp()
+      handleJump(duration)
+      wasJumping.current = false
     }
-  }, [handleJump])
+  })
 
   return children
 }

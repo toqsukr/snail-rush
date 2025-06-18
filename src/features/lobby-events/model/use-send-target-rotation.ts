@@ -4,7 +4,7 @@ import { Operations, OpponentRotationType } from './types'
 
 export const useSendTargetRotation = () => {
   const websocket = useWebSocket()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   return (data: OpponentRotationType) => {
     if (!user) return
 

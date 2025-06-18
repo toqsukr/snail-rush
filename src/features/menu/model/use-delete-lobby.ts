@@ -7,7 +7,7 @@ import { useMenu } from './store'
 export const useDeleteLobby = () => {
   const disconnectLobby = useMenu(s => s.disconnectLobby)
   const { session, deleteSession } = useSession()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { isHost, onDeleteLobby } = useLobbyMenuDeps()
   const removeSession = useDeleteSession()
 

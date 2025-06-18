@@ -15,7 +15,7 @@ const SKIN_SNAIL_POSITION = [25, 41, 5] satisfies [number, number, number]
 const SKIN_SNAIL_ROTATION = [0, (32 * Math.PI) / 24, 0] satisfies [number, number, number]
 
 const SkinMenu = () => {
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const mainMenuContextValue = useMainMenuDeps()
   const { data: skin } = useSkinById(user?.skinID ?? '')
   const texturePath = getTexturePath(skin?.name.split('.')[0] ?? PlayerSkins.HERBIVORE)

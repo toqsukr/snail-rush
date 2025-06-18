@@ -24,7 +24,7 @@ import { Vector3 } from 'three'
 
 const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
-  const user = useUser(s => s.user)
+  const { data: user, isLoading: isUserLoading } = useUser()
   const session = useSession(s => s.session)
   const gameStore = useGameStore()
   const appendLog = useAppendLog()
@@ -110,6 +110,8 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const handler = useEventsHandler(handlerProp)
+
+  if (isUserLoading) return
 
   if (!user?.id || !session?.id) return <Navigate to={'..'} />
 

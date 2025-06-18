@@ -4,7 +4,7 @@ import { Operations } from './types'
 
 export const useSendShrink = () => {
   const websocket = useWebSocket()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   return () => {
     if (!user) return
 

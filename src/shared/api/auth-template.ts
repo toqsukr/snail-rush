@@ -1,16 +1,15 @@
-import { getToken, removeToken } from '@shared/config/token'
+import { getRawTokenFromStorage, removeTokenEverywhere } from '@shared/config/token'
 import axios from 'axios'
 import baseTemplate from './base-template'
 
 const authTemplate = axios.create({
   ...baseTemplate.defaults,
-  withCredentials: true,
   baseURL: baseTemplate.defaults.baseURL,
   headers: { ...baseTemplate.defaults.headers },
 })
 
 authTemplate.interceptors.request.use(request => {
-  const token = getToken()
+  const token = getRawTokenFromStorage()
   if (token) {
     request.headers.Authorization = `Bearer ${token}`
   }
@@ -21,7 +20,7 @@ authTemplate.interceptors.response.use(
   response => response,
   error => {
     if (error.response?.status === 401) {
-      removeToken()
+      removeTokenEverywhere()
     }
     return Promise.reject(error)
   }

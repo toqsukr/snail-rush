@@ -60,7 +60,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 }
 
 const PlayerSuspense = () => {
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { moveable, updateMoveable, playerStatus } = useGameStore()
   const { data: skin } = useSkinById(user?.skinID ?? '')
 

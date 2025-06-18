@@ -4,7 +4,7 @@ import { Operations, OpponentPositionType } from './types'
 
 export const useSendTargetPosition = () => {
   const websocket = useWebSocket()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   return (data: OpponentPositionType) => {
     if (!user) return
 

@@ -8,7 +8,7 @@ export const useDisconnectLobby = () => {
   const disconnectLobby = useMenu(s => s.disconnectLobby)
   const { session, deleteSession } = useSession()
   const disconnectYourself = useDisconnect()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { onDisconnectLobby } = useLobbyMenuDeps()
 
   return async () => {

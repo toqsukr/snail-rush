@@ -13,6 +13,7 @@ import AppLayout from './layouts/app-layout'
 import AuthLayout from './layouts/auth-layout'
 import CountdownLayout from './layouts/countdown-layout'
 import LobbyMenuLayout from './layouts/lobby-menu-layout'
+import LobbyRedirectLayout from './layouts/lobby-redirect-layout'
 import MainMenuLayout from './layouts/main-menu-layout'
 import NonAuthLayout from './layouts/non-auth-layout'
 import TrackCameraLayout from './layouts/track-camera-layout'
@@ -23,13 +24,15 @@ export const router = createBrowserRouter([
     element: (
       <QueryClientProvider client={queryClient}>
         <AppLayout>
-          <TrackCameraLayout>
-            <CountdownLayout>
-              <MainMenuLayout>
-                <Outlet />
-              </MainMenuLayout>
-            </CountdownLayout>
-          </TrackCameraLayout>
+          <LobbyRedirectLayout>
+            <TrackCameraLayout>
+              <CountdownLayout>
+                <MainMenuLayout>
+                  <Outlet />
+                </MainMenuLayout>
+              </CountdownLayout>
+            </TrackCameraLayout>
+          </LobbyRedirectLayout>
         </AppLayout>
       </QueryClientProvider>
     ),

@@ -1,6 +1,7 @@
 import { useSession } from '@entities/session'
 import { TSkin, useSkins } from '@entities/skin'
 import { useUser } from '@entities/user'
+import { useIsRegistering } from '@features/auth/api/use-register'
 import { useLobbyMenuDeps, useMainMenuDeps } from '@features/menu/deps'
 import { useChangeSkin } from '@features/menu/model/use-change-skin'
 import { useCreateLobby } from '@features/menu/model/use-create-lobby'
@@ -8,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
 import { FC, PropsWithChildren, useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useIsConnectingSession } from '../../api/connect-session'
@@ -34,9 +35,19 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
   const isDisconnecting = useIsDisconnectingSession()
   const isLobbyCreating = useIsLobbyCreating()
   const isUserCreating = useIsUserCreating()
+  const isRegistering = useIsRegistering()
+  const { isLoading: isUserLoading } = useUser()
   const { isLoading: isSkinsLoading } = useSkins()
 
-  if (isConnecting || isDisconnecting || isLobbyCreating || isUserCreating || isSkinsLoading)
+  if (
+    isRegistering ||
+    isUserLoading ||
+    isConnecting ||
+    isDisconnecting ||
+    isLobbyCreating ||
+    isUserCreating ||
+    isSkinsLoading
+  )
     return <div>{t('loading_text')}</div>
 
   return (
@@ -46,10 +57,10 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-export const MainMenu = () => {
+const MainMenuContent = () => {
   const { t } = useTranslation()
   const joinLobby = useJoinLobby()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { visibility, mode } = useMenu()
   const session = useSession(s => s.session)
   const changeSkin = useChangeSkin()
@@ -74,7 +85,7 @@ export const MainMenu = () => {
   if (!visibility || !mode.includes('main-menu')) return
 
   return (
-    <Menu>
+    <>
       <Controller
         name='username'
         control={formData.control}
@@ -91,6 +102,14 @@ export const MainMenu = () => {
       <Button onClick={toSkins} disabled={mode !== 'main-menu'}>
         {t('change_skin_text')}
       </Button>
+    </>
+  )
+}
+
+export const MainMenu = () => {
+  return (
+    <Menu>
+      <MainMenuContent />
     </Menu>
   )
 }
@@ -99,7 +118,7 @@ export const SkinMenu = () => {
   const { visibility, mode } = useMenu()
   const { onChangeSkin } = useMainMenuDeps()
   const { data: skins } = useSkins()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
 
   if (!visibility || !mode.includes('main-menu')) return
 
@@ -162,7 +181,7 @@ export const GameOver: FC<{ winnerName: string }> = ({ winnerName }) => {
 
 export const LobbyMenu = () => {
   const session = useSession(s => s.session)
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { isHost } = useLobbyMenuDeps()
   const { visibility, mode } = useMenu()
 
@@ -227,26 +246,18 @@ export const JoinLobbyConnected = () => {
 export const AuthMenu = () => {
   const { t } = useTranslation()
   const { onRegister } = useMainMenuDeps()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const { mode, toAuthUsername, backToMainMenu } = useMenu()
 
-  const formData = useForm<{ password: string }>({
+  const formData = useForm<{ username: string; password: string }>({
     mode: 'onChange',
-    defaultValues: { password },
-    resolver: zodResolver(z.object({ password: z.string().min(5) })),
+    defaultValues: { username: '', password: '' },
+    resolver: zodResolver(z.object({ username: z.string().min(1), password: z.string().min(5) })),
   })
 
-  if (mode === 'auth-username')
-    return <UsernameMenu username={username} updateUsername={username => setUsername(username)} />
+  if (mode === 'auth-username') return <UsernameMenu formData={formData} />
 
-  const onInputChange = (
-    e: React.FormEvent<HTMLInputElement>,
-    controllerChange: (...event: any[]) => void
-  ) => {
-    controllerChange(e)
-    setPassword(e.currentTarget.value)
-  }
+  const username = formData.watch('username')
+  const password = formData.watch('password')
 
   const onRegisterClick = () => {
     backToMainMenu()
@@ -259,11 +270,7 @@ export const AuthMenu = () => {
         name='password'
         control={formData.control}
         render={({ field: { ref: _ref, ...props } }) => (
-          <Input
-            {...props}
-            onChange={e => onInputChange(e, props.onChange)}
-            placeholder={t('password_input_placeholder')}
-          />
+          <Input {...props} placeholder={t('password_input_placeholder')} />
         )}
       />
       <Button onClick={onRegisterClick} disabled={!password.length}>
@@ -274,25 +281,13 @@ export const AuthMenu = () => {
   )
 }
 
-const UsernameMenu: FC<{ username: string; updateUsername: (username: string) => void }> = ({
-  username,
-  updateUsername,
+const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: string }> }> = ({
+  formData,
 }) => {
   const { t } = useTranslation()
   const toAuthPassword = useMenu(s => s.toAuthPassword)
-  const formData = useForm<{ username: string }>({
-    mode: 'onChange',
-    defaultValues: { username },
-    resolver: zodResolver(z.object({ username: z.string().min(1) })),
-  })
 
-  const onInputChange = (
-    e: React.FormEvent<HTMLInputElement>,
-    controllerChange: (...event: any[]) => void
-  ) => {
-    controllerChange(e)
-    updateUsername(e.currentTarget.value)
-  }
+  const username = formData.watch('username')
 
   return (
     <Menu>
@@ -300,11 +295,7 @@ const UsernameMenu: FC<{ username: string; updateUsername: (username: string) =>
         name='username'
         control={formData.control}
         render={({ field: { ref: _ref, ...props } }) => (
-          <Input
-            {...props}
-            onChange={e => onInputChange(e, props.onChange)}
-            placeholder={t('username_input_placeholder')}
-          />
+          <Input {...props} placeholder={t('username_input_placeholder')} />
         )}
       />
       <Button onClick={toAuthPassword} disabled={!username.length}>

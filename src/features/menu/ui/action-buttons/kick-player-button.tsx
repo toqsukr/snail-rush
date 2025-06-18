@@ -7,7 +7,7 @@ import { RxCross2 } from 'react-icons/rx'
 const KickPlayerButton: FC<{ lobbyPlayerID: string }> = ({ lobbyPlayerID }) => {
   const kickPlayer = useKickLobbyPlayer()
   const { isHost } = useLobbyMenuDeps()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
 
   if (!isHost(user?.id ?? '') || user?.id === lobbyPlayerID) return
 

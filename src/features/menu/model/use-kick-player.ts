@@ -7,7 +7,7 @@ import { useKickPlayer } from '../api/kick-player'
 export const useKickLobbyPlayer = () => {
   const kickPlayer = useKickPlayer()
   const { removePlayer } = usePlayers()
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const { session, updateSession } = useSession()
 
   return async (dependentID: string) => {

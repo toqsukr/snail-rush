@@ -3,7 +3,7 @@ import { useWebSocket } from '@shared/lib/websocket'
 import { Operations } from './types'
 
 export const useSendFinishGame = () => {
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const websocket = useWebSocket()
   return () => {
     if (!user) return

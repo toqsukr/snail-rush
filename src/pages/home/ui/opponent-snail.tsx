@@ -30,7 +30,7 @@ const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
 }
 
 const OpponentSuspense = () => {
-  const user = useUser(s => s.user)
+  const { data: user } = useUser()
   const playerStatus = useGameStore(s => s.playerStatus)
   const players = usePlayers(s => s.players)
   const opponentPlayer = players.find(({ id }) => id !== user?.id)
