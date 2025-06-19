@@ -1,11 +1,13 @@
 import { useIsHost } from '@features/auth/model/use-is-host'
 import { useResetTimer, useStartTimer } from '@features/countdown'
 import { useSendStartGame, useSendStopGame } from '@features/lobby-events'
-import { useClearLogs } from '@features/logflow'
+import { useAppendLog, useClearLogs } from '@features/logflow'
 import { lobbyMenuDepsContext } from '@features/menu'
 import { useFocusTo, useFollowTarget, useMoveTo } from '@features/tracking-camera'
 import { MAIN_MENU_POSITION } from '@pages/home'
+import playerService from '@shared/api/player'
 import { FC, PropsWithChildren, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../../pages/home/lib/status'
 import { useGameStore } from '../../pages/home/model/store'
@@ -23,6 +25,8 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const resetTimer = useResetTimer()
   const focusTo = useFocusTo()
   const moveTo = useMoveTo()
+  const { t } = useTranslation()
+  const appendLog = useAppendLog()
   const clearLogs = useClearLogs()
   const sendStopGame = useSendStopGame()
   const sendStartGame = useSendStartGame()
@@ -35,6 +39,11 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const onDisconnectLobby = () => {
     updatePlayerStatus(null)
     clearLogs()
+  }
+
+  const onKickPlayer = async (kickedID: string) => {
+    const { username } = await playerService.getPlayer(kickedID)
+    appendLog(`${username} ${t('kick_player_text')}!`)
   }
 
   const onDeleteLobby = () => {
@@ -65,6 +74,7 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
       <lobbyMenuDepsContext.Provider
         value={{
           onPlay,
+          onKickPlayer,
           onDeleteLobby,
           onBackToLobby,
           isHost: checkHost,

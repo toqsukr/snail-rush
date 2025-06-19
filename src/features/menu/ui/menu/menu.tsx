@@ -94,11 +94,9 @@ const MainMenuContent = () => {
       <Button onClick={createLobby} disabled={!username.length || mode !== 'main-menu'}>
         {session ? t('lobby_text') : t('create_lobby_text')}
       </Button>
-
       <Button onClick={joinLobby} disabled={!username.length || !!session || mode !== 'main-menu'}>
         {t('join_text')}
       </Button>
-
       <Button onClick={toSkins} disabled={mode !== 'main-menu'}>
         {t('change_skin_text')}
       </Button>

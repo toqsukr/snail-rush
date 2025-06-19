@@ -2,11 +2,12 @@ import { TUser } from '@entities/user'
 import { PlayerDTO } from '@shared/api/player'
 
 export const parseFromRegisterDTO = (userData: PlayerDTO) => {
-  const { player_id, skin_id, ...rest } = userData
+  const { player_id, skin_id, total_games, ...rest } = userData
 
-  const user: Omit<TUser, 'token'> = {
+  const user: TUser = {
     id: player_id,
     skinID: skin_id,
+    totalGames: total_games,
     ...rest,
   }
 

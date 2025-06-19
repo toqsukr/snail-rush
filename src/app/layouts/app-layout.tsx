@@ -48,9 +48,9 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
             { name: 'right', keys: [rightKey] },
             { name: 'jump', keys: ['Space'] },
           ]}>
-          {/* <OrbitControls/> */}
+          {/* <OrbitControls /> */}
           <Perf position='top-left' />
-          <Physics debug gravity={[0, -20, 0]} timeStep={1 / 60}>
+          <Physics gravity={[0, -20, 0]} timeStep={1 / 60}>
             {children}
           </Physics>
         </KeyboardControls>

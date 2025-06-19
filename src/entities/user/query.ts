@@ -13,8 +13,8 @@ export const useUser = () => {
     queryFn: () => {
       return authService.getUserByToken()
     },
-    select: ({ player_id, skin_id, ...rest }) => {
-      return { ...rest, id: player_id, skinID: skin_id } satisfies Omit<TUser, 'token'>
+    select: ({ player_id, skin_id, total_games, ...rest }) => {
+      return { ...rest, id: player_id, skinID: skin_id, totalGames: total_games } satisfies TUser
     },
     enabled: !!token,
   })

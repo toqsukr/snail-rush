@@ -1,5 +1,5 @@
 import { TSkin } from '@entities/skin'
-import { invalidateUser, useUser } from '@entities/user'
+import { invalidateUser, parseFromRegisterDTO, useUser } from '@entities/user'
 import { useRegister } from '@features/auth'
 import { useAppendLog } from '@features/logflow'
 import { mainMenuDepsContext } from '@features/menu'
@@ -15,16 +15,15 @@ import { Vector3 } from 'three'
 import { useGameStore } from '../../pages/home/model/store'
 
 const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
-  const { data: user } = useUser()
-  const updateToken = useToken(s => s.updateToken)
-  const { t } = useTranslation()
   const focusTo = useFocusTo()
+  const { t } = useTranslation()
   const navigate = useNavigate()
+  const { data: user } = useUser()
+  const appendLog = useAppendLog()
   const { updatePlayerStatus } = useGameStore()
   const { mutateAsync: register } = useRegister()
+  const updateToken = useToken(s => s.updateToken)
   const { mutateAsync: updateUser } = useUpdatePlayer()
-
-  const appendLog = useAppendLog()
 
   const onConnectLobby = () => {
     navigate(Routes.LOBBY)
@@ -48,14 +47,9 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const onRegister = async (username: string, password: string) => {
     const { player, token } = await register({ username, password })
-    // TODO
-    const defaultSkinID = 'c696386d-38f2-44a1-a335-e8244fb57676'
+
     updateToken(token.access_token)
-    await updateUser({
-      id: player.player_id,
-      username: player.username,
-      skinID: defaultSkinID,
-    })
+    await updateUser(parseFromRegisterDTO(player))
     invalidateUser()
   }
 

@@ -14,10 +14,11 @@ type LobbyMenuDeps = {
   onPlay: () => void
   onPause: () => void
   onContinue: () => void
+  onKickPlayer: (kickedID: string) => void
   onDeleteLobby: () => void
-  onBackToLobby: () => void
   onDisconnectLobby: () => void
   isHost: (playerID: string) => boolean
+  onBackToLobby: () => void
 }
 
 export const mainMenuDepsContext = createStrictContext<MainMenuDeps>()

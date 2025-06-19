@@ -8,8 +8,8 @@ export const useUpdatePlayer = () => {
   return useMutation({
     mutationKey: [updateUserMutationKey],
     mutationFn: async (data: TUser) => {
-      const { id, skinID, ...rest } = data
-      const playerDTO = { player_id: id, skin_id: skinID, ...rest }
+      const { id, skinID, totalGames, ...rest } = data
+      const playerDTO = { player_id: id, skin_id: skinID, total_games: totalGames, ...rest }
       return playerService.updatePlayer(playerDTO)
     },
   })
