@@ -1,18 +1,18 @@
-import { usePlayers } from '@entities/players'
+import { useSession } from '@entities/session'
 import { useLobbyMenuDeps } from '../deps'
 import { useMenu } from './store'
 
 export const usePlay = () => {
   const { onPlay } = useLobbyMenuDeps()
   const playGame = useMenu(s => s.playGame)
-  const players = usePlayers(s => s.players)
+  const { data: session } = useSession()
 
   const playAction = () => {
     playGame()
     onPlay()
   }
 
-  const disabled = players.length < 2
+  const disabled = (session?.players.length ?? 0) < 2
 
   return { playAction, disabled }
 }

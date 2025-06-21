@@ -4,7 +4,7 @@ import { FC, PropsWithChildren, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const LobbyRedirectLayout: FC<PropsWithChildren> = ({ children }) => {
-  const session = useSession(s => s.session)
+  const { data: session } = useSession()
   const navigate = useNavigate()
 
   useEffect(() => {

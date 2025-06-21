@@ -1,4 +1,4 @@
-import { usePlayers } from '@entities/players'
+import { getPlayer } from '@entities/players'
 import { TUser } from '@entities/user'
 import { FinishControl, finishControlDepsContext } from '@features/finish-control'
 import { useSendFinishGame } from '@features/lobby-events'
@@ -12,7 +12,7 @@ import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
 
-export const FINISH_POSITION = new Vector3(54, 0.1, -4)
+export const FINISH_POSITION = new Vector3(54, 0.5, -4)
 
 const stones = [
   { position: [62, 0, -19], rotation: [0, 0, 0] },
@@ -62,7 +62,6 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
 const GameMap = () => {
   const followTarget = useFollowTarget()
   const sendFinishGame = useSendFinishGame()
-  const players = usePlayers(s => s.players)
   const { finishGame, updateWinner, updateMoveable, winner } = useGameStore()
 
   return (
@@ -77,7 +76,7 @@ const GameMap = () => {
               console.log('send finish')
               sendFinishGame()
               await followTarget(FINISH_POSITION)
-              const foundWinner = players.find(({ id }) => id === userData.userID)
+              const foundWinner = await getPlayer(userData.userID)
               if (foundWinner) {
                 updateWinner(foundWinner)
               }

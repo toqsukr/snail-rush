@@ -6,6 +6,7 @@ import { mainMenuDepsContext } from '@features/menu'
 import { useUpdatePlayer } from '@features/menu/api/update-user'
 import { useFocusTo } from '@features/tracking-camera'
 import { MAIN_MENU_POSITION, SKIN_MENU_POSITION } from '@pages/home'
+import { FEEDBACK_MENU_POSITION } from '@pages/home/ui/feedback-menu'
 import { useToken } from '@shared/config/token'
 import { Routes } from '@shared/model/routes'
 import { FC, PropsWithChildren } from 'react'
@@ -45,6 +46,10 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     await focusTo(new Vector3(...SKIN_MENU_POSITION))
   }
 
+  const onToFeedback = async () => {
+    await focusTo(new Vector3(...FEEDBACK_MENU_POSITION))
+  }
+
   const onRegister = async (username: string, password: string) => {
     const { player, token } = await register({ username, password })
 
@@ -55,9 +60,13 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const onChangeSkin = async ({ name, skinID }: TSkin) => {
     if (!user) return
-    await updateUser({ ...user, skinID })
+    await updateUser({ id: user.id, username: user.username, skinID })
     invalidateUser()
     appendLog(`${t('you_changed_skin_text')} ${name}!`)
+  }
+
+  const onSendFeedback = () => {
+    appendLog(`${t('feedback_delivered_text')}!`)
   }
 
   return (
@@ -66,6 +75,8 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
         onConnectLobby,
         onCreateLobby,
         onToSkins,
+        onToFeedback,
+        onSendFeedback,
         onBackToMainMenu,
         onChangeSkin,
         onRegister,

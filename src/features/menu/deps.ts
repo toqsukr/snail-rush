@@ -8,6 +8,8 @@ type MainMenuDeps = {
   onBackToMainMenu: () => void
   onChangeSkin: (skin: TSkin) => void
   onRegister: (username: string, password: string) => void
+  onSendFeedback: () => void
+  onToFeedback: () => void
 }
 
 type LobbyMenuDeps = {

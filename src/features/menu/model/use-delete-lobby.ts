@@ -1,4 +1,4 @@
-import { useSession } from '@entities/session'
+import { resetSession, useSession, useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
 import { useDeleteSession } from '../api/delete-session'
 import { useLobbyMenuDeps } from '../deps'
@@ -6,7 +6,8 @@ import { useMenu } from './store'
 
 export const useDeleteLobby = () => {
   const disconnectLobby = useMenu(s => s.disconnectLobby)
-  const { session, deleteSession } = useSession()
+  const { data: session } = useSession()
+  const deleteSession = useSessionCode(s => s.deleteSession)
   const { data: user } = useUser()
   const { isHost, onDeleteLobby } = useLobbyMenuDeps()
   const removeSession = useDeleteSession()
@@ -16,6 +17,7 @@ export const useDeleteLobby = () => {
 
     disconnectLobby()
     deleteSession()
+    resetSession()
     onDeleteLobby()
     removeSession.mutate(session.id)
   }

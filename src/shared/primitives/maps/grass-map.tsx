@@ -2,7 +2,7 @@ import { useGLTF } from '@react-three/drei'
 import { RigidBody } from '@react-three/rapier'
 
 const GrassMap = () => {
-  const mapPlane = useGLTF('models/grass-map.glb')
+  const mapPlane = useGLTF('models/compressed_grass-map.glb')
   const mapWalls = useGLTF('models/grass-walls.glb')
 
   return (

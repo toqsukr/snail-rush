@@ -3,4 +3,5 @@ export type TSession = {
   players: string[]
   isActive: boolean
   hostID: string
+  score: Record<string, number>
 }

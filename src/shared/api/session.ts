@@ -7,6 +7,7 @@ export const SessionDTOSchema = z.object({
   players: PlayerDTOSchema.array(),
   is_active: z.boolean(),
   host_id: z.string(),
+  score: z.record(z.number()),
 })
 
 export type SessionDTO = z.infer<typeof SessionDTOSchema>
@@ -39,6 +40,13 @@ class SessionService {
   async kickPlayer(session_id: string, action_id: string, dependent_id: string) {
     return baseTemplate.delete(
       `${this.SESSION_PREFIX}/${session_id}/player/${action_id}/kick/${dependent_id}/`
+    )
+  }
+
+  async toggleReady(session_id: string, player_id: string) {
+    return baseTemplate.post(
+      `${this.SESSION_PREFIX}/${session_id}/player/${player_id}/toggle-ready/`,
+      null
     )
   }
 }

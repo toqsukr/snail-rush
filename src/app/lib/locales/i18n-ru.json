@@ -1,8 +1,9 @@
 {
-  "you_changed_skin_text": "ВЫ изменили расцветку на",
+  "you_changed_skin_text": "Вы изменили расцветку на",
   "changed_skin_text": "изменил расцветку на",
-  "lobby_created_text": "Вестибюль создан",
-  "you_connected_lobby_text": "ВЫ присоединились",
+  "lobby_created_text": "Комната создана",
+  "you_connected_lobby_text": "Вы присоединились",
   "connected_lobby_text": "присоединился",
-  "kick_player_text": "отключен"
+  "kick_player_text": "Противник был отключен",
+  "feedback_delivered_text": "Ваш отзыв успешно доставлен"
 }

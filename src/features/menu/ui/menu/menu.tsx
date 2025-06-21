@@ -2,12 +2,13 @@ import { useSession } from '@entities/session'
 import { TSkin, useSkins } from '@entities/skin'
 import { useUser } from '@entities/user'
 import { useIsRegistering } from '@features/auth/api/use-register'
+import { useIsFeedbackSending, useSendFeedback } from '@features/menu/api/send-feedback'
 import { useLobbyMenuDeps, useMainMenuDeps } from '@features/menu/deps'
-import { useChangeSkin } from '@features/menu/model/use-change-skin'
 import { useCreateLobby } from '@features/menu/model/use-create-lobby'
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
+import Textarea from '@shared/uikit/textarea/textarea'
 import { FC, PropsWithChildren, useState } from 'react'
 import { Controller, useForm, UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -36,22 +37,26 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
   const isLobbyCreating = useIsLobbyCreating()
   const isUserCreating = useIsUserCreating()
   const isRegistering = useIsRegistering()
+  const isFeedbackSending = useIsFeedbackSending()
   const { isLoading: isUserLoading } = useUser()
   const { isLoading: isSkinsLoading } = useSkins()
+  const { isLoading: isSessionLoading } = useSession()
 
   if (
     isRegistering ||
     isUserLoading ||
+    isSessionLoading ||
     isConnecting ||
     isDisconnecting ||
     isLobbyCreating ||
     isUserCreating ||
+    isFeedbackSending ||
     isSkinsLoading
   )
     return <div>{t('loading_text')}</div>
 
   return (
-    <section className='h-full relative'>
+    <section className='relative text-center'>
       <div className={css.menu}>{children}</div>
     </section>
   )
@@ -61,21 +66,25 @@ const MainMenuContent = () => {
   const { t } = useTranslation()
   const joinLobby = useJoinLobby()
   const { data: user } = useUser()
-  const { visibility, mode } = useMenu()
-  const session = useSession(s => s.session)
-  const changeSkin = useChangeSkin()
-  const { onToSkins } = useMainMenuDeps()
+  const { visibility, mode, toSkins, toFeedback } = useMenu()
+  const { data: session } = useSession()
+  const { onToSkins, onToFeedback } = useMainMenuDeps()
   const createLobby = useCreateLobby()
 
-  const toSkins = () => {
-    changeSkin()
+  const changeSkin = () => {
+    toSkins()
     onToSkins()
+  }
+
+  const leaveFeedback = () => {
+    toFeedback()
+    onToFeedback()
   }
 
   const formData = useForm<{ username: string }>({
     mode: 'onChange',
     defaultValues: { username: user?.username ?? '' },
-    resolver: zodResolver(z.object({ username: z.string().min(1) })),
+    resolver: zodResolver(z.object({ username: z.string().min(1).max(20) })),
   })
 
   const username = formData.watch('username')
@@ -86,10 +95,24 @@ const MainMenuContent = () => {
 
   return (
     <>
+      {user && (
+        <h1>{`${t('rating_text')}: ${(
+          user.totalGames && (100 * user.wins) / user.totalGames
+        ).toFixed(0)}%`}</h1>
+      )}
+      {user && <h1>{`${t('total_games_text')}: ${user.totalGames}`}</h1>}
       <Controller
         name='username'
         control={formData.control}
-        render={({ field: { ref: _ref, ...props } }) => <UsernameInput {...props} />}
+        render={({ field: { ref: _ref, onChange, ...props } }) => (
+          <UsernameInput
+            {...props}
+            onChange={e => {
+              const value = e.currentTarget.value.slice(0, 20)
+              onChange(value)
+            }}
+          />
+        )}
       />
       <Button onClick={createLobby} disabled={!username.length || mode !== 'main-menu'}>
         {session ? t('lobby_text') : t('create_lobby_text')}
@@ -97,8 +120,11 @@ const MainMenuContent = () => {
       <Button onClick={joinLobby} disabled={!username.length || !!session || mode !== 'main-menu'}>
         {t('join_text')}
       </Button>
-      <Button onClick={toSkins} disabled={mode !== 'main-menu'}>
+      <Button onClick={changeSkin} disabled={mode !== 'main-menu'}>
         {t('change_skin_text')}
+      </Button>
+      <Button onClick={leaveFeedback} disabled={mode !== 'main-menu'}>
+        {t('leave_feedback_text')}
       </Button>
     </>
   )
@@ -168,8 +194,8 @@ export const GameOver: FC<{ winnerName: string }> = ({ winnerName }) => {
 
   return (
     <Menu>
-      <div>{t('game_over_text')}</div>
-      <div>
+      <div className='text-start'>{t('game_over_text')}</div>
+      <div className='text-start'>
         {winnerName} {t('won_text')}!
       </div>
       <BackToLobbyButton />
@@ -178,7 +204,7 @@ export const GameOver: FC<{ winnerName: string }> = ({ winnerName }) => {
 }
 
 export const LobbyMenu = () => {
-  const session = useSession(s => s.session)
+  const { data: session } = useSession()
   const { data: user } = useUser()
   const { isHost } = useLobbyMenuDeps()
   const { visibility, mode } = useMenu()
@@ -194,6 +220,26 @@ export const HostLobby: FC<{ sessionID: string }> = ({ sessionID }) => {
   const { t } = useTranslation()
   const deleteLobby = useDeleteLobby()
   const { playAction, disabled } = usePlay()
+  // const [lobbyReady, setLobbyReady] = useState(true)
+
+  // const getEveryReady = async () => {
+  //   const promises = playerIDs.map(id => getPlayer(id))
+  //   let allReady = true
+
+  //   for await (const promise of promises) {
+  //     if (!promise.isReady) {
+  //       allReady = false
+  //       break
+  //     }
+  //   }
+
+  //   setLobbyReady(allReady)
+  // }
+
+  // useEffect(() => {
+  //   getEveryReady()
+  // }, [playerIDs])
+
   return (
     <Menu>
       <h1>
@@ -268,7 +314,7 @@ export const AuthMenu = () => {
         name='password'
         control={formData.control}
         render={({ field: { ref: _ref, ...props } }) => (
-          <Input {...props} placeholder={t('password_input_placeholder')} />
+          <Input {...props} type='password' placeholder={t('password_input_placeholder')} />
         )}
       />
       <Button onClick={onRegisterClick} disabled={!password.length}>
@@ -292,13 +338,58 @@ const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: s
       <Controller
         name='username'
         control={formData.control}
-        render={({ field: { ref: _ref, ...props } }) => (
-          <Input {...props} placeholder={t('username_input_placeholder')} />
+        render={({ field: { ref: _ref, onChange, ...props } }) => (
+          <Input
+            {...props}
+            placeholder={t('username_input_placeholder')}
+            onChange={e => {
+              const value = e.currentTarget.value.slice(0, 20)
+              onChange(value)
+            }}
+          />
         )}
       />
       <Button onClick={toAuthPassword} disabled={!username.length}>
         {t('next_text')}
       </Button>
     </Menu>
+  )
+}
+
+export const FeedbackMenu = () => {
+  const { t } = useTranslation()
+  const { data: user } = useUser()
+  const { mode, visibility } = useMenu()
+  const { mutateAsync: sendFeedback } = useSendFeedback()
+  const { onSendFeedback } = useMainMenuDeps()
+  const formData = useForm<{ feedback: string }>({
+    mode: 'onChange',
+    defaultValues: { feedback: '' },
+    resolver: zodResolver(z.object({ feedback: z.string().min(1) })),
+  })
+
+  if (!visibility || !mode.includes('main-menu')) return
+
+  const handleSendFeedback = async (data: { feedback: string }) => {
+    if (!user) return
+    await sendFeedback({ playerID: user.id, message: data.feedback })
+    formData.reset()
+    onSendFeedback()
+  }
+
+  return (
+    <form onSubmit={formData.handleSubmit(handleSendFeedback)}>
+      <Menu>
+        <Controller
+          control={formData.control}
+          name='feedback'
+          render={({ field }) => (
+            <Textarea {...field} placeholder={t('feedback_input_placeholder')} />
+          )}
+        />
+        <Button disabled={!formData.formState.isValid}>{t('send_text')}</Button>
+        <BackButton />
+      </Menu>
+    </form>
   )
 }

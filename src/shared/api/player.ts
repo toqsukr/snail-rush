@@ -8,6 +8,7 @@ export const PlayerDTOSchema = z.object({
   losses: z.number(),
   total_games: z.number(),
   skin_id: z.string(),
+  is_ready: z.boolean(),
 })
 
 export type PlayerDTO = z.infer<typeof PlayerDTOSchema>
@@ -27,7 +28,7 @@ class PlayerService {
       .then(({ data }) => PlayerDTOSchema.parse(data))
   }
 
-  async updatePlayer(user: PlayerDTO) {
+  async updatePlayer(user: Pick<PlayerDTO, 'player_id' | 'username' | 'skin_id'>) {
     const { player_id, ...rest } = user
     return baseTemplate
       .put(`${this.PLAYER_PREFIX}/${player_id}/`, rest)
@@ -36,6 +37,10 @@ class PlayerService {
 
   async deletePlayer(player_id: string) {
     return baseTemplate.post<null>(`${this.PLAYER_PREFIX}/${player_id}/`, null)
+  }
+
+  async sendFeedback(player_id: string, message: string) {
+    return baseTemplate.post(`${this.PLAYER_PREFIX}/${player_id}/feedback/`, { message })
   }
 }
 

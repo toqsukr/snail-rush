@@ -1,5 +1,5 @@
-import { TPlayer, usePlayers } from '@entities/players'
-import { useSession } from '@entities/session'
+import { getPlayer, TPlayer } from '@entities/players'
+import { invalidateSession, useSession } from '@entities/session'
 import { useUser } from '@entities/user'
 import { useStartTimer } from '@features/countdown'
 import {
@@ -10,6 +10,7 @@ import {
 } from '@features/lobby-events'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { useMenuMode } from '@features/menu'
+import { useKickLobbyPlayer } from '@features/menu/model/use-kick-player'
 import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
 import { FINISH_POSITION } from '@pages/home'
@@ -25,14 +26,14 @@ import { Vector3 } from 'three'
 const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
   const { data: user, isLoading: isUserLoading } = useUser()
-  const session = useSession(s => s.session)
+  const { data: session } = useSession()
   const gameStore = useGameStore()
   const appendLog = useAppendLog()
   const clearLogs = useClearLogs()
-  const { players, updatePlayers } = usePlayers()
   const followTarget = useFollowTarget()
   const startTimer = useStartTimer()
   const changeMenuMode = useMenuMode()
+  const kickLobbyPlayer = useKickLobbyPlayer()
 
   const playerStartPosition = getStartPosition(getPlayerPosition(gameStore.playerStatus ?? 'host'))
 
@@ -40,7 +41,9 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     gameStore.updateMoveable(false)
     await followTarget(FINISH_POSITION)
     gameStore.finishGame()
-    const winner = players.find(({ id }) => id === actor_id)
+
+    const winner = await getPlayer(actor_id)
+
     winner && gameStore.updateWinner(winner)
   }
 
@@ -51,21 +54,20 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const onPlayerConnected = (updatedPlayers: TPlayer[], timestamp: number) => {
-    const connected = updatedPlayers.find(({ id }) => players.every(player => id !== player.id))
+    const connected = updatedPlayers.find(({ id }) => id !== user?.id)
     if (connected) {
-      updatePlayers(updatedPlayers)
       const time = unixFloatToDate(timestamp)
       appendLog(`${connected.username} ${t('connected_lobby_text')}`, time)
     }
   }
 
-  const onPlayerKicked = (updatedPlayers: TPlayer[], timestamp: number) => {
-    const kicked = players.find(({ id }) => updatedPlayers.every(player => id !== player.id))
-    if (kicked) {
-      updatePlayers(updatedPlayers)
-      const time = unixFloatToDate(timestamp)
-      appendLog(`${kicked.username} ${t('kick_player_text')}!`, time)
-    }
+  const onPlayerKicked = () => {
+    // const kicked = players.find(({ id }) => updatedPlayers.every(player => id !== player.id))
+    // if (kicked) {
+    //   updatePlayers(updatedPlayers)
+    //   const time = unixFloatToDate(timestamp)
+    //   appendLog(`${kicked.username} ${t('kick_player_text')}!`, time)
+    // }
   }
 
   const onGameStop = async () => {
@@ -104,6 +106,13 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     onGameFinish,
     onPlayerKicked,
     onPlayerConnected,
+    onOpponentShrink: async () => {
+      const kickID = session?.players.find(id => id !== user?.id)
+      if (kickID) {
+        await kickLobbyPlayer(kickID)
+        invalidateSession()
+      }
+    },
     onGameStart: () => onGameStart(startTimer),
     onChangeOpponentRotation,
     onChangeOpponentPosition,

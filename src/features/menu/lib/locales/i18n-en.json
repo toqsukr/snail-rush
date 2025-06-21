@@ -18,5 +18,10 @@
   "connect_tip_text": "Let your friend connect by code",
   "game_over_text": "GAME OVER",
   "won_text": "WON",
-  "loading_text": "Loading..."
+  "loading_text": "Loading...",
+  "leave_feedback_text": "LEAVE FEEDBACK",
+  "feedback_input_placeholder": "Enter some text",
+  "rating_text": "Your rating",
+  "total_games_text": "Total games",
+  "send_text": "SEND"
 }

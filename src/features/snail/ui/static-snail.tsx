@@ -11,22 +11,13 @@ import React, { FC } from 'react'
 import { MeshPhysicalMaterial } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 
-const textures = [
-  '/textures/snail-metal.png',
-  '/textures/snail-normal.png',
-  '/textures/snail-roughness.png',
-]
-
 type StaticSnailProps = { texturePath: string } & RigidBodyProps
 
 export const StaticSnail: FC<StaticSnailProps> = ({ texturePath, ...props }) => {
   const { scene } = useGLTF('/models/snail.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
 
-  const [metalTexture, normalTexture, roughnessTexture, mapTexture] = useTexture([
-    ...textures,
-    texturePath,
-  ])
+  const [mapTexture] = useTexture([texturePath])
 
   const { nodes } = useGraph(clone)
   const meshProps = nodes['snail_mesh'] as any
@@ -37,9 +28,6 @@ export const StaticSnail: FC<StaticSnailProps> = ({ texturePath, ...props }) => 
   const material = new MeshPhysicalMaterial({
     ...meshProps.material,
     map: mapTexture,
-    metalnessMap: metalTexture,
-    normalMap: normalTexture,
-    roughnessMap: roughnessTexture,
     color: 0xaaaaaa,
     metalness: 0.1,
     roughness: 0.1,
@@ -85,6 +73,6 @@ export const StaticSnail: FC<StaticSnailProps> = ({ texturePath, ...props }) => 
 }
 
 useGLTF.preload('/models/snail.glb')
-useTexture.preload(textures[0])
-useTexture.preload(textures[1])
-useTexture.preload(textures[2])
+// useTexture.preload(textures[0])
+// useTexture.preload(textures[1])
+// useTexture.preload(textures[2])

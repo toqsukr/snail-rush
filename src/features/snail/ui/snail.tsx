@@ -17,7 +17,7 @@ import { useJump } from '../model/use-jump'
 import { useShrink } from '../model/use-shrink'
 import { useSnailContext } from './snail-provider'
 
-const textures = [
+export const textures = [
   '/textures/snail-metal.png',
   '/textures/snail-normal.png',
   '/textures/snail-roughness.png',
@@ -29,10 +29,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { ref, actions } = useAnimations(animations)
 
-  const [metalTexture, normalTexture, roughnessTexture, mapTexture] = useTexture([
-    ...textures,
-    texturePath,
-  ])
+  const [mapTexture] = useTexture([texturePath])
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
   const { animate, stopAnimation, isAnimationRunning } = useAnimation(actions)
@@ -86,9 +83,6 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   const material = new MeshPhysicalMaterial({
     ...meshProps.material,
     map: mapTexture,
-    metalnessMap: metalTexture,
-    normalMap: normalTexture,
-    roughnessMap: roughnessTexture,
     color: 0xaaaaaa,
     metalness: 0.1,
     roughness: 0.1,

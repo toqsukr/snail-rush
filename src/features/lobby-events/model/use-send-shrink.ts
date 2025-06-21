@@ -11,6 +11,7 @@ export const useSendShrink = () => {
     websocket.send(
       JSON.stringify({
         type: Operations.PLAYER_SHRINK,
+        data: { position: { x: 0, y: 0, z: 0 } },
       })
     )
   }

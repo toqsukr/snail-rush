@@ -5,4 +5,5 @@ export type TPlayer = {
   losses: number
   totalGames: number
   skinID: string
+  isReady: boolean
 }

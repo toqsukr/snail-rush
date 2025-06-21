@@ -1,26 +1,25 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { TSession } from './types'
 
-const SESSION_STORE_KEY = 'session-data-store'
+const SESSION_CODE_STORE_KEY = 'session-code-store'
 
-type SessionStore = {
-  session: TSession | null
-  updateSession: (session: TSession) => void
+type SessionCodeStore = {
+  code: string | null
+  updateSession: (session: string) => void
   deleteSession: () => void
 }
 
-export const useSession = create(
-  persist<SessionStore, [], [], Pick<SessionStore, 'session'>>(
+export const useSessionCode = create(
+  persist<SessionCodeStore, [], [], Pick<SessionCodeStore, 'code'>>(
     (set, get) => ({
-      session: null,
-      updateSession: session => set({ ...get(), session }),
-      deleteSession: () => set({ ...get(), session: null }),
+      code: null,
+      updateSession: code => set({ ...get(), code }),
+      deleteSession: () => set({ ...get(), code: null }),
     }),
     {
-      name: SESSION_STORE_KEY,
+      name: SESSION_CODE_STORE_KEY,
       storage: createJSONStorage(() => sessionStorage),
-      partialize: state => ({ session: state.session }),
+      partialize: state => ({ code: state.code }),
     }
   )
 )

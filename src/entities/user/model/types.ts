@@ -5,4 +5,5 @@ export type TUser = {
   losses: number
   totalGames: number
   skinID: string
+  isReady: boolean
 }

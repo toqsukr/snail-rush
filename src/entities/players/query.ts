@@ -1,17 +1,17 @@
-import authService from '@shared/api/auth'
+import playerService from '@shared/api/player'
 import { queryClient } from '@shared/api/query-client'
 import { useToken } from '@shared/config/token'
 import { useQuery } from '@tanstack/react-query'
-import { TUser } from './model/types'
+import { TPlayer } from './model/types'
 
-const userDataQueryKey = 'get-user-data'
+const playerByIDQueryKey = 'get-player-by-id'
 
-export const useUser = () => {
+export const usePlayerByID = (id: string) => {
   const token = useToken(s => s.token)
   return useQuery({
-    queryKey: [userDataQueryKey],
+    queryKey: [playerByIDQueryKey, id],
     queryFn: () => {
-      return authService.getUserByToken()
+      return playerService.getPlayer(id)
     },
     select: ({ player_id, skin_id, total_games, is_ready, ...rest }) => {
       return {
@@ -20,10 +20,11 @@ export const useUser = () => {
         skinID: skin_id,
         isReady: is_ready,
         totalGames: total_games,
-      } satisfies TUser
+      } satisfies TPlayer
     },
-    enabled: !!token,
+    enabled: !!token && !!id,
   })
 }
 
-export const invalidateUser = () => queryClient.invalidateQueries({ queryKey: [userDataQueryKey] })
+export const invalidatePlayerByID = (id: string) =>
+  queryClient.invalidateQueries({ queryKey: [playerByIDQueryKey, id] })

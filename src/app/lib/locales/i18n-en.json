@@ -4,5 +4,6 @@
   "lobby_created_text": "Lobby was created",
   "you_connected_lobby_text": "YOU connected to lobby",
   "connected_lobby_text": "connected to lobby",
-  "kick_player_text": "was kicked"
+  "kick_player_text": "Opponent was kicked",
+  "feedback_delivered_text": "YOUR feedback was saved!"
 }

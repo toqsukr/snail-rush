@@ -1,5 +1,4 @@
-import { parseFromPlayerDTO, usePlayers } from '@entities/players'
-import { parseFromSessionDTO, useSession } from '@entities/session'
+import { invalidateSession, useSession, useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
 import { useCreateSession } from '../api/create-session'
 import { useMainMenuDeps } from '../deps'
@@ -9,8 +8,8 @@ export const useCreateLobby = () => {
   const createSession = useCreateSession()
   const connectLobby = useMenu(s => s.connectLobby)
   const { data: user } = useUser()
-  const { session, updateSession } = useSession()
-  const updatePlayers = usePlayers(s => s.updatePlayers)
+  const { data: session } = useSession()
+  const updateSession = useSessionCode(s => s.updateSession)
   const { onCreateLobby } = useMainMenuDeps()
 
   return async () => {
@@ -22,9 +21,9 @@ export const useCreateLobby = () => {
       const createdSession = await createSession.mutateAsync(user.id)
       connectLobby()
 
+      invalidateSession()
       onCreateLobby(user.id, createdSession.session_id)
-      updatePlayers(createdSession.players.map(player => parseFromPlayerDTO(player)))
-      updateSession(parseFromSessionDTO(createdSession))
+      updateSession(createdSession.session_id)
     }
   }
 }
