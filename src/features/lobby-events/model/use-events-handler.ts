@@ -48,10 +48,14 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
     onChangeOpponentRotation,
   } = props
 
-  const handleMessage = useEventCallback((websocket: WebSocket, event: MessageEvent) => {
+  const handleMessage = useEventCallback((event: MessageEvent, closeConnection: () => void) => {
     const onSessionExit = () => {
       onKickMe()
-      websocket.close()
+      try {
+        closeConnection()
+      } catch (e) {
+        console.error(e)
+      }
       deleteSession()
       resetSession()
     }

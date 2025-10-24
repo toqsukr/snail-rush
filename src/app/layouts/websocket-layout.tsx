@@ -16,6 +16,7 @@ import { useFollowTarget } from '@features/tracking-camera'
 import { FINISH_POSITION } from '@pages/home'
 import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
 import { useGameStore } from '@pages/home/model/store'
+import { WS_HOST_URL } from '@shared/api/base-template'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
 import { FC, PropsWithChildren, Suspense } from 'react'
@@ -118,16 +119,15 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     onChangeOpponentPosition,
   }
 
-  const handler = useEventsHandler(handlerProp)
+  const handleMessage = useEventsHandler(handlerProp)
 
   if (isUserLoading) return
 
   if (!user?.id || !session?.id) return <Navigate to={'..'} />
 
   const webSocketValue = {
-    userID: user.id,
-    sessionID: session.id,
-    handler,
+    url: `${WS_HOST_URL}/api/v1/gameplay/session/${session.id}/player/${user.id}/start/`,
+    handleMessage,
   }
 
   return (

@@ -1,4 +1,3 @@
-import basicSsl from '@vitejs/plugin-basic-ssl'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path' // npm i --save-dev @types/node
 import Unfonts from 'unplugin-fonts/vite'
@@ -8,7 +7,6 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [
     react(),
-    basicSsl(),
     Unfonts({
       google: { families: ['Jersey 25', 'Roboto'], preconnect: true },
     }),

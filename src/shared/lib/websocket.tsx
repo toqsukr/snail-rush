@@ -1,36 +1,31 @@
-import { WS_HOST_URL } from '@shared/api/base-template'
-import { FC, PropsWithChildren, useEffect, useState } from 'react'
+import { FC, PropsWithChildren, useEffect, useMemo } from 'react'
 import { createStrictContext, useStrictContext } from './react'
 
 const webSocketContext = createStrictContext<WebSocket>()
 
 type ProviderProps = {
-  sessionID: string
-  userID: string
-  handler: (websocket: WebSocket, event: MessageEvent) => void
+  url: string | URL
+  handleMessage: (event: MessageEvent, closeConnection: () => void) => void
 }
 
 export const WebSocketProvider: FC<PropsWithChildren<ProviderProps>> = ({
   children,
-  sessionID,
-  userID,
-  handler,
+  url,
+  handleMessage,
 }) => {
-  const [websocket] = useState(
-    () =>
-      new WebSocket(`${WS_HOST_URL}/api/v1/gameplay/session/${sessionID}/player/${userID}/start/`)
-  )
+  const memoizedWebsocket = useMemo(() => new WebSocket(url), [url])
 
   useEffect(() => {
-    if (sessionID && userID) {
-      websocket.onmessage = function (this: WebSocket, event: MessageEvent) {
-        handler(this, event)
-      }
-      return () => websocket.close()
-    }
-  }, [sessionID, userID])
+    return () => memoizedWebsocket.close()
+  }, [memoizedWebsocket])
 
-  return <webSocketContext.Provider value={websocket}>{children}</webSocketContext.Provider>
+  useEffect(() => {
+    memoizedWebsocket.onmessage = function (this: WebSocket, event: MessageEvent) {
+      handleMessage(event, this.close)
+    }
+  }, [handleMessage])
+
+  return <webSocketContext.Provider value={memoizedWebsocket}>{children}</webSocketContext.Provider>
 }
 
 export const useWebSocket = () => useStrictContext(webSocketContext)
