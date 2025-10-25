@@ -1,4 +1,2 @@
-export { opponentDepsContext } from './deps'
-export { pushOpponentPosition } from './model/sequential-position'
-export { pushOpponentRotation } from './model/sequential-rotation'
-export { Opponent } from './ui/opponent'
+export { opponentPositionEmitter, pushOpponentPosition } from './model/position-emitter'
+export { opponentRotationEmitter, pushOpponentRotation } from './model/rotation-emitter'

@@ -1,7 +1,6 @@
 import { parseFromPlayerDTO, TPlayer } from '@entities/players'
 import { invalidateSession, resetSession, useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
-import { useEventCallback } from '@shared/lib/react'
 import {
   ConnectPlayerMessageType,
   KickPlayerMessageType,
@@ -20,16 +19,16 @@ import {
 } from './types'
 
 type LobbyEventsProviderProp = {
-  onKickMe: () => void
-  onGameStart: () => void
-  onGameStop: () => void
-  onOpponentShrink: () => void
-  onStartJump: (position: OpponentStartJumpType) => void
-  onGameFinish: (data: MessageType) => void
-  onPlayerKicked: (players: TPlayer[], timestamp: number) => void
-  onPlayerConnected: (players: TPlayer[], timestamp: number) => void
-  onChangeOpponentPosition: (position: OpponentPositionType) => void
-  onChangeOpponentRotation: (position: OpponentRotationType) => void
+  onKickMe?: () => void
+  onGameStart?: () => void
+  onGameStop?: () => void
+  onOpponentShrink?: () => void
+  onStartJump?: (position: OpponentStartJumpType) => void
+  onGameFinish?: (data: MessageType) => void
+  onPlayerKicked?: (players: TPlayer[], timestamp: number) => void
+  onPlayerConnected?: (players: TPlayer[], timestamp: number) => void
+  onChangeOpponentPosition?: (position: OpponentPositionType) => void
+  onChangeOpponentRotation?: (position: OpponentRotationType) => void
 }
 
 export const useEventsHandler = (props: LobbyEventsProviderProp) => {
@@ -48,9 +47,9 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
     onChangeOpponentRotation,
   } = props
 
-  const handleMessage = useEventCallback((event: MessageEvent, closeConnection: () => void) => {
+  const handleMessage = (event: MessageEvent, closeConnection: () => void) => {
     const onSessionExit = () => {
-      onKickMe()
+      onKickMe?.()
       try {
         closeConnection()
       } catch (e) {
@@ -68,7 +67,7 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           invalidateSession()
           const connectData = responseData.data as ConnectPlayerMessageType
           console.log(responseData, connectData.players)
-          onPlayerConnected(
+          onPlayerConnected?.(
             connectData.players.map(player => parseFromPlayerDTO(player)),
             connectData.timestamp
           )
@@ -79,7 +78,7 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
             onSessionExit()
           } else {
             invalidateSession()
-            onPlayerKicked(
+            onPlayerKicked?.(
               players.map(player => parseFromPlayerDTO(player)),
               timestamp
             )
@@ -89,23 +88,22 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           const { position } = PlayerMoveMessageSchema.parse(
             responseData.data
           ) as PlayerMoveMessageType
-          onChangeOpponentPosition({ position })
+          onChangeOpponentPosition?.({ position })
           console.log('player moved', position)
           break
         case Operations.PLAYER_ROTATION:
           const { rotation } = PlayerRotateMessageSchema.parse(
             responseData.data
           ) as PlayerRotateMessageType
-          onChangeOpponentRotation({ rotation })
+          onChangeOpponentRotation?.({ rotation })
           console.log('player rotated', rotation)
           break
         case Operations.SESSION_STOP_GAME:
-          onGameStop()
+          onGameStop?.()
           console.log('game stop')
           break
         case Operations.PLAYER_SHRINK:
-          onOpponentShrink()
-          console.log('player shrink')
+          onOpponentShrink?.()
           // const startJumpData = PlayerStartJumpMessageSchema.parse(
           //   responseData.data
           // ) as PlayerStartJumpMessageType
@@ -117,14 +115,14 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           console.log('session deleted')
           break
         case Operations.SESSION_START:
-          onGameStart()
+          onGameStart?.()
           console.log('game started')
           break
         case Operations.PLAYER_FINISH:
           invalidateSession()
           const finishData = MessageSchema.parse(responseData.data) as MessageType
           console.log(finishData)
-          onGameFinish(finishData)
+          onGameFinish?.(finishData)
           console.log('game finished')
           break
         default:
@@ -133,7 +131,7 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
     } catch (e) {
       console.error(e)
     }
-  })
+  }
 
   return handleMessage
 }

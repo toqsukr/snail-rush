@@ -1,12 +1,11 @@
-import react from '@vitejs/plugin-react-swc'
-import path from 'path' // npm i --save-dev @types/node
+import react from '@vitejs/plugin-react'
+import path from 'path'
 import Unfonts from 'unplugin-fonts/vite'
 import { defineConfig } from 'vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react(), // Теперь использует ESBuild вместо SWC
     Unfonts({
       google: { families: ['Jersey 25', 'Roboto'], preconnect: true },
     }),

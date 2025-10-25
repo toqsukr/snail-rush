@@ -1,14 +1,12 @@
 import { useRef } from 'react'
+import { useSnailContext } from '../ui/snail-provider'
 
-export const useShrink = (
-  isAnimating: () => boolean,
-  animateShrink: () => void,
-  interruptShrink: () => void
-) => {
+export const useShrink = (animateShrink: () => void, interruptShrink: () => void) => {
   const holdRef = useRef(false)
+  const { getIsJumping } = useSnailContext()
 
   const startShrinkAnimation = () => {
-    if (!isAnimating()) {
+    if (!getIsJumping()) {
       animateShrink()
     }
   }

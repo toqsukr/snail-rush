@@ -1,9 +1,10 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 import { FC, PropsWithChildren } from 'react'
+import { Vector3 } from 'three'
 
 type CountdownDeps = {
   startValue: number
-  playerPosition: [number, number, number]
+  playerPosition: Vector3
   onAlarm: () => void
 }
 

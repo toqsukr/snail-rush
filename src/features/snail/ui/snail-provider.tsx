@@ -1,53 +1,40 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
-import { FC, PropsWithChildren, useMemo, useState } from 'react'
-import { Observable } from 'rxjs'
-import { Vector3 } from 'three'
-import { useAppendPosition } from '../model/sequential-position'
-import { useAppendRotation } from '../model/sequential-rotation'
+import { FC, PropsWithChildren, useRef, useState } from 'react'
+import { Euler, Vector3 } from 'three'
 import { createSnailStore, SnailStore } from '../model/store'
-import { PositionType, RotationType } from '../model/types'
-import { useCalcAnimationDuration, useCalcTargetPosition } from '../model/use-jump'
 
 type SnailProviderProp = {
-  initPosition?: [number, number, number]
-  initRotation?: number[]
+  initPosition?: Vector3
+  initRotation?: Euler
 }
 
-type SnailProvider = {
-  sequentialPosition: Observable<PositionType>
-  sequentialRotation: Observable<RotationType>
-  appendPosition: (position: PositionType) => void
-  appendRotation: (rotation: RotationType) => void
-  calcTargetPosition: (koef: number) => Vector3
-  calcAnimationDuration: (koef: number) => number
+type SnailContext = {
+  getIsJumping: () => boolean
+  updateIsJumping: (value: boolean) => void
 } & SnailStore
 
-export const SnailContext = createStrictContext<SnailProvider>()
+export const SnailContext = createStrictContext<SnailContext>()
 
 export const useSnailContext = () => useStrictContext(SnailContext)
 
 export const SnailProvider: FC<PropsWithChildren<SnailProviderProp>> = ({
   children,
-  initPosition = [0, 0, 0],
-  initRotation = [0, 0, 0],
+  initPosition = new Vector3(),
+  initRotation = new Euler(),
 }) => {
   const [useSnailStore] = useState(() => createSnailStore(initPosition, initRotation))
   const storeData = useSnailStore()
 
-  const positionThread = useMemo(useAppendPosition, [])
-  const rotationThread = useMemo(useAppendRotation, [])
-  const calcAnimationDuration = useCalcAnimationDuration()
-  const calcTargetPosition = useMemo(
-    () => useCalcTargetPosition(new Vector3(...storeData.position), storeData.rotation),
-    [storeData]
-  )
+  const isJumping = useRef(false)
+  const updateIsJumping = (value: boolean) => {
+    isJumping.current = value
+  }
+  const getIsJumping = () => isJumping.current
 
   const value = {
-    calcTargetPosition,
-    calcAnimationDuration: () => calcAnimationDuration(0),
-    ...positionThread,
-    ...rotationThread,
     ...storeData,
+    getIsJumping,
+    updateIsJumping,
   }
 
   return <SnailContext.Provider value={value}>{children}</SnailContext.Provider>

@@ -147,7 +147,9 @@ export const SkinMenu = () => {
   if (!visibility || !mode.includes('main-menu')) return
 
   const choseSkin = (skin: TSkin) => {
-    skin.skinID !== user?.skinID && onChangeSkin(skin)
+    if (skin.skinID !== user?.skinID) {
+      onChangeSkin(skin)
+    }
   }
 
   return (

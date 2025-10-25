@@ -12,6 +12,6 @@ const locales = import.meta.glob(
 export const resources = Object.entries(locales).reduce((acc, [path, module]) => {
   const [, lang] = path.match(/i18n-(.+?)\.json/) || []
   if (!acc[lang]) acc[lang] = { translation: {} }
-  Object.assign(acc[lang].translation, (module as any).default)
+  Object.assign(acc[lang].translation, (module as typeof locales).default)
   return acc
-}, {} as Record<string, { translation: Record<string, any> }>)
+}, {} as Record<string, { translation: Record<string, typeof locales> }>)

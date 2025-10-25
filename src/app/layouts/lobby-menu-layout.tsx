@@ -57,15 +57,17 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const onPlay = async () => {
     sendStartGame()
-    startGame()
     await followTarget(new Vector3(...playerStartPosition))
+    startGame()
     startTimer()
   }
 
   const onBackToLobby = async () => {
     resetTimer()
     toMainMenu()
-    finished || sendStopGame()
+    if (!finished) {
+      sendStopGame()
+    }
     await moveTo([MAIN_MENU_POSITION[0], MAIN_MENU_POSITION[1], MAIN_MENU_POSITION[2] + 10])
     const tempStatus = playerStatus
     updatePlayerStatus(null)

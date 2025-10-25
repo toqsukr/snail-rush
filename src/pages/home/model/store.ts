@@ -10,6 +10,7 @@ type GameStore = {
   started: boolean
   moveable: boolean
   finished: boolean
+  playerModelHandle: number
   winner: TPlayer | null
   pauseGame: () => void
   startGame: () => void
@@ -21,6 +22,7 @@ type GameStore = {
   updateWinner: (winner: TPlayer) => void
   updateMoveable: (moveable: boolean) => void
   updatePlayerStatus: (playerStatus: PlayerStatus | null) => void
+  updatePlayerModelHandle: (modelHandle: number) => void
 }
 
 export const useGameStore = create(
@@ -33,6 +35,8 @@ export const useGameStore = create(
       finished: false,
       playerStatus: null,
       skin: PlayerSkins.HERBIVORE,
+      playerModelHandle: -1,
+      updatePlayerModelHandle: playerModelHandle => set({ ...get(), playerModelHandle }),
       startGame: () => set({ ...get(), started: true, finished: false, winner: null }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),

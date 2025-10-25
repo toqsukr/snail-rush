@@ -8,7 +8,7 @@ import {
   RoundCuboidCollider,
 } from '@react-three/rapier'
 import React, { FC } from 'react'
-import { MeshPhysicalMaterial } from 'three'
+import { BufferGeometry, MeshPhysicalMaterial, Skeleton } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 
 type StaticSnailProps = { texturePath: string } & RigidBodyProps
@@ -20,7 +20,15 @@ export const StaticSnail: FC<StaticSnailProps> = ({ texturePath, ...props }) => 
   const [mapTexture] = useTexture([texturePath])
 
   const { nodes } = useGraph(clone)
-  const meshProps = nodes['snail_mesh'] as any
+  const meshProps = nodes['snail_mesh'] as unknown as {
+    material: object
+    skeleton: Skeleton
+    geometry: BufferGeometry
+    morphTargetInfluences?: number[]
+    morphTargetDictionary?: {
+      [key: string]: number
+    }
+  }
 
   mapTexture.flipY = false
   mapTexture.colorSpace = 'srgb'

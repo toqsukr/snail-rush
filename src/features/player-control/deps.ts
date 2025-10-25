@@ -1,16 +1,17 @@
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
-import { Vector3 } from 'three'
-import { PositionType, RotationType } from './model/types'
+import { Euler, Vector3 } from 'three'
 
 type PlayerDeps = {
-  maxSpaceHold: number
-  getMoveable: () => boolean
-  getRotation: () => number[]
-  getIsJumping: () => boolean
-  onJump: (position: PositionType) => void
-  onRotate: (rotation: RotationType) => void
-  calcTargetPosition: (koef: number) => Vector3
-  calcAnimationDuration: (koef: number) => number
+  canMove: () => boolean
+  onJump: (
+    koef: number,
+    holdTime: number,
+    callback: (impulse: Vector3, duration: number) => void
+  ) => void
+  onRotate: (
+    pitchIncrement: number,
+    callback: (updatedRotation: Euler, duration: number) => void
+  ) => void
   onStartShrink: (() => void) | null
   onStopShrink: (() => void) | null
 }

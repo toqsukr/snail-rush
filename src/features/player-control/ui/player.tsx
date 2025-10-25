@@ -4,52 +4,49 @@ import { FC, PropsWithChildren, useRef } from 'react'
 import { usePlayerDeps } from '../deps'
 import { useAdditiveRotation } from '../model/use-additive-rotation'
 import { useSpaceHold } from '../model/use-space-hold'
+import { pushPlayerPosition } from '../model/position-emitter'
+import { pushPlayerRotation } from '../model/rotation-emitter'
+import { Euler, Vector3 } from 'three'
+import { MAX_SPACE_HOLD_TIME } from '@shared/config/game'
 
 export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { handleKeyUp, handleKeyDown } = useSpaceHold()
   const { incrementX, decrementX, resetX, calcRotationIncrement } = useAdditiveRotation()
 
-  const [_, getKeys] = useKeyboardControls<'left' | 'right' | 'jump'>()
+  const [, getKeys] = useKeyboardControls<'left' | 'right' | 'jump'>()
   const wasLeft = useRef(false)
   const wasRight = useRef(false)
   const wasJumping = useRef(false)
 
-  const {
-    getIsJumping,
-    onJump,
-    onRotate,
-    calcTargetPosition,
-    calcAnimationDuration,
-    getRotation,
-    getMoveable,
-    maxSpaceHold,
-  } = usePlayerDeps()
+  const { onJump, onRotate, canMove } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
-    const koef = holdTime / maxSpaceHold
-    if (!getIsJumping() && getMoveable()) {
-      const position = calcTargetPosition(koef)
-      const duration = calcAnimationDuration(koef)
-      const targetPosition = { ...position, duration, holdTime }
-      onJump(targetPosition)
-    }
+    if (!canMove()) return
+
+    const koef = holdTime / MAX_SPACE_HOLD_TIME
+    const callback = (impulse: Vector3, duration: number) =>
+      pushPlayerPosition({
+        impulse,
+        duration,
+        holdTime,
+      })
+    onJump(koef, holdTime, callback)
   }
 
   const handleRotate = (directionKoef: number) => {
-    if (!getIsJumping() && getMoveable()) {
-      const rotationArr = getRotation()
-      const updatedPitch = directionKoef
-      const rotation = {
-        roll: rotationArr[0],
-        pitch: rotationArr[1] + updatedPitch,
-        yaw: rotationArr[2],
-      }
-      const targetRotation = { ...rotation, duration: 0 }
-      onRotate(targetRotation)
-    }
+    if (!canMove()) return
+
+    const callback = (updatedRotation: Euler, duration: number) =>
+      pushPlayerRotation({
+        rotation: updatedRotation,
+        duration,
+      })
+    onRotate(directionKoef, callback)
   }
 
   useFrame(() => {
+    if (!canMove()) return
+
     const keys = getKeys()
 
     if ((keys.left && wasRight.current) || (keys.right && wasLeft.current)) {

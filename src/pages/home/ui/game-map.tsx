@@ -3,7 +3,6 @@ import { TUser } from '@entities/user'
 import { FinishControl, finishControlDepsContext } from '@features/finish-control'
 import { useSendFinishGame } from '@features/lobby-events'
 import { StaticObstacle } from '@features/obstacle'
-import { useFollowTarget } from '@features/tracking-camera'
 import FinishLine from '@shared/primitives/finish-line'
 import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
@@ -11,6 +10,7 @@ import TallStone from '@shared/primitives/obstacles/tall-stone'
 import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
+import { useFollowTarget } from '@features/tracking-camera'
 
 export const FINISH_POSITION = new Vector3(54, 0.5, -4)
 
@@ -60,30 +60,31 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
 }
 
 const GameMap = () => {
-  const followTarget = useFollowTarget()
   const sendFinishGame = useSendFinishGame()
+  const followTarget = useFollowTarget()
   const { finishGame, updateWinner, updateMoveable, winner } = useGameStore()
+
+  const onFinish = async (userData: unknown) => {
+    if (containsUserdata(userData) && !winner) {
+      updateMoveable(false)
+      console.log('send finish')
+      sendFinishGame()
+      finishGame()
+      setTimeout(async () => {
+        await followTarget(FINISH_POSITION)
+        const foundWinner = await getPlayer(userData.userID)
+        if (foundWinner) {
+          updateWinner(foundWinner)
+        }
+      })
+    }
+  }
 
   return (
     <>
       <GrassMap />
       <StartLine {...startProps} />
-      <finishControlDepsContext.Provider
-        value={{
-          onFinish: async userData => {
-            if (containsUserdata(userData) && !winner) {
-              updateMoveable(false)
-              console.log('send finish')
-              sendFinishGame()
-              await followTarget(FINISH_POSITION)
-              const foundWinner = await getPlayer(userData.userID)
-              if (foundWinner) {
-                updateWinner(foundWinner)
-              }
-              finishGame()
-            }
-          },
-        }}>
+      <finishControlDepsContext.Provider value={{ onFinish }}>
         <FinishControl {...finishProps}>
           <FinishLine />
         </FinishControl>

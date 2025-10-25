@@ -23,7 +23,7 @@ export const WebSocketProvider: FC<PropsWithChildren<ProviderProps>> = ({
     memoizedWebsocket.onmessage = function (this: WebSocket, event: MessageEvent) {
       handleMessage(event, this.close)
     }
-  }, [handleMessage])
+  }, [memoizedWebsocket, handleMessage])
 
   return <webSocketContext.Provider value={memoizedWebsocket}>{children}</webSocketContext.Provider>
 }

@@ -1,4 +1,4 @@
-import { Context, createContext, useContext, useRef } from 'react'
+import { Context, createContext, useContext } from 'react'
 
 export function useStrictContext<T>(context: Context<T | null>) {
   const value = useContext(context)
@@ -8,10 +8,4 @@ export function useStrictContext<T>(context: Context<T | null>) {
 
 export function createStrictContext<T>() {
   return createContext<T | null>(null)
-}
-
-export function useEventCallback<T extends (...args: any[]) => void>(fn: T): T {
-  const ref = useRef<T>(fn)
-  ref.current = fn
-  return ((...args: any[]) => ref.current(...args)) as T
 }

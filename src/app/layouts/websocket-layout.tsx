@@ -22,7 +22,7 @@ import { WebSocketProvider } from '@shared/lib/websocket'
 import { FC, PropsWithChildren, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate } from 'react-router-dom'
-import { Vector3 } from 'three'
+import { Euler, Vector3 } from 'three'
 
 const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
@@ -32,6 +32,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const appendLog = useAppendLog()
   const clearLogs = useClearLogs()
   const followTarget = useFollowTarget()
+
   const startTimer = useStartTimer()
   const changeMenuMode = useMenuMode()
   const kickLobbyPlayer = useKickLobbyPlayer()
@@ -40,18 +41,22 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const onGameFinish = async ({ actor_id }: MessageType) => {
     gameStore.updateMoveable(false)
-    await followTarget(FINISH_POSITION)
     gameStore.finishGame()
 
-    const winner = await getPlayer(actor_id)
+    setTimeout(async () => {
+      await followTarget(FINISH_POSITION)
+      const winner = await getPlayer(actor_id)
 
-    winner && gameStore.updateWinner(winner)
+      if (winner) {
+        gameStore.updateWinner(winner)
+      }
+    })
   }
 
-  const onGameStart = async (startTimer: () => void) => {
-    gameStore.startGame()
+  const onGameStart = async () => {
     await followTarget(new Vector3(...playerStartPosition))
     startTimer()
+    gameStore.startGame()
   }
 
   const onPlayerConnected = (updatedPlayers: TPlayer[], timestamp: number) => {
@@ -62,31 +67,6 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     }
   }
 
-  const onPlayerKicked = () => {
-    // const kicked = players.find(({ id }) => updatedPlayers.every(player => id !== player.id))
-    // if (kicked) {
-    //   updatePlayers(updatedPlayers)
-    //   const time = unixFloatToDate(timestamp)
-    //   appendLog(`${kicked.username} ${t('kick_player_text')}!`, time)
-    // }
-  }
-
-  const onGameStop = async () => {
-    // resetTimer()
-    // toMainMenu()
-    // await moveTo([
-    //   MAIN_MENU_POSITION[0],
-    //   MAIN_MENU_POSITION[1],
-    //   MAIN_MENU_POSITION[2] + 10,
-    // ])
-    // const tempStatus = playerStatus
-    // updatePlayerStatus(null)
-    // await focusTo(new Vector3(...MAIN_MENU_POSITION))
-    // updatePlayerStatus(tempStatus)
-  }
-
-  const onStartJump = () => {}
-
   const onKickMe = () => {
     gameStore.updatePlayerStatus(null)
     changeMenuMode('main-menu')
@@ -94,27 +74,28 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const onChangeOpponentRotation = ({ rotation }: OpponentRotationType) => {
-    pushOpponentRotation(rotation)
+    const { duration, roll, pitch, yaw } = rotation
+    pushOpponentRotation({ rotation: new Euler(roll, pitch, yaw), duration })
   }
-  const onChangeOpponentPosition = ({ position: { hold_time, ...rest } }: OpponentPositionType) => {
-    pushOpponentPosition({ ...rest, holdTime: hold_time })
+  const onChangeOpponentPosition = ({ position }: OpponentPositionType) => {
+    const { duration, hold_time, x, y, z } = position
+    pushOpponentPosition({ impulse: new Vector3(x, y, z), duration, holdTime: hold_time })
+  }
+
+  const onOpponentShrink = async () => {
+    const kickID = session?.players.find(id => id !== user?.id)
+    if (kickID) {
+      await kickLobbyPlayer(kickID)
+      invalidateSession()
+    }
   }
 
   const handlerProp = {
     onKickMe,
-    onGameStop,
-    onStartJump,
     onGameFinish,
-    onPlayerKicked,
     onPlayerConnected,
-    onOpponentShrink: async () => {
-      const kickID = session?.players.find(id => id !== user?.id)
-      if (kickID) {
-        await kickLobbyPlayer(kickID)
-        invalidateSession()
-      }
-    },
-    onGameStart: () => onGameStart(startTimer),
+    onOpponentShrink,
+    onGameStart,
     onChangeOpponentRotation,
     onChangeOpponentPosition,
   }

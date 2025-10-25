@@ -3,32 +3,20 @@ import { useSession } from '@entities/session'
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
 import { isObstacle } from '@features/obstacle'
-import { Opponent, opponentDepsContext } from '@features/opponent-control'
-import { Snail, snailDepsContext, SnailProvider, useSnailContext } from '@features/snail'
+import { opponentPositionEmitter, opponentRotationEmitter } from '@features/opponent-control'
+import { Snail, snailDepsContext, SnailProvider } from '@features/snail'
 import { FC, Suspense } from 'react'
 import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../lib/status'
 import { useGameStore } from '../model/store'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from './player-snail'
+import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
+import { Euler } from 'three'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
-  const { appendPosition, appendRotation } = useSnailContext()
   const { data: session } = useSession()
   const opponentID = session?.players.find(id => id !== user?.id)
   const { data: opponent } = usePlayerByID(opponentID ?? '')
 
-  return (
-    <opponentDepsContext.Provider
-      value={{
-        onJump: appendPosition,
-        onRotate: rotation => {
-          appendRotation(rotation)
-        },
-      }}>
-      <Opponent>
-        <Snail username={opponent?.username} />
-      </Opponent>
-    </opponentDepsContext.Provider>
-  )
+  return <Snail username={opponent?.username} />
 }
 
 const OpponentSuspense = () => {
@@ -47,6 +35,8 @@ const OpponentSuspense = () => {
     <Suspense fallback={null}>
       <snailDepsContext.Provider
         value={{
+          positionEmitter: opponentPositionEmitter,
+          rotationEmitter: opponentRotationEmitter,
           stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,
           shrinkDuration: MAX_SPACE_HOLD_TIME,
@@ -56,7 +46,7 @@ const OpponentSuspense = () => {
           initPosition={getStartPosition(
             getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined')
           )}
-          initRotation={[0, Math.PI, 0]}>
+          initRotation={new Euler(0, Math.PI, 0)}>
           <OpponentSnail user={user} />
         </SnailProvider>
       </snailDepsContext.Provider>

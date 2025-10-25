@@ -8,7 +8,7 @@ import {
   RoundCuboidCollider,
 } from '@react-three/rapier'
 import React, { FC, useEffect, useMemo, useRef } from 'react'
-import { MeshPhysicalMaterial } from 'three'
+import { BufferGeometry, MeshPhysicalMaterial, Skeleton } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 import { useSnailDeps } from '../deps'
 import { useAnimation } from '../model/use-animation'
@@ -24,7 +24,7 @@ export const textures = [
 ]
 
 export const Snail: FC<{ username?: string; userID?: string }> = ({ username, userID }) => {
-  const { texturePath, shrinkDuration, stunTimeout } = useSnailDeps()
+  const { texturePath, shrinkDuration, stunTimeout, handleModelHandle } = useSnailDeps()
   const { scene, animations } = useGLTF('/models/snail.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { ref, actions } = useAnimations(animations)
@@ -33,18 +33,18 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
   const { animate, stopAnimation, isAnimationRunning } = useAnimation(actions)
-  const { updateStartShrinkAnimation, updateStopShrinkAnimation } = useSnailContext()
+  const { updateStartShrinkAnimation, updateStopShrinkAnimation, updateIsJumping } =
+    useSnailContext()
 
   const getRigidBody = () => rigidBodyRef.current
 
-  useJump(
-    getRigidBody,
-    () => isAnimationRunning('BakedAnimation'),
-    (duration: number) => animate('BakedAnimation', { duration })
-  )
+  useFrame(() => {
+    updateIsJumping(isAnimationRunning('BakedAnimation'))
+  })
+
+  useJump(getRigidBody, (duration: number) => animate('BakedAnimation', { duration }))
 
   const { startShrinkAnimation, stopShrinkAnimation } = useShrink(
-    () => isAnimationRunning('shrink-animation'),
     () =>
       animate('shrink-animation', {
         pauseOnEnd: true,
@@ -64,6 +64,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   useEffect(() => {
     updateStartShrinkAnimation(startShrinkAnimation)
     updateStopShrinkAnimation(stopShrinkAnimation)
+    handleModelHandle?.(rigidBodyRef.current?.handle ?? -1)
   }, [])
 
   useFrame(() => {
@@ -75,7 +76,15 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   const userData = useMemo(() => ({ userID }), [])
 
   const { nodes } = useGraph(clone)
-  const meshProps = nodes['snail_mesh'] as any
+  const meshProps = nodes['snail_mesh'] as unknown as {
+    material: object
+    skeleton: Skeleton
+    geometry: BufferGeometry
+    morphTargetInfluences?: number[]
+    morphTargetDictionary?: {
+      [key: string]: number
+    }
+  }
 
   mapTexture.flipY = false
   mapTexture.colorSpace = 'srgb'

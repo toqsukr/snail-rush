@@ -52,7 +52,7 @@ export const Countdown: FC<CountdownProp> = props => {
     }
   }, [started])
 
-  const position = [playerPosition[0], playerPosition[1] + 8, playerPosition[2]]
+  const position = [playerPosition.x, playerPosition.y + 8, playerPosition.z]
 
   if (!isRunning.current) return
 

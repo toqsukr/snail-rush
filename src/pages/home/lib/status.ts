@@ -1,6 +1,8 @@
-export const HOST_START_POSITION = [19, 0.1, -10] satisfies [number, number, number]
+import { Vector3 } from 'three'
 
-export const JOINED_START_POSITION = [12.2, 0.1, -10] satisfies [number, number, number]
+export const HOST_START_POSITION = new Vector3(19, 0.1, -10)
+
+export const JOINED_START_POSITION = new Vector3(12.2, 0.1, -10)
 
 export type PlayerStatus = 'host' | 'joined'
 
@@ -15,7 +17,7 @@ export enum PlayerSkins {
 }
 
 export const getStartPosition = (playerPosition: PlayerPositions) => {
-  const definePosition: Record<PlayerPositions, [number, number, number]> = {
+  const definePosition: Record<PlayerPositions, Vector3> = {
     0: HOST_START_POSITION,
     1: JOINED_START_POSITION,
   }
