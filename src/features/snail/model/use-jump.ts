@@ -1,9 +1,9 @@
 import { RapierRigidBody } from '@react-three/rapier'
 import { useEffect } from 'react'
 import { Quaternion, Vector3 } from 'three'
-import { useSnailContext } from '../ui/snail-provider'
+import { useSnailContext } from '@features/snail/ui/snail-provider'
+import { useSnailDeps } from '@features/snail/deps'
 import { PositionType, RotationType } from './types'
-import { useSnailDeps } from '../deps'
 
 export const useJump = (
   getRigidBody: () => RapierRigidBody | null,

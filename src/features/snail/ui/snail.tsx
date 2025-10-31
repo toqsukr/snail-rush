@@ -14,7 +14,6 @@ import { useSnailDeps } from '../deps'
 import { useAnimation } from '../model/use-animation'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
-import { useShrink } from '../model/use-shrink'
 import { useSnailContext } from './snail-provider'
 
 export const textures = [
@@ -44,15 +43,13 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   useJump(getRigidBody, (duration: number) => animate('BakedAnimation', { duration }))
 
-  const { startShrinkAnimation, stopShrinkAnimation } = useShrink(
-    () =>
-      animate('shrink-animation', {
-        pauseOnEnd: true,
-        loop: false,
-        duration: shrinkDuration / 1000,
-      }),
-    () => stopAnimation('shrink-animation')
-  )
+  const startShrinkAnimation = () =>
+    animate('shrink-animation', {
+      pauseOnEnd: true,
+      loop: false,
+      duration: shrinkDuration / 1000,
+    })
+  const stopShrinkAnimation = () => stopAnimation('shrink-animation')
 
   const handleCollision = useCollision(getRigidBody, () =>
     animate('stun-animation', { duration: stunTimeout / 1000 })

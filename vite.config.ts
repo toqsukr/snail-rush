@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   plugins: [
-    react(), // Теперь использует ESBuild вместо SWC
+    react(),
     Unfonts({
       google: { families: ['Jersey 25', 'Roboto'], preconnect: true },
     }),

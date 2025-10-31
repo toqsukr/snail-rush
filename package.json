@@ -7,6 +7,9 @@
     "dev": "vite",
     "dev:host": "vite --host",
     "build": "tsc -b && vite build",
+    "test:vitest": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test": "yarn lint && yarn test:vitest",
     "lint": "eslint .",
     "start": "vite preview",
     "start:host": "vite preview --host"
@@ -19,6 +22,7 @@
     "@react-three/fiber": "8.17.10",
     "@react-three/rapier": "1.5.0",
     "@tanstack/react-query": "^5.62.14",
+    "@vitejs/plugin-basic-ssl": "^2.1.0",
     "@vitejs/plugin-react": "^5.1.0",
     "axios": "^1.7.9",
     "clsx": "^2.1.1",
@@ -41,6 +45,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.throttle": "^4.1.9",
     "@types/node": "^22.10.2",
@@ -48,14 +54,17 @@
     "@types/react-dom": "^18.3.5",
     "@types/react-transition-group": "^4.4.12",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitest/coverage-v8": "^4.0.6",
     "esbuild": "^0.25.11",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+    "jsdom": "^27.1.0",
     "r3f-perf": "^7.2.3",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "vitest": "^4.0.6"
   }
 }
