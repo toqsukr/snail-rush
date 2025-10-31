@@ -15,9 +15,9 @@ export const useSession = () => {
     queryFn: () => {
       return sessionService.getSession(code ?? '')
     },
-    select: ({ host_id, is_active, session_id, players, ...rest }) => {
+    select: ({ host_id, is_active, players, score }) => {
       return {
-        ...rest,
+        score,
         id: code ?? '',
         hostID: host_id,
         isActive: is_active,

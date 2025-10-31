@@ -8,10 +8,10 @@ const LobbyRedirectLayout: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!!session) {
+    if (session) {
       navigate(Routes.LOBBY)
     }
-  }, [session])
+  }, [session, navigate])
 
   return children
 }

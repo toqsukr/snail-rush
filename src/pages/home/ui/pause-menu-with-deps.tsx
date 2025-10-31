@@ -20,7 +20,7 @@ const PauseMenu = () => {
     return () => {
       if (groupRef.current) camera.remove(groupRef.current)
     }
-  }, [camera, groupRef.current])
+  }, [camera])
 
   const contextValue = useLobbyMenuDeps()
 

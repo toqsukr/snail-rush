@@ -10,7 +10,7 @@ import Button from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
 import Textarea from '@shared/uikit/textarea/textarea'
 import { FC, PropsWithChildren, useState } from 'react'
-import { Controller, useForm, UseFormReturn } from 'react-hook-form'
+import { Controller, ControllerRenderProps, useForm, UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
 import { useIsConnectingSession } from '../../api/connect-session'
@@ -89,6 +89,19 @@ const MainMenuContent = () => {
 
   const username = formData.watch('username')
 
+  const renderUsernameInput = (field: ControllerRenderProps<{username: string}, 'username'>) => {
+    const {name, onBlur, onChange, value, disabled } = field
+    const props = {name, onBlur, value, disabled}
+
+    return <UsernameInput
+      {...props}
+      onChange={e => {
+        const value = e.currentTarget.value.slice(0, 20)
+        onChange(value)
+      }}
+    />
+  }
+
   if (visibility && mode === 'join-lobby') return <JoinLobby />
 
   if (!visibility || !mode.includes('main-menu')) return
@@ -104,15 +117,7 @@ const MainMenuContent = () => {
       <Controller
         name='username'
         control={formData.control}
-        render={({ field: { ref: _ref, onChange, ...props } }) => (
-          <UsernameInput
-            {...props}
-            onChange={e => {
-              const value = e.currentTarget.value.slice(0, 20)
-              onChange(value)
-            }}
-          />
-        )}
+        render={({field}) => renderUsernameInput(field)}
       />
       <Button onClick={createLobby} disabled={!username.length || mode !== 'main-menu'}>
         {session ? t('lobby_text') : t('create_lobby_text')}
@@ -289,12 +294,14 @@ export const JoinLobbyConnected = () => {
   )
 }
 
+type TAuthFormData = { username: string; password: string }
+
 export const AuthMenu = () => {
   const { t } = useTranslation()
   const { onRegister } = useMainMenuDeps()
   const { mode, toAuthUsername, backToMainMenu } = useMenu()
 
-  const formData = useForm<{ username: string; password: string }>({
+  const formData = useForm<TAuthFormData>({
     mode: 'onChange',
     defaultValues: { username: '', password: '' },
     resolver: zodResolver(z.object({ username: z.string().min(1), password: z.string().min(5) })),
@@ -310,14 +317,19 @@ export const AuthMenu = () => {
     onRegister(username, password)
   }
 
+  const renderPasswordInput = (field: ControllerRenderProps<TAuthFormData, 'password'>) => {
+    const {name, onBlur, onChange, value, disabled} = field
+    const props = {name, onBlur, onChange, value, disabled}
+
+    return <Input {...props} type='password' placeholder={t('password_input_placeholder')} />
+  }
+
   return (
     <Menu>
       <Controller
         name='password'
         control={formData.control}
-        render={({ field: { ref: _ref, ...props } }) => (
-          <Input {...props} type='password' placeholder={t('password_input_placeholder')} />
-        )}
+        render={({field}) => renderPasswordInput(field)}
       />
       <Button onClick={onRegisterClick} disabled={!password.length}>
         {t('register_text')}
@@ -335,21 +347,26 @@ const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: s
 
   const username = formData.watch('username')
 
+  const renderUsernameInput = (field: ControllerRenderProps<TAuthFormData, 'username'>) => {
+    const {name, onBlur, onChange, value, disabled } = field
+    const props = {name, onBlur, value, disabled}
+
+    return <Input
+      {...props}
+      placeholder={t('username_input_placeholder')}
+      onChange={e => {
+        const value = e.currentTarget.value.slice(0, 20)
+        onChange(value)
+      }}
+    />
+  }
+
   return (
     <Menu>
       <Controller
         name='username'
         control={formData.control}
-        render={({ field: { ref: _ref, onChange, ...props } }) => (
-          <Input
-            {...props}
-            placeholder={t('username_input_placeholder')}
-            onChange={e => {
-              const value = e.currentTarget.value.slice(0, 20)
-              onChange(value)
-            }}
-          />
-        )}
+        render={({field}) => renderUsernameInput(field)}
       />
       <Button onClick={toAuthPassword} disabled={!username.length}>
         {t('next_text')}

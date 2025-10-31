@@ -11,7 +11,7 @@ export const useUpdateUsername = () => {
     debounce((user: TUser) => {
       return updatePlayer.mutateAsync(user)
     }, 1500),
-    []
+    [updatePlayer]
   )
 
   return async (username: string) => {

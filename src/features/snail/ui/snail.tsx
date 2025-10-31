@@ -7,14 +7,15 @@ import {
   RigidBody,
   RoundCuboidCollider,
 } from '@react-three/rapier'
-import React, { FC, useEffect, useMemo, useRef } from 'react'
-import { BufferGeometry, MeshPhysicalMaterial, Skeleton } from 'three'
+import React, { FC, RefObject, useEffect, useMemo, useRef } from 'react'
+import { BufferGeometry, Group, MeshPhysicalMaterial, Object3DEventMap, Skeleton } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 import { useSnailDeps } from '../deps'
 import { useAnimation } from '../model/use-animation'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
 import { useSnailContext } from './snail-provider'
+import { DreiTextProps } from '@shared/lib/three'
 
 export const textures = [
   '/textures/snail-metal.png',
@@ -56,7 +57,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   )
 
   const { camera } = useThree()
-  const textRef = useRef<any>(null)
+  const textRef = useRef<DreiTextProps | null>(null)
 
   useEffect(() => {
     updateStartShrinkAnimation(startShrinkAnimation)
@@ -66,7 +67,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   useFrame(() => {
     if (textRef.current) {
-      textRef.current.lookAt(camera.position)
+      textRef.current.lookAt?.(camera.position)
     }
   })
 
@@ -118,7 +119,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       <Text ref={textRef} fontSize={0.8} fontWeight={800} fillOpacity={0.8} position={[0, 4, 0]}>
         {username}
       </Text>
-      <group ref={ref as any} dispose={null}>
+      <group ref={ref as RefObject<Group<Object3DEventMap>>} dispose={null}>
         <group name='Scene'>
           <group name='snail' position={[0, 0.2, 0.11]} rotation={[Math.PI / 2, 0, 0]}>
             <primitive object={nodes['tail-bone']} />
