@@ -1,8 +1,8 @@
 import { useRef } from 'react'
 
-const MIN_INCREMENT = 0.1
-const MAX_INCREMENT = 0.7
-const STEP = 0.1
+const MIN_INCREMENT = 0.025
+const MAX_INCREMENT = 0.5
+const STEP = 0.025
 
 export const useAdditiveRotation = () => {
   const x = useRef(0)

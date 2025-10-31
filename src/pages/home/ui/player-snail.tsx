@@ -22,7 +22,7 @@ import { useGameStore } from '../model/store'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 
 const calculateImpulse = (rotation: Euler, koef: number) => {
-  return new Vector3(0, 0, koef).applyEuler(rotation).multiplyScalar(10)
+  return new Vector3(0, 0, koef).applyEuler(rotation).multiplyScalar(12)
 }
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
