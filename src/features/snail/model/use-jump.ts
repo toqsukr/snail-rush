@@ -1,52 +1,54 @@
-import { useEffect } from 'react'
+import { RefObject, useEffect } from 'react'
 import { Quaternion, Vector3 } from 'three'
 import { RapierRigidBody } from '@react-three/rapier'
 import { useSnailContext } from '@features/snail/ui/snail-provider'
 import { useSnailDeps } from '@features/snail/deps'
-import { PositionType, RotationType } from './types'
+import { PositionWithoutCorrectType, RotationType } from './types'
 
 export const useJump = (
-  getRigidBody: () => RapierRigidBody | null,
+  rigidBodyRef: RefObject<RapierRigidBody | null>,
   animateJump: (duration: number) => void
 ) => {
-  const { position, rotation, updatePosition, updateRotation } = useSnailContext()
+  const { getPosition, rotation, updatePosition, updateRotation } = useSnailContext()
   const { positionEmitter, rotationEmitter } = useSnailDeps()
 
   const triggerRotate = (rotation: RotationType) => {
     const { rotation: targetRotation } = rotation
-    const rigidBody = getRigidBody()
-    if (rigidBody) {
+    if (rigidBodyRef.current) {
       const quaternion = new Quaternion().setFromEuler(targetRotation)
-      rigidBody.setRotation(quaternion, true)
+      rigidBodyRef.current.setRotation(quaternion, true)
     }
     updateRotation(targetRotation)
   }
 
-  const triggerJump = (position: PositionType) => {
-    console.log(position)
+  const triggerJump = (position: PositionWithoutCorrectType) => {
     const { duration, impulse } = position
     animateJump(duration)
-    const rigidBody = getRigidBody()
 
-    if (rigidBody) {
-      rigidBody.applyImpulse(impulse, true)
+    if (rigidBodyRef.current) {
+      rigidBodyRef.current.applyImpulse(impulse, true)
+      const { x, y, z } = rigidBodyRef.current.translation()
+      updatePosition(new Vector3(x, y, z))
     }
-
-    updatePosition(impulse)
   }
 
   useEffect(() => {
-    const rigidBody = getRigidBody()
-    if (rigidBody) {
-      rigidBody.setTranslation(new Vector3(...position), true)
+    if (rigidBodyRef.current) {
+      rigidBodyRef.current.setTranslation(new Vector3(...getPosition()), true)
       const quaternion = new Quaternion().setFromEuler(rotation)
-      rigidBody.setRotation(quaternion, true)
+      rigidBodyRef.current.setRotation(quaternion, true)
     }
   }, [])
 
+  const getRigidBody = () => rigidBodyRef.current
+
   useEffect(() => {
     const unsubscribePosition = positionEmitter.subscribe(position => {
-      triggerJump(position)
+      const { duration, holdTime, impulse, ...rest } = position
+      if (rest.correctStartPosition) {
+        getRigidBody()?.setTranslation(rest.startPosition, true)
+      }
+      triggerJump({ duration, holdTime, impulse })
     })
 
     const unsubscribeRotation = rotationEmitter.subscribe(rotation => {

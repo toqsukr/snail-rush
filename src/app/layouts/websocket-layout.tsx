@@ -13,7 +13,7 @@ import { useMenuMode } from '@features/menu'
 import { useKickLobbyPlayer } from '@features/menu/model/use-kick-player'
 import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
-import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
+import { getPlayerPosition, getStartPosition } from '@pages/home/model/status'
 import { useGameStore } from '@pages/home/model/store'
 import { grassMapData } from '@pages/home/ui/game-map'
 import { WS_HOST_URL } from '@shared/api/base-template'
@@ -77,9 +77,18 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     const { duration, roll, pitch, yaw } = rotation
     pushOpponentRotation({ rotation: new Euler(roll, pitch, yaw), duration })
   }
-  const onChangeOpponentPosition = ({ position }: OpponentPositionType) => {
-    const { duration, hold_time, x, y, z } = position
-    pushOpponentPosition({ impulse: new Vector3(x, y, z), duration, holdTime: hold_time })
+
+  const onChangeOpponentPosition = ({ move }: OpponentPositionType) => {
+    const { duration, hold_time, x, y, z, position } = move
+    const startPosition = new Vector3(position.x, position.y, position.z)
+
+    pushOpponentPosition({
+      correctStartPosition: true,
+      startPosition,
+      impulse: new Vector3(x, y, z),
+      duration,
+      holdTime: hold_time,
+    })
   }
 
   const onOpponentShrink = async () => {

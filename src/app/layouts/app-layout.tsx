@@ -1,5 +1,5 @@
 import { Logflow } from '@features/logflow'
-import { getTexturePath, PlayerSkins } from '@pages/home/lib/status'
+import { getTexturePath, PlayerSkins } from '@pages/home/model/status'
 import { useGameStore } from '@pages/home/model/store'
 import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'

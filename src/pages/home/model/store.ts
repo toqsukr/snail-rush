@@ -1,7 +1,7 @@
 import { TPlayer } from '@entities/players'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { PlayerSkins, PlayerStatus } from '../lib/status'
+import { PlayerSkins, PlayerStatus } from './status'
 
 const GAME_STORE_KEY = 'game-data-store'
 

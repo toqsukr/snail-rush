@@ -27,7 +27,7 @@ type LobbyEventsProviderProp = {
   onGameFinish?: (data: MessageType) => void
   onPlayerKicked?: (players: TPlayer[], timestamp: number) => void
   onPlayerConnected?: (players: TPlayer[], timestamp: number) => void
-  onChangeOpponentPosition?: (position: OpponentPositionType) => void
+  onChangeOpponentPosition?: (move: OpponentPositionType) => void
   onChangeOpponentRotation?: (position: OpponentRotationType) => void
 }
 
@@ -87,11 +87,9 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
         }
         case Operations.PLAYER_MOVE: {
-          const { position } = PlayerMoveMessageSchema.parse(
-            responseData.data
-          ) as PlayerMoveMessageType
-          onChangeOpponentPosition?.({ position })
-          console.log('player moved', position)
+          const { move } = PlayerMoveMessageSchema.parse(responseData.data) as PlayerMoveMessageType
+          onChangeOpponentPosition?.({ move })
+          console.log('player moved from', move.position, 'with impulse', [move.x, move.y, move.z])
           break
         }
         case Operations.PLAYER_ROTATION: {
@@ -110,12 +108,12 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
         case Operations.PLAYER_SHRINK: {
           onOpponentShrink?.()
           // const startJumpData = PlayerStartJumpMessageSchema.parse(
-            //   responseData.data
-            // ) as PlayerStartJumpMessageType
-            // onStartJump({ position: startJumpData.position })
-            console.log('player shrink')
-            break
-          }
+          //   responseData.data
+          // ) as PlayerStartJumpMessageType
+          // onStartJump({ position: startJumpData.position })
+          console.log('player shrink')
+          break
+        }
         case Operations.SESSION_DELETE: {
           onSessionExit()
           console.log('session deleted')

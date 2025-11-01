@@ -66,9 +66,9 @@ const MainMenuContent = () => {
   const { t } = useTranslation()
   const joinLobby = useJoinLobby()
   const { data: user } = useUser()
-  const { visibility, mode, toSkins, toFeedback } = useMenu()
+  const { visibility, mode, toSkins } = useMenu()
   const { data: session } = useSession()
-  const { onToSkins, onToFeedback } = useMainMenuDeps()
+  const { onToSkins } = useMainMenuDeps()
   const createLobby = useCreateLobby()
 
   const changeSkin = () => {
@@ -76,10 +76,10 @@ const MainMenuContent = () => {
     onToSkins()
   }
 
-  const leaveFeedback = () => {
-    toFeedback()
-    onToFeedback()
-  }
+  // const leaveFeedback = () => {
+  //   toFeedback()
+  //   onToFeedback()
+  // }
 
   const formData = useForm<{ username: string }>({
     mode: 'onChange',

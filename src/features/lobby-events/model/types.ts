@@ -30,6 +30,11 @@ export const TransferPositionSchema = z.object({
   x: z.number(),
   y: z.number(),
   z: z.number(),
+  position: z.object({
+    x: z.number(),
+    y: z.number(),
+    z: z.number(),
+  }),
   hold_time: z.number(),
   duration: z.number(),
 })
@@ -48,7 +53,7 @@ export const TransferRotationSchema = z.object({
 })
 
 export const OpponentPositionSchema = z.object({
-  position: TransferPositionSchema,
+  move: TransferPositionSchema,
 })
 
 export const OpponentStartJumpSchema = z.object({
@@ -80,7 +85,7 @@ export type WebSocketResponse = z.infer<typeof WebSocketResponseSchema>
 
 export const PlayerMoveMessageSchema = MessageSchema.merge(
   z.object({
-    position: TransferPositionSchema,
+    move: TransferPositionSchema,
   })
 )
 

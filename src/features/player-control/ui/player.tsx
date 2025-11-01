@@ -23,7 +23,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   const handleJump = (holdTime: number) => {
     if (!canMove()) return
 
-    const koef = Math.max(.4, holdTime / MAX_SPACE_HOLD_TIME)
+    const koef = Math.max(0.4, holdTime / MAX_SPACE_HOLD_TIME)
     const callback = (impulse: Vector3, duration: number) =>
       pushPlayerPosition({
         impulse,

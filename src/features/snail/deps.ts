@@ -1,13 +1,13 @@
 import { Emitter } from '@shared/lib/emitter'
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
-import { PositionType, RotationType } from './model/types'
+import { PositionWithCorrectType, PositionWithoutCorrectType, RotationType } from './model/types'
 
 type SnailDeps = {
   texturePath: string
   stunTimeout: number
   shrinkDuration: number
   shouldHandleCollision: (objectUserData: unknown) => boolean
-  positionEmitter: Emitter<PositionType>
+  positionEmitter: Emitter<PositionWithCorrectType> | Emitter<PositionWithoutCorrectType>
   rotationEmitter: Emitter<RotationType>
   onCollision?: () => void
   startPosition?: [number, number, number]

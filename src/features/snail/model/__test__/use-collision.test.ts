@@ -43,9 +43,7 @@ describe('useCollision', () => {
     } as CollisionEnterPayload
 
     const { result: snailDepsResult } = renderHook(() => useSnailDeps())
-    const { result: collisionResult } = renderHook(() =>
-      useCollision(mockedGetRigidBody, mockedAnimateCollision)
-    )
+    const { result: collisionResult } = renderHook(() => useCollision(mockedAnimateCollision))
 
     collisionResult.current(collisionPayload)
 
@@ -71,9 +69,7 @@ describe('useCollision', () => {
     } as CollisionEnterPayload
 
     const { result: snailDepsResult } = renderHook(() => useSnailDeps())
-    const { result: collisionResult } = renderHook(() =>
-      useCollision(mockedGetRigidBody, mockedAnimateCollision)
-    )
+    const { result: collisionResult } = renderHook(() => useCollision(mockedAnimateCollision))
 
     collisionResult.current(collisionPayload)
 

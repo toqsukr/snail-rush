@@ -36,13 +36,11 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   const { updateStartShrinkAnimation, updateStopShrinkAnimation, updateIsJumping } =
     useSnailContext()
 
-  const getRigidBody = () => rigidBodyRef.current
-
   useFrame(() => {
     updateIsJumping(isAnimationRunning('BakedAnimation'))
   })
 
-  useJump(getRigidBody, (duration: number) => animate('BakedAnimation', { duration }))
+  useJump(rigidBodyRef, (duration: number) => animate('BakedAnimation', { duration }))
 
   const startShrinkAnimation = () =>
     animate('shrink-animation', {
@@ -52,7 +50,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     })
   const stopShrinkAnimation = () => stopAnimation('shrink-animation')
 
-  const handleCollision = useCollision(getRigidBody, () =>
+  const handleCollision = useCollision(() =>
     animate('stun-animation', { duration: stunTimeout / 1000 })
   )
 
@@ -107,7 +105,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       collisionGroups={interactionGroups(0b01, 0b10)}
       onCollisionEnter={handleCollision}
       enabledRotations={[false, false, false]}
-      restitution={1}>
+      restitution={0}>
       <RoundCuboidCollider
         name='neck'
         args={[0.05, 0.05, 0.5, 0.2]}

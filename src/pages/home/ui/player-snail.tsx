@@ -1,6 +1,6 @@
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
-import { useSendTargetPosition, useSendTargetRotation } from '@features/lobby-events'
+import { useSendMoveImpulse, useSendTargetRotation } from '@features/lobby-events'
 import {
   Player,
   playerDepsContext,
@@ -17,18 +17,19 @@ import {
 } from '@features/snail'
 import { FC, Suspense, useCallback } from 'react'
 import { Euler, Vector3 } from 'three'
-import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../lib/status'
+import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../model/status'
 import { useGameStore } from '../model/store'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { isObstacle } from '@shared/lib/game/obstacle'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
-  const sendTargetPosition = useSendTargetPosition()
+  const sendTargetPosition = useSendMoveImpulse()
   const sendTargetRotation = useSendTargetRotation()
   const calcAnimationDuration = useCalcAnimationDuration()
 
-  const { rotation, getIsJumping, startShrinkAnimation, stopShrinkAnimation } = useSnailContext()
+  const { rotation, getIsJumping, startShrinkAnimation, stopShrinkAnimation, getPosition } =
+    useSnailContext()
 
   const onJump = (
     koef: number,
@@ -38,15 +39,15 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
     const impulse = calculateImpulse(rotation, koef)
     const duration = calcAnimationDuration(0)
     pushCallback(impulse, duration)
-    sendTargetPosition({
-      position: {
-        x: impulse.x,
-        y: impulse.y,
-        z: impulse.z,
-        duration,
-        hold_time: holdTime,
-      },
-    })
+    const move = {
+      x: impulse.x,
+      y: impulse.y,
+      z: impulse.z,
+      duration,
+      position: getPosition(),
+      hold_time: holdTime,
+    }
+    sendTargetPosition({ move })
   }
 
   const onRotate = (

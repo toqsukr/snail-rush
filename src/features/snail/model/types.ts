@@ -6,6 +6,16 @@ export type PositionType = {
   duration: number
 }
 
+export type PositionWithCorrectType = {
+  correctStartPosition: true
+  startPosition: Vector3
+} & PositionType
+
+export type PositionWithoutCorrectType = {
+  correctStartPosition?: false
+  startPosition?: never
+} & PositionType
+
 export type RotationType = {
   rotation: Euler
   duration: number

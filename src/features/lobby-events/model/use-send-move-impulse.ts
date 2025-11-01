@@ -2,7 +2,7 @@ import { useUser } from '@entities/user'
 import { useWebSocket } from '@shared/lib/websocket'
 import { Operations, OpponentPositionType } from './types'
 
-export const useSendTargetPosition = () => {
+export const useSendMoveImpulse = () => {
   const websocket = useWebSocket()
   const { data: user } = useUser()
   return (data: OpponentPositionType) => {

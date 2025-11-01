@@ -1,5 +1,5 @@
 import { CountdownProvider } from '@features/countdown'
-import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
+import { getPlayerPosition, getStartPosition } from '@pages/home/model/status'
 import { useGameStore } from '@pages/home/model/store'
 import { FC, PropsWithChildren } from 'react'
 

@@ -9,7 +9,7 @@ import { MAIN_MENU_POSITION } from '@pages/home'
 import { FC, PropsWithChildren, Suspense } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Vector3 } from 'three'
-import { getPlayerPosition, getStartPosition } from '../../pages/home/lib/status'
+import { getPlayerPosition, getStartPosition } from '../../pages/home/model/status'
 import { useGameStore } from '../../pages/home/model/store'
 
 const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {

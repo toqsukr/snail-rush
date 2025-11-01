@@ -9,6 +9,8 @@ type SnailProviderProp = {
 }
 
 type SnailContext = {
+  getPosition: () => Vector3
+  updatePosition: (value: Vector3) => void
   getIsJumping: () => boolean
   updateIsJumping: (value: boolean) => void
 } & SnailStore
@@ -19,11 +21,17 @@ export const useSnailContext = () => useStrictContext(SnailContext)
 
 export const SnailProvider: FC<PropsWithChildren<SnailProviderProp>> = ({
   children,
-  initPosition = new Vector3(),
   initRotation = new Euler(),
+  initPosition = new Vector3(),
 }) => {
-  const [useSnailStore] = useState(() => createSnailStore(initPosition, initRotation))
+  const [useSnailStore] = useState(() => createSnailStore(initRotation))
   const storeData = useSnailStore()
+
+  const positionRef = useRef(initPosition)
+  const updatePosition = (value: Vector3) => {
+    positionRef.current = value
+  }
+  const getPosition = () => positionRef.current
 
   const isJumping = useRef(false)
   const updateIsJumping = (value: boolean) => {
@@ -35,6 +43,8 @@ export const SnailProvider: FC<PropsWithChildren<SnailProviderProp>> = ({
     ...storeData,
     getIsJumping,
     updateIsJumping,
+    getPosition,
+    updatePosition,
   }
 
   return <SnailContext.Provider value={value}>{children}</SnailContext.Provider>
