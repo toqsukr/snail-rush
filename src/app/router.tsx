@@ -1,6 +1,5 @@
 import { AuthPage } from '@pages/auth'
 import HomePage from '@pages/home'
-import GameMap from '@pages/home/ui/game-map'
 import GameOver from '@pages/home/ui/game-over'
 import LobbyMenu from '@pages/home/ui/lobby-menu'
 import PauseMenu from '@pages/home/ui/pause-menu-with-deps'
@@ -18,6 +17,7 @@ import MainMenuLayout from './layouts/main-menu-layout'
 import NonAuthLayout from './layouts/non-auth-layout'
 import TrackCameraLayout from './layouts/track-camera-layout'
 import WebSocketLayout from './layouts/websocket-layout'
+import GrassGameMap from '@pages/home/ui/game-map'
 
 export const router = createBrowserRouter([
   {
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
               <WebSocketLayout>
                 <LobbyMenuLayout>
                   <LobbyMenu />
-                  <GameMap />
+                  <GrassGameMap />
                   <PauseMenu />
                   <GameOver />
                   <PlayerSuspense />

@@ -13,9 +13,9 @@ import { useMenuMode } from '@features/menu'
 import { useKickLobbyPlayer } from '@features/menu/model/use-kick-player'
 import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
-import { FINISH_POSITION } from '@pages/home'
 import { getPlayerPosition, getStartPosition } from '@pages/home/lib/status'
 import { useGameStore } from '@pages/home/model/store'
+import { grassMapData } from '@pages/home/ui/game-map'
 import { WS_HOST_URL } from '@shared/api/base-template'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
@@ -44,7 +44,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     gameStore.finishGame()
 
     setTimeout(async () => {
-      await followTarget(FINISH_POSITION)
+      await followTarget(new Vector3(...grassMapData.finishLine.position))
       const winner = await getPlayer(actor_id)
 
       if (winner) {

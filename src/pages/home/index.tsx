@@ -6,8 +6,6 @@ import MainMenu from './ui/main-menu'
 import OpponentSuspense from './ui/opponent-snail'
 import SkinMenu from './ui/skin-menu'
 
-const LIGHT_POSITION = [5, 1, 0] satisfies [number, number, number]
-
 const HomePage = () => {
   return (
     <>
@@ -18,12 +16,10 @@ const HomePage = () => {
       <FeedbackMenu />
       <SkinMenu />
       <Floor />
-      <ambientLight position={LIGHT_POSITION} intensity={1} />
     </>
   )
 }
 
-export { FINISH_POSITION } from './ui/game-map'
 export { MAIN_MENU_POSITION } from './ui/main-menu'
 export { SKIN_MENU_POSITION } from './ui/skin-menu'
 export default HomePage

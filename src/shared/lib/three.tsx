@@ -35,6 +35,8 @@ export type DreiTextProps = JSX.IntrinsicElements['mesh'] & {
     onSync?: (troika: unknown) => void;
 };
 
+const LIGHT_POSITION = [5, 1, 0] satisfies [number, number, number]
+
 export const Floor = () => {
   return (
     <RigidBody
@@ -44,9 +46,9 @@ export const Floor = () => {
       rotation={[Math.PI / 2, 0, 0]}
       args={[250, 250, 250]}>
       <mesh>
-        <ambientLight intensity={3} color='white' />
+        <ambientLight intensity={4} color='white' position={LIGHT_POSITION} />
         <directionalLight intensity={3} position={[10, 10, 10]} castShadow />
-        <directionalLight intensity={3} position={[-10, 10, -10]} castShadow />
+        {/* <directionalLight intensity={3} position={[-10, 10, -10]} castShadow /> */}
         <planeGeometry args={[250, 250, 250]} />
         <meshStandardMaterial color='black' />
       </mesh>

@@ -1,7 +1,6 @@
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
 import { useSendTargetPosition, useSendTargetRotation } from '@features/lobby-events'
-import { isObstacle } from '@features/obstacle'
 import {
   Player,
   playerDepsContext,
@@ -21,6 +20,7 @@ import { Euler, Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../lib/status'
 import { useGameStore } from '../model/store'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
+import { isObstacle } from '@shared/lib/game/obstacle'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()

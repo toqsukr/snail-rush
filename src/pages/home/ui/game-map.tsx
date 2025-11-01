@@ -1,53 +1,54 @@
+import { Vector3 } from 'three'
 import { getPlayer } from '@entities/players'
 import { TUser } from '@entities/user'
-import { FinishControl, finishControlDepsContext } from '@features/finish-control'
 import { useSendFinishGame } from '@features/lobby-events'
-import { StaticObstacle } from '@features/obstacle'
-import FinishLine from '@shared/primitives/finish-line'
-import GrassMap from '@shared/primitives/maps/grass-map'
-import Stone from '@shared/primitives/obstacles/stone'
-import SmallStone from '@shared/primitives/obstacles/small-stone'
-import StartLine from '@shared/primitives/start-line'
-import { Euler, Vector3 } from 'three'
-import { useGameStore } from '../model/store'
 import { useFollowTarget } from '@features/tracking-camera'
-
-export const FINISH_POSITION = new Vector3(54, 0.5, -4)
-
-const stones = [
-  { position: [62, 0, -19], rotation: [0, 0, 0] },
-  { position: [63, 0, -31], rotation: [0, Math.PI / 3, 0] },
-  { position: [73, 0, -36], rotation: [0, -Math.PI / 2.5, 0] },
-  { position: [61, 0, -42], rotation: [0, 0, 0] },
-  { position: [70, 0, -49], rotation: [0, Math.PI / 3.5, 0] },
-  { position: [57, 0, -58], rotation: [0, Math.PI / 4, 0] },
-  { position: [26, 0, -68], rotation: [0, 0, 0] },
-  { position: [28, 0, -60], rotation: [0, 0, 0] },
-  { position: [34, 0, -53], rotation: [0, Math.PI / 4, 0] },
-  { position: [15, 0, -44], rotation: [0, 0, 0] },
-  { position: [11, 0, -32], rotation: [0, Math.PI / 2.5, 0] },
-  { position: [20, 0, -28], rotation: [0, -Math.PI / 3, 0] },
-]
-const smallStones = [
-  { position: [45, 0, -62], rotation: [0, 0, 0] },
-  { position: [73, 0, -21], rotation: [0, Math.PI / 3, 0] },
-  { position: [63, 0, -26], rotation: [0, -Math.PI / 2.5, 0] },
-  { position: [15, 0, -23], rotation: [0, 0, 0] },
-  { position: [65, 0, -59], rotation: [0, Math.PI / 3.5, 0] },
-]
-
-const startProps = {
-  position: [15.5, 0.1, -12],
-  rotation: [0, -Math.PI / 2, 0],
-}
-
-const finishProps = {
-  position: FINISH_POSITION,
-  rotation: new Euler(0, Math.PI + Math.PI / 2.8, 0),
-}
+import { useGameStore } from '../model/store'
+import { GameMap, MapData } from '@shared/lib/game/map'
 
 type TUserData = {
   userID: TUser['id']
+}
+
+//TODO в бд итд
+export const grassMapData: MapData = {
+  planeModelPath: 'models/grass-map.glb',
+  wallsModelPath: 'models/grass-walls.glb',
+  startLine: { position: [15.5, 0.1, -12], rotation: [0, -Math.PI / 2, 0] },
+  finishLine: { position: [54, 0.5, -4], rotation: [0, Math.PI + Math.PI / 2.8, 0] },
+  obstacle: {
+    stone: {
+      items: [
+        { position: [62, 0, -19], rotation: [0, 0, 0] },
+        { position: [63, 0, -31], rotation: [0, Math.PI / 3, 0] },
+        { position: [73, 0, -36], rotation: [0, -Math.PI / 2.5, 0] },
+        { position: [61, 0, -42], rotation: [0, 0, 0] },
+        { position: [70, 0, -49], rotation: [0, Math.PI / 3.5, 0] },
+        { position: [57, 0, -58], rotation: [0, Math.PI / 4, 0] },
+        { position: [26, 0, -68], rotation: [0, 0, 0] },
+        { position: [28, 0, -60], rotation: [0, 0, 0] },
+        { position: [34, 0, -53], rotation: [0, Math.PI / 4, 0] },
+        { position: [15, 0, -44], rotation: [0, 0, 0] },
+        { position: [11, 0, -32], rotation: [0, Math.PI / 2.5, 0] },
+        { position: [20, 0, -28], rotation: [0, -Math.PI / 3, 0] },
+      ],
+      modelPath: 'models/desert-stone.glb',
+    },
+    smallStone: {
+      items: [
+        { position: [45, 0, -62], rotation: [0, 0, 0] },
+        { position: [73, 0, -21], rotation: [0, Math.PI / 3, 0] },
+        { position: [63, 0, -26], rotation: [0, -Math.PI / 2.5, 0] },
+        { position: [15, 0, -23], rotation: [0, 0, 0] },
+        { position: [65, 0, -59], rotation: [0, Math.PI / 3.5, 0] },
+      ],
+      modelPath: 'models/small-desert-stone.glb',
+    },
+    bigStone: {
+      items: [],
+      modelPath: 'models/big-desert-stone.glb',
+    },
+  },
 }
 
 const containsUserdata = (userData: unknown): userData is TUserData => {
@@ -59,7 +60,7 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
   )
 }
 
-const GameMap = () => {
+const GrassGameMap = () => {
   const sendFinishGame = useSendFinishGame()
   const followTarget = useFollowTarget()
   const { finishGame, updateWinner, updateMoveable, winner } = useGameStore()
@@ -71,7 +72,7 @@ const GameMap = () => {
       sendFinishGame()
       finishGame()
       setTimeout(async () => {
-        await followTarget(FINISH_POSITION)
+        await followTarget(new Vector3(...grassMapData.finishLine.position))
         const foundWinner = await getPlayer(userData.userID)
         if (foundWinner) {
           updateWinner(foundWinner)
@@ -80,34 +81,7 @@ const GameMap = () => {
     }
   }
 
-  return (
-    <>
-      <GrassMap />
-      <StartLine {...startProps} />
-      <finishControlDepsContext.Provider value={{ onFinish }}>
-        <FinishControl {...finishProps}>
-          <FinishLine />
-        </FinishControl>
-      </finishControlDepsContext.Provider>
-
-      {stones.map(({ position, rotation }) => (
-        <StaticObstacle
-          key={`stone-${position.join()}`}
-          model={<Stone />}
-          rotation={new Euler(...rotation)}
-          position={new Vector3(...position)}
-        />
-      ))}
-      {smallStones.map(({ position, rotation }) => (
-        <StaticObstacle
-          key={`small-stone-${position.join()}`}
-          model={<SmallStone />}
-          rotation={new Euler(...rotation)}
-          position={new Vector3(...position)}
-        />
-      ))}
-    </>
-  )
+  return <GameMap onFinish={onFinish} mapData={grassMapData} />
 }
 
-export default GameMap
+export default GrassGameMap

@@ -2,7 +2,6 @@ import { usePlayerByID } from '@entities/players'
 import { useSession } from '@entities/session'
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
-import { isObstacle } from '@features/obstacle'
 import { opponentPositionEmitter, opponentRotationEmitter } from '@features/opponent-control'
 import { Snail, snailDepsContext, SnailProvider } from '@features/snail'
 import { FC, Suspense } from 'react'
@@ -10,6 +9,7 @@ import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from
 import { useGameStore } from '../model/store'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { Euler } from 'three'
+import { isObstacle } from '@shared/lib/game/obstacle'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { data: session } = useSession()
