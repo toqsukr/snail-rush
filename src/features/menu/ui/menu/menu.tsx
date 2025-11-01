@@ -89,17 +89,19 @@ const MainMenuContent = () => {
 
   const username = formData.watch('username')
 
-  const renderUsernameInput = (field: ControllerRenderProps<{username: string}, 'username'>) => {
-    const {name, onBlur, onChange, value, disabled } = field
-    const props = {name, onBlur, value, disabled}
+  const renderUsernameInput = (field: ControllerRenderProps<{ username: string }, 'username'>) => {
+    const { name, onBlur, onChange, value, disabled } = field
+    const props = { name, onBlur, value, disabled }
 
-    return <UsernameInput
-      {...props}
-      onChange={e => {
-        const value = e.currentTarget.value.slice(0, 20)
-        onChange(value)
-      }}
-    />
+    return (
+      <UsernameInput
+        {...props}
+        onChange={e => {
+          const value = e.currentTarget.value.slice(0, 20)
+          onChange(value)
+        }}
+      />
+    )
   }
 
   if (visibility && mode === 'join-lobby') return <JoinLobby />
@@ -117,7 +119,7 @@ const MainMenuContent = () => {
       <Controller
         name='username'
         control={formData.control}
-        render={({field}) => renderUsernameInput(field)}
+        render={({ field }) => renderUsernameInput(field)}
       />
       <Button onClick={createLobby} disabled={!username.length || mode !== 'main-menu'}>
         {session ? t('lobby_text') : t('create_lobby_text')}
@@ -128,9 +130,9 @@ const MainMenuContent = () => {
       <Button onClick={changeSkin} disabled={mode !== 'main-menu'}>
         {t('change_skin_text')}
       </Button>
-      <Button onClick={leaveFeedback} disabled={mode !== 'main-menu'}>
+      {/* <Button onClick={leaveFeedback} disabled={mode !== 'main-menu'}>
         {t('leave_feedback_text')}
-      </Button>
+      </Button> */}
     </>
   )
 }
@@ -318,8 +320,8 @@ export const AuthMenu = () => {
   }
 
   const renderPasswordInput = (field: ControllerRenderProps<TAuthFormData, 'password'>) => {
-    const {name, onBlur, onChange, value, disabled} = field
-    const props = {name, onBlur, onChange, value, disabled}
+    const { name, onBlur, onChange, value, disabled } = field
+    const props = { name, onBlur, onChange, value, disabled }
 
     return <Input {...props} type='password' placeholder={t('password_input_placeholder')} />
   }
@@ -329,7 +331,7 @@ export const AuthMenu = () => {
       <Controller
         name='password'
         control={formData.control}
-        render={({field}) => renderPasswordInput(field)}
+        render={({ field }) => renderPasswordInput(field)}
       />
       <Button onClick={onRegisterClick} disabled={!password.length}>
         {t('register_text')}
@@ -348,17 +350,19 @@ const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: s
   const username = formData.watch('username')
 
   const renderUsernameInput = (field: ControllerRenderProps<TAuthFormData, 'username'>) => {
-    const {name, onBlur, onChange, value, disabled } = field
-    const props = {name, onBlur, value, disabled}
+    const { name, onBlur, onChange, value, disabled } = field
+    const props = { name, onBlur, value, disabled }
 
-    return <Input
-      {...props}
-      placeholder={t('username_input_placeholder')}
-      onChange={e => {
-        const value = e.currentTarget.value.slice(0, 20)
-        onChange(value)
-      }}
-    />
+    return (
+      <Input
+        {...props}
+        placeholder={t('username_input_placeholder')}
+        onChange={e => {
+          const value = e.currentTarget.value.slice(0, 20)
+          onChange(value)
+        }}
+      />
+    )
   }
 
   return (
@@ -366,7 +370,7 @@ const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: s
       <Controller
         name='username'
         control={formData.control}
-        render={({field}) => renderUsernameInput(field)}
+        render={({ field }) => renderUsernameInput(field)}
       />
       <Button onClick={toAuthPassword} disabled={!username.length}>
         {t('next_text')}
