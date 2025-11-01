@@ -1,9 +1,7 @@
 import { CollisionEnterPayload, RapierRigidBody } from '@react-three/rapier'
 import { Vector3 } from 'three'
 import { useSnailDeps } from '../deps'
-
-const FORCE_MAGNITUDE = 10
-const BOUNCE_FACTOR = 0.7
+import { BOUNCE_FACTOR, FORCE_MAGNITUDE } from './constants'
 
 export const useCollision = (
   getRigidBody: () => RapierRigidBody | null,

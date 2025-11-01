@@ -1,10 +1,10 @@
 import { CuboidCollider, RigidBody, RigidBodyProps } from '@react-three/rapier'
 import { FC, PropsWithChildren, useRef } from 'react'
-import { useFinishControl } from '../deps'
+import { useFinishControlDeps } from '../deps'
 
 export const FinishControl: FC<PropsWithChildren<RigidBodyProps>> = ({ children, ...props }) => {
   const timerRef = useRef<NodeJS.Timeout>()
-  const { onFinish } = useFinishControl()
+  const { onFinish } = useFinishControlDeps()
   return (
     <RigidBody
       {...props}

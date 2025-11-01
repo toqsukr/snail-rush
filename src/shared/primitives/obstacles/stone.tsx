@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { Mesh } from 'three'
 
 const Stone = React.memo(() => {
-  const { scene } = useGLTF('models/stone.glb')
+  const { scene } = useGLTF('models/desert-stone.glb')
   const clonedScene = useMemo(() => {
     const clone = scene.clone()
     clone.traverse(child => {

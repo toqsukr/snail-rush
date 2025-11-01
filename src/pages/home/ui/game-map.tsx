@@ -6,7 +6,7 @@ import { StaticObstacle } from '@features/obstacle'
 import FinishLine from '@shared/primitives/finish-line'
 import GrassMap from '@shared/primitives/maps/grass-map'
 import Stone from '@shared/primitives/obstacles/stone'
-import TallStone from '@shared/primitives/obstacles/tall-stone'
+import SmallStone from '@shared/primitives/obstacles/small-stone'
 import StartLine from '@shared/primitives/start-line'
 import { Euler, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
@@ -28,7 +28,7 @@ const stones = [
   { position: [11, 0, -32], rotation: [0, Math.PI / 2.5, 0] },
   { position: [20, 0, -28], rotation: [0, -Math.PI / 3, 0] },
 ]
-const tallStones = [
+const smallStones = [
   { position: [45, 0, -62], rotation: [0, 0, 0] },
   { position: [73, 0, -21], rotation: [0, Math.PI / 3, 0] },
   { position: [63, 0, -26], rotation: [0, -Math.PI / 2.5, 0] },
@@ -98,10 +98,10 @@ const GameMap = () => {
           position={new Vector3(...position)}
         />
       ))}
-      {tallStones.map(({ position, rotation }) => (
+      {smallStones.map(({ position, rotation }) => (
         <StaticObstacle
-          key={`tall-stone-${position.join()}`}
-          model={<TallStone />}
+          key={`small-stone-${position.join()}`}
+          model={<SmallStone />}
           rotation={new Euler(...rotation)}
           position={new Vector3(...position)}
         />

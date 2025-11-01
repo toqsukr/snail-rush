@@ -6,4 +6,4 @@ type FinishControlDeps = {
 
 export const finishControlDepsContext = createStrictContext<FinishControlDeps>()
 
-export const useFinishControl = () => useStrictContext(finishControlDepsContext)
+export const useFinishControlDeps = () => useStrictContext(finishControlDepsContext)
