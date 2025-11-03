@@ -13,8 +13,8 @@ import { isObstacle } from '@shared/lib/game/obstacle'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { data: session } = useSession()
-  const opponentID = session?.players.find(id => id !== user?.id)
-  const { data: opponent } = usePlayerByID(opponentID ?? '')
+  const sessionOpponent = session?.players.find(({ id }) => id !== user?.id)
+  const { data: opponent } = usePlayerByID(sessionOpponent?.id ?? '')
 
   return <Snail username={opponent?.username} />
 }
@@ -23,8 +23,8 @@ const OpponentSuspense = () => {
   const { data: user } = useUser()
   const playerStatus = useGameStore(s => s.playerStatus)
   const { data: session } = useSession()
-  const opponentID = session?.players.find(id => id !== user?.id)
-  const { data: opponentPlayer } = usePlayerByID(opponentID ?? '')
+  const sessionOpponent = session?.players.find(({ id }) => id !== user?.id)
+  const { data: opponentPlayer } = usePlayerByID(sessionOpponent?.id ?? '')
   const { data: skin } = useSkinById(opponentPlayer?.skinID ?? '')
 
   if (!playerStatus || (session?.players.length ?? 0) < 2 || !user) return

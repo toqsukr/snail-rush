@@ -10,6 +10,8 @@
   "lobby_code_input_placeholder": "Введите код для подключения",
   "connect_text": "Подключиться",
   "disconnect_text": "Отключиться",
+  "ready_text": "Готов",
+  "not_ready_text": "Не готов",
   "continue_text": "Продолжить",
   "back_to_lobby_text": "В комнату",
   "play_text": "Играть",

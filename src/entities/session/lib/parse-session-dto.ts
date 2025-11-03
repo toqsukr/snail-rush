@@ -6,7 +6,7 @@ export const parseFromSessionDTO = (sessionDTO: SessionDTO) => {
 
   const session: TSession = {
     id: session_id,
-    players: players.map(player => player.player_id),
+    players: players.map(({ player_id, is_ready }) => ({ id: player_id, isReady: is_ready })),
     isActive: is_active,
     hostID: host_id,
     ...rest,

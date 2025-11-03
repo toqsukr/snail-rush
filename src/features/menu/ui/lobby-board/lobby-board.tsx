@@ -4,6 +4,7 @@ import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import KickPlayerButton from '../action-buttons/kick-player-button'
 import css from './lobby-board.module.scss'
+import { TbFlagCheck } from 'react-icons/tb'
 
 const LobbyBoard = () => {
   const { t } = useTranslation()
@@ -13,7 +14,7 @@ const LobbyBoard = () => {
     <section className={css.lobby}>
       <h1>{t('lobby_text')}</h1>
       <ul className={css.players}>
-        {session?.players.map(playerID => (
+        {session?.players.map(({ id: playerID }) => (
           <li key={playerID} className={css.list_item}>
             <LobbyPlayer id={playerID} />
           </li>
@@ -26,11 +27,7 @@ const LobbyBoard = () => {
 const LobbyPlayer: FC<Pick<TPlayer, 'id'>> = ({ id }) => {
   const { data: session } = useSession()
   const { data: player } = usePlayerByID(id)
-
-  // const handleCheckClick = () => {
-  //   if (user?.id !== id) return
-  //   toggleReady({ sessionID: session?.id ?? '', playerID: id })
-  // }
+  const sessionPlayer = session?.players.find(player => player.id === id)
 
   return (
     <>
@@ -38,11 +35,12 @@ const LobbyPlayer: FC<Pick<TPlayer, 'id'>> = ({ id }) => {
         {player?.username}: {session && session.score[id] ? session.score[id] : 0}
       </p>
       <div className='flex justify-center items-center gap-1'>
-        {/* <FaCheck
-          onClick={handleCheckClick}
-          className='transition-opacity cursor-pointer'
-          style={{ opacity: player?.isReady ? 1 : 0.7 }}
-        /> */}
+        {session?.hostID !== id && (
+          <TbFlagCheck
+            className='transition-opacity'
+            style={{ opacity: sessionPlayer?.isReady ? 1 : 0.5 }}
+          />
+        )}
         <KickPlayerButton lobbyPlayerID={id} />
       </div>
     </>

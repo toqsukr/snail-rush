@@ -5,6 +5,7 @@ export enum Operations {
   SESSION_START = 'session.start',
   SESSION_DELETE = 'session.delete',
   PLAYER_CONNECT = 'player.connect',
+  PLAYER_READY = 'player.ready',
   PLAYER_MOVE = 'player.move',
   PLAYER_SHRINK = 'player.shrink',
   SESSION_STOP_GAME = 'session.stop',

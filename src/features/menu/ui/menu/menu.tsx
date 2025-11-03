@@ -1,6 +1,6 @@
-import { useSession } from '@entities/session'
+import { invalidateSession, useSession } from '@entities/session'
 import { TSkin, useSkins } from '@entities/skin'
-import { useUser } from '@entities/user'
+import { invalidateUser, useUser } from '@entities/user'
 import { useIsRegistering } from '@features/auth/api/use-register'
 import { useIsFeedbackSending, useSendFeedback } from '@features/menu/api/send-feedback'
 import { useLobbyMenuDeps, useMainMenuDeps } from '@features/menu/deps'
@@ -29,6 +29,7 @@ import BackToLobbyButton from '../action-buttons/back-to-lobby-button'
 import LobbyBoard from '../lobby-board/lobby-board'
 import UsernameInput from '../username-input'
 import css from './menu.module.scss'
+import { useToggleReady } from '@features/menu/api/toggle-ready'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
@@ -229,25 +230,10 @@ export const HostLobby: FC<{ sessionID: string }> = ({ sessionID }) => {
   const { t } = useTranslation()
   const deleteLobby = useDeleteLobby()
   const { playAction, disabled } = usePlay()
-  // const [lobbyReady, setLobbyReady] = useState(true)
+  const { data: session } = useSession()
+  const sessionOpponent = session?.players.find(({ id }) => id !== session?.hostID)
 
-  // const getEveryReady = async () => {
-  //   const promises = playerIDs.map(id => getPlayer(id))
-  //   let allReady = true
-
-  //   for await (const promise of promises) {
-  //     if (!promise.isReady) {
-  //       allReady = false
-  //       break
-  //     }
-  //   }
-
-  //   setLobbyReady(allReady)
-  // }
-
-  // useEffect(() => {
-  //   getEveryReady()
-  // }, [playerIDs])
+  const disableStartGame = disabled || !sessionOpponent?.isReady
 
   return (
     <Menu>
@@ -255,7 +241,7 @@ export const HostLobby: FC<{ sessionID: string }> = ({ sessionID }) => {
         {t('connect_tip_text')}: {sessionID}
       </h1>
       <LobbyBoard />
-      <Button disabled={disabled} onClick={playAction}>
+      <Button disabled={disableStartGame} onClick={playAction}>
         {t('play_text')}
       </Button>
       <Button onClick={deleteLobby}>{t('delete_lobby_text')}</Button>
@@ -287,10 +273,22 @@ export const JoinLobby = () => {
 export const JoinLobbyConnected = () => {
   const { t } = useTranslation()
   const disconnectYourself = useDisconnectLobby()
+  const { data: user } = useUser()
+  const { data: session } = useSession()
+  const { mutateAsync: toggleReady } = useToggleReady()
+
+  const sessionPlayer = session?.players.find(({ id }) => id === user?.id)
+
+  const handleReady = async () => {
+    toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+  }
 
   return (
     <Menu>
       <LobbyBoard />
+      <Button onClick={handleReady}>
+        {sessionPlayer?.isReady ? t('not_ready_text') : t('ready_text')}
+      </Button>
       <Button onClick={disconnectYourself}>{t('disconnect_text')}</Button>
     </Menu>
   )

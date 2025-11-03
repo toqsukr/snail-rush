@@ -21,7 +21,7 @@ export const useSession = () => {
         id: code ?? '',
         hostID: host_id,
         isActive: is_active,
-        players: players.map(({ player_id }) => player_id),
+        players: players.map(({ player_id, is_ready }) => ({ id: player_id, isReady: is_ready })),
       } satisfies TSession
     },
     enabled: !!token && !!code,

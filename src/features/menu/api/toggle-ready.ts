@@ -1,3 +1,4 @@
+import { invalidateSession } from '@entities/session'
 import sessionService from '@shared/api/session'
 import { useMutation } from '@tanstack/react-query'
 
@@ -9,6 +10,9 @@ export const useToggleReady = () => {
     mutationFn: async (data: { sessionID: string; playerID: string }) => {
       const { playerID, sessionID } = data
       return sessionService.toggleReady(sessionID, playerID)
+    },
+    onSuccess: () => {
+      invalidateSession()
     },
   })
 }

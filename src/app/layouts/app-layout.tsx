@@ -50,7 +50,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
           ]}>
           {/* <OrbitControls /> */}
           <Perf position='top-left' />
-          <Physics gravity={[0, -20, 0]} timeStep={1 / 60}>
+          <Physics gravity={[0, -20, 0]} timeStep='vary'>
             {children}
           </Physics>
         </KeyboardControls>

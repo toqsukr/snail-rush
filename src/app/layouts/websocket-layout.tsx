@@ -10,6 +10,7 @@ import {
 } from '@features/lobby-events'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { useMenuMode } from '@features/menu'
+import { useToggleReady } from '@features/menu/api/toggle-ready'
 import { useKickLobbyPlayer } from '@features/menu/model/use-kick-player'
 import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
@@ -37,6 +38,8 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const changeMenuMode = useMenuMode()
   const kickLobbyPlayer = useKickLobbyPlayer()
 
+  const { mutateAsync: toggleReady } = useToggleReady()
+
   const playerStartPosition = getStartPosition(getPlayerPosition(gameStore.playerStatus ?? 'host'))
 
   const onGameFinish = async ({ actor_id }: MessageType) => {
@@ -45,6 +48,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
 
     setTimeout(async () => {
       await followTarget(new Vector3(...grassMapData.finishLine.position))
+      toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
       const winner = await getPlayer(actor_id)
 
       if (winner) {
@@ -84,17 +88,17 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
 
     pushOpponentPosition({
       correctStartPosition: true,
-      startPosition,
       impulse: new Vector3(x, y, z),
-      duration,
       holdTime: hold_time,
+      startPosition,
+      duration,
     })
   }
 
   const onOpponentShrink = async () => {
-    const kickID = session?.players.find(id => id !== user?.id)
-    if (kickID) {
-      await kickLobbyPlayer(kickID)
+    const kickOpponent = session?.players.find(({ id }) => id !== user?.id)
+    if (kickOpponent) {
+      await kickLobbyPlayer(kickOpponent.id)
       invalidateSession()
     }
   }

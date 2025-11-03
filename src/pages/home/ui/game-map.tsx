@@ -1,10 +1,12 @@
 import { Vector3 } from 'three'
 import { getPlayer } from '@entities/players'
-import { TUser } from '@entities/user'
+import { TUser, useUser } from '@entities/user'
 import { useSendFinishGame } from '@features/lobby-events'
 import { useFollowTarget } from '@features/tracking-camera'
 import { useGameStore } from '../model/store'
 import { GameMap, MapData } from '@shared/lib/game/map'
+import { useToggleReady } from '@features/menu/api/toggle-ready'
+import { invalidateSession, useSession } from '@entities/session'
 
 type TUserData = {
   userID: TUser['id']
@@ -19,6 +21,7 @@ export const grassMapData: MapData = {
   obstacle: {
     stone: {
       items: [
+        { position: [67, 0, -12], rotation: [0, Math.PI / 2.8, 0] },
         { position: [62, 0, -19], rotation: [0, 0, 0] },
         { position: [63, 0, -31], rotation: [0, Math.PI / 3, 0] },
         { position: [73, 0, -36], rotation: [0, -Math.PI / 2.5, 0] },
@@ -63,12 +66,16 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
 const GrassGameMap = () => {
   const sendFinishGame = useSendFinishGame()
   const followTarget = useFollowTarget()
+  const { data: user } = useUser()
+  const { data: session } = useSession()
+  const { mutateAsync: toggleReady } = useToggleReady()
   const { finishGame, updateWinner, updateMoveable, winner } = useGameStore()
 
   const onFinish = async (userData: unknown) => {
     if (containsUserdata(userData) && !winner) {
       updateMoveable(false)
       console.log('send finish')
+      toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
       sendFinishGame()
       finishGame()
       setTimeout(async () => {

@@ -73,6 +73,10 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           )
           break
         }
+        case Operations.PLAYER_READY: {
+          invalidateSession()
+          break
+        }
         case Operations.PLAYER_KICK: {
           const { kicked_id, players, timestamp } = responseData.data as KickPlayerMessageType
           if (user?.id === kicked_id) {

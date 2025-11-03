@@ -42,7 +42,7 @@ export const StaticObstacle: FC<StaticObstacleProp> = ({ model, ...props }) => {
       {...props}
       type='fixed'
       colliders='cuboid'
-      restitution={1}
+      restitution={2}
       userData={{ isObstacle: true }}>
       {model}
     </RigidBody>

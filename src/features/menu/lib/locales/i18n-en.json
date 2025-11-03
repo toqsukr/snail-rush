@@ -10,6 +10,8 @@
   "lobby_code_input_placeholder": "Enter lobby code",
   "connect_text": "CONNECT",
   "disconnect_text": "DISCONNECT",
+  "ready_text": "READY",
+  "not_ready_text": "NOT READY",
   "continue_text": "CONTINUE",
   "back_to_lobby_text": "BACK TO LOBBY",
   "play_text": "PLAY",
