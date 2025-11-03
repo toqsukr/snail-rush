@@ -1,6 +1,6 @@
-import { invalidateSession, useSession } from '@entities/session'
+import { useSession } from '@entities/session'
 import { TSkin, useSkins } from '@entities/skin'
-import { invalidateUser, useUser } from '@entities/user'
+import { useUser } from '@entities/user'
 import { useIsRegistering } from '@features/auth/api/use-register'
 import { useIsFeedbackSending, useSendFeedback } from '@features/menu/api/send-feedback'
 import { useLobbyMenuDeps, useMainMenuDeps } from '@features/menu/deps'

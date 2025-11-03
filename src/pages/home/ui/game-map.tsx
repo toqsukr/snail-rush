@@ -6,7 +6,7 @@ import { useFollowTarget } from '@features/tracking-camera'
 import { useGameStore } from '../model/store'
 import { GameMap, MapData } from '@shared/lib/game/map'
 import { useToggleReady } from '@features/menu/api/toggle-ready'
-import { invalidateSession, useSession } from '@entities/session'
+import { useSession } from '@entities/session'
 
 type TUserData = {
   userID: TUser['id']
@@ -75,7 +75,9 @@ const GrassGameMap = () => {
     if (containsUserdata(userData) && !winner) {
       updateMoveable(false)
       console.log('send finish')
-      toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+      if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
+        toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+      }
       sendFinishGame()
       finishGame()
       setTimeout(async () => {

@@ -48,7 +48,9 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
 
     setTimeout(async () => {
       await followTarget(new Vector3(...grassMapData.finishLine.position))
-      toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+      if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
+        toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+      }
       const winner = await getPlayer(actor_id)
 
       if (winner) {
