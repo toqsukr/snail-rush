@@ -53,9 +53,6 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
 
     setTimeout(async () => {
       await followTarget(new Vector3(...grassMapData.finishLine.position))
-      if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
-        toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
-      }
       const winner = await getPlayer(actor_id)
 
       if (winner) {
@@ -68,6 +65,11 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     await followTarget(new Vector3(...playerStartPosition))
     startTimer()
     gameStore.startGame()
+    setTimeout(() => {
+      if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
+        toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+      }
+    })
   }
 
   const onPlayerConnected = (updatedPlayers: TPlayer[], timestamp: number) => {

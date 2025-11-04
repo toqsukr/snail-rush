@@ -1,4 +1,4 @@
-import { invalidateSession } from '@entities/session'
+import { invalidateSession, useSession } from '@entities/session'
 import { useIsHost } from '@features/auth/model/use-is-host'
 import { useResetTimer, useStartTimer } from '@features/countdown'
 import { useSendKick, useSendStartGame, useSendStopGame } from '@features/lobby-events'
@@ -12,6 +12,7 @@ import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../../pages/home/model/status'
 import { useGameStore } from '../../pages/home/model/store'
 import { useUser } from '@entities/user'
+import { useToggleReady } from '@features/menu/api/toggle-ready'
 
 const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const {
@@ -34,6 +35,8 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const startTimer = useStartTimer()
   const sendKick = useSendKick()
   const { data: user } = useUser()
+  const { data: session } = useSession()
+  const { mutateAsync: toggleReady } = useToggleReady()
 
   const followTarget = useFollowTarget()
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus ?? 'host'))
@@ -42,7 +45,6 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const onDisconnectLobby = () => {
     sendKick(user?.id ?? '')
     console.log('send kick me')
-    // updatePlayerStatus(null)
     clearLogs()
   }
 
@@ -62,6 +64,9 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     await followTarget(new Vector3(...playerStartPosition))
     startGame()
     startTimer()
+    if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
+      toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
+    }
   }
 
   const onBackToLobby = async () => {

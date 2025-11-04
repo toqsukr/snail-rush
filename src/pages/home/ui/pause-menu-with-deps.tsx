@@ -1,26 +1,29 @@
 import { PauseMenu as Menu, lobbyMenuDepsContext, useLobbyMenuDeps } from '@features/menu'
 import { Html } from '@react-three/drei'
-import { useThree } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useEffect, useRef } from 'react'
-import { Group } from 'three'
+import { useRef } from 'react'
+import { Group, Object3DEventMap, Vector3 } from 'three'
 import { useGameStore } from '../model/store'
 
 const PAUSE_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
+const DISTANCE = 10
 
 const PauseMenu = () => {
-  const groupRef = useRef<Group>(null)
+  const groupRef = useRef<Group<Object3DEventMap>>(null)
   const camera = useThree(s => s.camera)
   const { started, finished } = useGameStore()
 
-  useEffect(() => {
+  useFrame(() => {
     if (!groupRef.current) return
-    camera.add(groupRef.current)
-    return () => {
-      if (groupRef.current) camera.remove(groupRef.current)
-    }
-  }, [camera])
+
+    const direction = new Vector3()
+    camera.getWorldDirection(direction)
+
+    groupRef.current.position.copy(camera.position).add(direction.multiplyScalar(DISTANCE))
+    groupRef.current.quaternion.copy(camera.quaternion)
+  })
 
   const contextValue = useLobbyMenuDeps()
 
@@ -31,7 +34,7 @@ const PauseMenu = () => {
       <Html
         transform
         occlude='raycast'
-        position={[0, 0, -10]}
+        position={[0, 0, 0]}
         style={{ width: '100%' }}
         rotation={PAUSE_MENU_ROTATION}>
         <QueryClientProvider client={queryClient}>
