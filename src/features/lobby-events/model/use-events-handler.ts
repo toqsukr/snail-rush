@@ -20,12 +20,12 @@ import {
 
 type LobbyEventsProviderProp = {
   onKickMe?: () => void
+  onKickPlayer?: (id: string) => Promise<void>
   onGameStart?: () => void
   onGameStop?: () => void
   onOpponentShrink?: () => void
   onStartJump?: (position: OpponentStartJumpType) => void
   onGameFinish?: (data: MessageType) => void
-  onPlayerKicked?: (players: TPlayer[], timestamp: number) => void
   onPlayerConnected?: (players: TPlayer[], timestamp: number) => void
   onChangeOpponentPosition?: (move: OpponentPositionType) => void
   onChangeOpponentRotation?: (position: OpponentRotationType) => void
@@ -37,11 +37,11 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
 
   const {
     onKickMe,
+    onKickPlayer,
     onGameStop,
     onGameStart,
     onGameFinish,
     onOpponentShrink,
-    onPlayerKicked,
     onPlayerConnected,
     onChangeOpponentPosition,
     onChangeOpponentRotation,
@@ -78,15 +78,12 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
         }
         case Operations.PLAYER_KICK: {
-          const { kicked_id, players, timestamp } = responseData.data as KickPlayerMessageType
+          const { kicked_id } = responseData.data as KickPlayerMessageType
           if (user?.id === kicked_id) {
+            invalidateSession()
             onSessionExit()
           } else {
-            invalidateSession()
-            onPlayerKicked?.(
-              players.map(player => parseFromPlayerDTO(player)),
-              timestamp
-            )
+            onKickPlayer?.(kicked_id)
           }
           break
         }

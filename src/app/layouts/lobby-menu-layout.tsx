@@ -1,7 +1,7 @@
 import { invalidateSession } from '@entities/session'
 import { useIsHost } from '@features/auth/model/use-is-host'
 import { useResetTimer, useStartTimer } from '@features/countdown'
-import { useSendShrink, useSendStartGame, useSendStopGame } from '@features/lobby-events'
+import { useSendKick, useSendStartGame, useSendStopGame } from '@features/lobby-events'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { lobbyMenuDepsContext } from '@features/menu'
 import { useFocusTo, useFollowTarget, useMoveTo } from '@features/tracking-camera'
@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next'
 import { Vector3 } from 'three'
 import { getPlayerPosition, getStartPosition } from '../../pages/home/model/status'
 import { useGameStore } from '../../pages/home/model/store'
+import { useUser } from '@entities/user'
 
 const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const {
@@ -31,21 +32,22 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const sendStopGame = useSendStopGame()
   const sendStartGame = useSendStartGame()
   const startTimer = useStartTimer()
-  const sendMagicDisconnect = useSendShrink()
-  // const sendKick = useSendKick()
+  const sendKick = useSendKick()
+  const { data: user } = useUser()
 
   const followTarget = useFollowTarget()
   const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus ?? 'host'))
   const checkHost = useIsHost()
 
   const onDisconnectLobby = () => {
-    sendMagicDisconnect()
-    console.log('send magic')
+    sendKick(user?.id ?? '')
+    console.log('send kick me')
     // updatePlayerStatus(null)
     clearLogs()
   }
 
-  const onKickPlayer = async () => {
+  const onKickPlayer = async (kickedID: string) => {
+    sendKick(kickedID)
     invalidateSession()
     appendLog(t('kick_player_text')!)
   }

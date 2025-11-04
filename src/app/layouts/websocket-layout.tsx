@@ -79,6 +79,11 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     clearLogs()
   }
 
+  const onKickPlayer = async (id: string) => {
+    await kickLobbyPlayer(id)
+    invalidateSession()
+  }
+
   const onChangeOpponentRotation = ({ rotation }: OpponentRotationType) => {
     const { duration, roll, pitch, yaw } = rotation
     pushOpponentRotation({ rotation: new Euler(roll, pitch, yaw), duration })
@@ -97,16 +102,11 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     })
   }
 
-  const onOpponentShrink = async () => {
-    const kickOpponent = session?.players.find(({ id }) => id !== user?.id)
-    if (kickOpponent) {
-      await kickLobbyPlayer(kickOpponent.id)
-      invalidateSession()
-    }
-  }
+  const onOpponentShrink = async () => {}
 
   const handlerProp = {
     onKickMe,
+    onKickPlayer,
     onGameFinish,
     onPlayerConnected,
     onOpponentShrink,

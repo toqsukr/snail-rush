@@ -16,7 +16,6 @@ import { z } from 'zod'
 import { useIsConnectingSession } from '../../api/connect-session'
 import { useIsLobbyCreating } from '../../api/create-session'
 import { useIsUserCreating } from '../../api/create-user'
-import { useIsDisconnectingSession } from '../../api/disconnect-session'
 import { useMenu } from '../../model/store'
 import { useConnectLobby } from '../../model/use-connect-lobby'
 import { useContinue } from '../../model/use-continue'
@@ -36,7 +35,6 @@ import { resetUser } from '@entities/user/query'
 const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
   const isConnecting = useIsConnectingSession()
-  const isDisconnecting = useIsDisconnectingSession()
   const isLobbyCreating = useIsLobbyCreating()
   const isUserCreating = useIsUserCreating()
   const isRegistering = useIsRegistering()
@@ -50,7 +48,6 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
     isUserLoading ||
     isSessionLoading ||
     isConnecting ||
-    isDisconnecting ||
     isLobbyCreating ||
     isUserCreating ||
     isFeedbackSending ||
