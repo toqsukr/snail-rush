@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
 import Textarea from '@shared/uikit/textarea/textarea'
-import { FC, PropsWithChildren, useState } from 'react'
+import { FC, PropsWithChildren, ReactNode, useState } from 'react'
 import { Controller, ControllerRenderProps, useForm, UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -30,6 +30,8 @@ import LobbyBoard from '../lobby-board/lobby-board'
 import UsernameInput from '../username-input'
 import css from './menu.module.scss'
 import { useToggleReady } from '@features/menu/api/toggle-ready'
+import { removeTokenEverywhere } from '@shared/config/token'
+import { resetUser } from '@entities/user/query'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
@@ -72,6 +74,12 @@ const MainMenuContent = () => {
   const { onToSkins } = useMainMenuDeps()
   const createLobby = useCreateLobby()
 
+  const formData = useForm<{ username: string }>({
+    mode: 'onChange',
+    defaultValues: { username: user?.username ?? '' },
+    resolver: zodResolver(z.object({ username: z.string().min(1).max(20) })),
+  })
+
   const changeSkin = () => {
     toSkins()
     onToSkins()
@@ -82,11 +90,10 @@ const MainMenuContent = () => {
   //   onToFeedback()
   // }
 
-  const formData = useForm<{ username: string }>({
-    mode: 'onChange',
-    defaultValues: { username: user?.username ?? '' },
-    resolver: zodResolver(z.object({ username: z.string().min(1).max(20) })),
-  })
+  const onExit = () => {
+    removeTokenEverywhere()
+    resetUser()
+  }
 
   const username = formData.watch('username')
 
@@ -130,6 +137,9 @@ const MainMenuContent = () => {
       </Button>
       <Button onClick={changeSkin} disabled={mode !== 'main-menu'}>
         {t('change_skin_text')}
+      </Button>
+      <Button onClick={onExit} disabled={mode !== 'main-menu'}>
+        {t('exit_text')}
       </Button>
       {/* <Button onClick={leaveFeedback} disabled={mode !== 'main-menu'}>
         {t('leave_feedback_text')}
@@ -295,11 +305,20 @@ export const JoinLobbyConnected = () => {
 }
 
 type TAuthFormData = { username: string; password: string }
+type AuthMode = 'login' | 'register'
 
 export const AuthMenu = () => {
   const { t } = useTranslation()
-  const { onRegister } = useMainMenuDeps()
+  const { onRegister, onLogin } = useMainMenuDeps()
   const { mode, toAuthUsername, backToMainMenu } = useMenu()
+  const [authMode, setAuthMode] = useState<AuthMode>('login')
+
+  const toggleMode = () => {
+    setAuthMode(prev => {
+      if (prev === 'login') return 'register'
+      return 'login'
+    })
+  }
 
   const formData = useForm<TAuthFormData>({
     mode: 'onChange',
@@ -317,11 +336,34 @@ export const AuthMenu = () => {
     onRegister(username, password)
   }
 
+  const onLoginClick = () => {
+    backToMainMenu()
+    onLogin(username, password)
+  }
+
   const renderPasswordInput = (field: ControllerRenderProps<TAuthFormData, 'password'>) => {
     const { name, onBlur, onChange, value, disabled } = field
     const props = { name, onBlur, onChange, value, disabled }
 
     return <Input {...props} type='password' placeholder={t('password_input_placeholder')} />
+  }
+
+  const defineAuthButton: Record<AuthMode, ReactNode> = {
+    login: (
+      <Button onClick={onLoginClick} disabled={!password.length}>
+        {t('login_text')}
+      </Button>
+    ),
+    register: (
+      <Button onClick={onRegisterClick} disabled={!password.length}>
+        {t('register_text')}
+      </Button>
+    ),
+  }
+
+  const defineChangeModeText: Record<AuthMode, string> = {
+    login: 'to_register_text',
+    register: 'to_login_text',
   }
 
   return (
@@ -331,10 +373,13 @@ export const AuthMenu = () => {
         control={formData.control}
         render={({ field }) => renderPasswordInput(field)}
       />
-      <Button onClick={onRegisterClick} disabled={!password.length}>
-        {t('register_text')}
-      </Button>
+      {defineAuthButton[authMode]}
       <Button onClick={toAuthUsername}>{t('back_text')}</Button>
+      <p
+        onClick={toggleMode}
+        className='text-xs underline cursor-pointer transition-opacity opacity-75 hover:opacity-100'>
+        {t(defineChangeModeText[authMode])}
+      </p>
     </Menu>
   )
 }

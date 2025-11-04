@@ -1,6 +1,6 @@
 import { TSkin } from '@entities/skin'
-import { invalidateUser, parseFromRegisterDTO, useUser } from '@entities/user'
-import { useRegister } from '@features/auth'
+import { invalidateUser, useUser } from '@entities/user'
+import { useLogin, useRegister } from '@features/auth'
 import { useAppendLog } from '@features/logflow'
 import { mainMenuDepsContext } from '@features/menu'
 import { useUpdatePlayer } from '@features/menu/api/update-user'
@@ -23,6 +23,7 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const appendLog = useAppendLog()
   const { updatePlayerStatus } = useGameStore()
   const { mutateAsync: register } = useRegister()
+  const { mutateAsync: login } = useLogin()
   const updateToken = useToken(s => s.updateToken)
   const { mutateAsync: updateUser } = useUpdatePlayer()
 
@@ -50,12 +51,18 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     await focusTo(new Vector3(...FEEDBACK_MENU_POSITION))
   }
 
+  const onLogin = async (username: string, password: string) => {
+    const { access_token } = await login({ username, password })
+
+    updateToken(access_token)
+  }
+
   const onRegister = async (username: string, password: string) => {
-    const { player, token } = await register({ username, password })
+    const { token } = await register({ username, password })
 
     updateToken(token.access_token)
-    await updateUser(parseFromRegisterDTO(player))
-    invalidateUser()
+    // await updateUser(parseFromRegisterDTO(player))
+    // invalidateUser()
   }
 
   const onChangeSkin = async ({ name, skinID }: TSkin) => {
@@ -80,6 +87,7 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
         onBackToMainMenu,
         onChangeSkin,
         onRegister,
+        onLogin,
       }}>
       {children}
     </mainMenuDepsContext.Provider>

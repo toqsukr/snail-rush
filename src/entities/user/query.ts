@@ -27,3 +27,5 @@ export const useUser = () => {
 }
 
 export const invalidateUser = () => queryClient.invalidateQueries({ queryKey: [userDataQueryKey] })
+
+export const resetUser = () => queryClient.removeQueries({ queryKey: [userDataQueryKey] })

@@ -25,8 +25,13 @@ class AuthService {
   }
 
   async login(data: { username: string; password: string }) {
+    const formData = new FormData()
+    formData.append('username', data.username)
+    formData.append('password', data.password)
     return baseTemplate
-      .post(`${this.AUTH_PREFIX}/token/`, data)
+      .post(`${this.AUTH_PREFIX}/token/`, formData, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
       .then(({ data }) => TokenDTOSchema.parse(data))
   }
 
