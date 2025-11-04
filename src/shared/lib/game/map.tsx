@@ -49,7 +49,6 @@ export const MapModelConstruct = ({
         colliders='trimesh'
         rotation={[0, 0, 0]}
         position={[0, 0, 0]}
-        restitution={1}
         userData={{ isObstacle: true }}>
         <primitive object={mapWalls.scene} />
       </RigidBody>

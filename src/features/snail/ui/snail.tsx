@@ -40,7 +40,11 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     updateIsJumping(isAnimationRunning('BakedAnimation'))
   })
 
-  useJump(rigidBodyRef, (duration: number) => animate('BakedAnimation', { duration }))
+  const startJumpAnimation = (duration: number) => animate('BakedAnimation', { duration })
+
+  const stopJumpAnimation = () => stopAnimation('BakedAnimation')
+
+  useJump(rigidBodyRef, startJumpAnimation)
 
   const startShrinkAnimation = () =>
     animate('shrink-animation', {
@@ -48,11 +52,22 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       loop: false,
       duration: shrinkDuration / 1000,
     })
+
   const stopShrinkAnimation = () => stopAnimation('shrink-animation')
 
-  const handleCollision = useCollision(() =>
+  const stopStunAnimation = () => stopAnimation('stun-animation')
+
+  const startStunAnimation = () => {
     animate('stun-animation', { duration: stunTimeout / 1000 })
-  )
+  }
+
+  const stopAllAnimation = () => {
+    stopShrinkAnimation()
+    stopJumpAnimation()
+    stopStunAnimation()
+  }
+
+  const handleCollision = useCollision(rigidBodyRef, startStunAnimation, stopAllAnimation)
 
   const { camera } = useThree()
   const textRef = useRef<DreiTextProps | null>(null)
@@ -102,7 +117,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       userData={userData}
       friction={1.5}
       linearDamping={1.2}
-      collisionGroups={interactionGroups(0b01, 0b10)}
+      collisionGroups={interactionGroups(0b01, 0b01)}
       onCollisionEnter={handleCollision}
       enabledRotations={[false, false, false]}
       restitution={0}>
