@@ -2,7 +2,11 @@ import { usePlayerByID } from '@entities/players'
 import { useSession } from '@entities/session'
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
-import { opponentPositionEmitter, opponentRotationEmitter } from '@features/opponent-control'
+import {
+  opponentPositionEmitter,
+  opponentRotationEmitter,
+  opponentShrinkEmitter,
+} from '@features/opponent-control'
 import { Snail, snailDepsContext, SnailProvider } from '@features/snail'
 import { FC, Suspense } from 'react'
 import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '../model/status'
@@ -37,6 +41,7 @@ const OpponentSuspense = () => {
         value={{
           positionEmitter: opponentPositionEmitter,
           rotationEmitter: opponentRotationEmitter,
+          shrinkEmitter: opponentShrinkEmitter,
           stunTimeout: STUN_TIMEOUT,
           shouldHandleCollision: isObstacle,
           shrinkDuration: MAX_SPACE_HOLD_TIME,

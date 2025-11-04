@@ -14,6 +14,8 @@ import {
   PlayerMoveMessageType,
   PlayerRotateMessageSchema,
   PlayerRotateMessageType,
+  PlayerStartJumpMessageSchema,
+  PlayerStartJumpMessageType,
   WebSocketResponse,
   WebSocketResponseSchema,
 } from './types'
@@ -23,8 +25,7 @@ type LobbyEventsProviderProp = {
   onKickPlayer?: (id: string) => Promise<void>
   onGameStart?: () => void
   onGameStop?: () => void
-  onOpponentShrink?: () => void
-  onStartJump?: (position: OpponentStartJumpType) => void
+  onOpponentShrink?: (position: OpponentStartJumpType) => void
   onGameFinish?: (data: MessageType) => void
   onPlayerConnected?: (players: TPlayer[], timestamp: number) => void
   onChangeOpponentPosition?: (move: OpponentPositionType) => void
@@ -107,11 +108,10 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
         }
         case Operations.PLAYER_SHRINK: {
-          onOpponentShrink?.()
-          // const startJumpData = PlayerStartJumpMessageSchema.parse(
-          //   responseData.data
-          // ) as PlayerStartJumpMessageType
-          // onStartJump({ position: startJumpData.position })
+          const { position } = PlayerStartJumpMessageSchema.parse(
+            responseData.data
+          ) as PlayerStartJumpMessageType
+          onOpponentShrink?.({ position })
           console.log('player shrink')
           break
         }

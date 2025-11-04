@@ -1,6 +1,6 @@
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
-import { useSendMoveImpulse, useSendTargetRotation } from '@features/lobby-events'
+import { useSendMoveImpulse, useSendShrink, useSendTargetRotation } from '@features/lobby-events'
 import {
   Player,
   playerDepsContext,
@@ -24,12 +24,22 @@ import { isObstacle } from '@shared/lib/game/obstacle'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
+  const sendStartShrink = useSendShrink()
   const sendTargetPosition = useSendMoveImpulse()
   const sendTargetRotation = useSendTargetRotation()
   const calcAnimationDuration = useCalcAnimationDuration()
 
   const { rotation, getIsJumping, startShrinkAnimation, stopShrinkAnimation, getPosition } =
     useSnailContext()
+
+  const onStartShrink = () => {
+    startShrinkAnimation?.()
+    sendStartShrink(getPosition())
+  }
+
+  const onStopShrink = () => {
+    stopShrinkAnimation?.()
+  }
 
   const onJump = (
     koef: number,
@@ -77,8 +87,8 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
         onJump,
         onRotate,
         canMove,
-        onStartShrink: startShrinkAnimation,
-        onStopShrink: stopShrinkAnimation,
+        onStartShrink,
+        onStopShrink,
       }}>
       <Player>
         <Snail userID={user.id} username={user.username} />

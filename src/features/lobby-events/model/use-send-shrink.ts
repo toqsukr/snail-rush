@@ -1,17 +1,16 @@
-import { useUser } from '@entities/user'
 import { useWebSocket } from '@shared/lib/websocket'
 import { Operations } from './types'
+import { Vector3 } from 'three'
 
 export const useSendShrink = () => {
   const websocket = useWebSocket()
-  const { data: user } = useUser()
-  return () => {
-    if (!user) return
+  return (position: Vector3) => {
+    const { x, y, z } = position
 
     websocket.send(
       JSON.stringify({
         type: Operations.PLAYER_SHRINK,
-        data: { position: { x: 0, y: 0, z: 0 } },
+        data: { position: { x, y, z } },
       })
     )
   }

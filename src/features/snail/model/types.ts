@@ -1,5 +1,9 @@
 import { Euler, Vector3 } from 'three'
 
+export type ShrinkType = {
+  startPosition: Vector3
+}
+
 export type PositionType = {
   impulse: Vector3
   holdTime: number

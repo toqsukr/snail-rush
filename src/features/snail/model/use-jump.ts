@@ -9,8 +9,15 @@ export const useJump = (
   rigidBodyRef: RefObject<RapierRigidBody | null>,
   animateJump: (duration: number) => void
 ) => {
-  const { getPosition, rotation, updatePosition, updateRotation } = useSnailContext()
-  const { positionEmitter, rotationEmitter } = useSnailDeps()
+  const {
+    getPosition,
+    rotation,
+    updatePosition,
+    updateRotation,
+    startShrinkAnimation,
+    stopShrinkAnimation,
+  } = useSnailContext()
+  const { positionEmitter, rotationEmitter, shrinkEmitter } = useSnailDeps()
 
   const triggerRotate = (rotation: RotationType) => {
     const { rotation: targetRotation } = rotation
@@ -44,6 +51,7 @@ export const useJump = (
 
   useEffect(() => {
     const unsubscribePosition = positionEmitter.subscribe(position => {
+      stopShrinkAnimation?.()
       const { duration, holdTime, impulse, ...rest } = position
       if (rest.correctStartPosition) {
         getRigidBody()?.setTranslation(rest.startPosition, true)
@@ -55,9 +63,14 @@ export const useJump = (
       triggerRotate(rotation)
     })
 
+    const unsubscribeShrink = shrinkEmitter?.subscribe(() => {
+      startShrinkAnimation?.()
+    })
+
     return () => {
       unsubscribePosition?.()
       unsubscribeRotation?.()
+      unsubscribeShrink?.()
     }
-  }, [])
+  }, [stopShrinkAnimation, startShrinkAnimation])
 }

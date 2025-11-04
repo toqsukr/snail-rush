@@ -12,8 +12,8 @@ type PlayerDeps = {
     pitchIncrement: number,
     callback: (updatedRotation: Euler, duration: number) => void
   ) => void
-  onStartShrink: (() => void) | null
-  onStopShrink: (() => void) | null
+  onStartShrink?: () => void
+  onStopShrink?: () => void
 }
 
 export const playerDepsContext = createStrictContext<PlayerDeps>()

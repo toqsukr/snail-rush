@@ -8,11 +8,16 @@ import {
   OpponentRotationType,
   useEventsHandler,
 } from '@features/lobby-events'
+import { OpponentStartJumpType } from '@features/lobby-events/model/types'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { useMenuMode } from '@features/menu'
 import { useToggleReady } from '@features/menu/api/toggle-ready'
 import { useKickLobbyPlayer } from '@features/menu/model/use-kick-player'
-import { pushOpponentPosition, pushOpponentRotation } from '@features/opponent-control'
+import {
+  pushOpponentPosition,
+  pushOpponentRotation,
+  pushOpponentShrink,
+} from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
 import { getPlayerPosition, getStartPosition } from '@pages/home/model/status'
 import { useGameStore } from '@pages/home/model/store'
@@ -102,7 +107,9 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     })
   }
 
-  const onOpponentShrink = async () => {}
+  const onOpponentShrink = ({ position }: OpponentStartJumpType) => {
+    pushOpponentShrink({ startPosition: new Vector3(position.x, position.y, position.z) })
+  }
 
   const handlerProp = {
     onKickMe,
