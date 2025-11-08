@@ -1,0 +1,12 @@
+.clipboard_text {
+  @apply rounded;
+
+  padding: 0.2rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.clipboard_text_active {
+  transform: scale(1.15);
+}

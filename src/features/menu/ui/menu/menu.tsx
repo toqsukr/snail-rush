@@ -31,6 +31,7 @@ import css from './menu.module.scss'
 import { useToggleReady } from '@features/menu/api/toggle-ready'
 import { removeTokenEverywhere } from '@shared/config/token'
 import { resetUser } from '@entities/user/query'
+import { ClipboardText } from '@shared/uikit/clipboard-text/clipboard-text'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
@@ -228,12 +229,12 @@ export const LobbyMenu = () => {
 
   if (!visibility || mode !== 'lobby') return
 
-  if (isHost(user?.id ?? '') && session) return <HostLobby sessionID={session.id} />
+  if (isHost(user?.id ?? '') && session) return <HostLobby lobbyCode={session.id} />
 
   return <JoinLobbyConnected />
 }
 
-export const HostLobby: FC<{ sessionID: string }> = ({ sessionID }) => {
+export const HostLobby: FC<{ lobbyCode: string }> = ({ lobbyCode }) => {
   const { t } = useTranslation()
   const deleteLobby = useDeleteLobby()
   const { playAction, disabled } = usePlay()
@@ -245,7 +246,8 @@ export const HostLobby: FC<{ sessionID: string }> = ({ sessionID }) => {
   return (
     <Menu>
       <h1>
-        {t('connect_tip_text')}: {sessionID}
+        {`${t('connect_tip_text')}:`}&nbsp;
+        <ClipboardText text={lobbyCode} value={lobbyCode} />
       </h1>
       <LobbyBoard />
       <Button disabled={disableStartGame} onClick={playAction}>
