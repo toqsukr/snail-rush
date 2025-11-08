@@ -5,15 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:host": "vite --host",
-    "build": "tsc -b && vite build",
-    "test:vitest": "vitest",
-    "test:coverage": "vitest --coverage",
-    "test": "yarn type-check && yarn lint && yarn test:vitest",
+    "dev:host": "vite --host --mode devhost",
+    "build": "tsc && vite build",
+    "build:tailscale": "tsc && vite build --mode tailscale",
+    "start": "yarn build && vite preview",
+    "start:tailscale": "yarn build:tailscale && vite preview --host",
     "lint": "eslint ./src",
     "type-check": "tsc --noEmit",
-    "start": "vite preview",
-    "start:host": "vite preview --host"
+    "test": "yarn type-check && yarn lint && yarn test:vitest",
+    "test:vitest": "vitest",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
@@ -68,6 +69,7 @@
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5",
+    "vite-plugin-pwa": "^1.1.0",
     "vitest": "^4.0.6"
   }
 }

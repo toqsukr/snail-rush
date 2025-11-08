@@ -10,7 +10,7 @@
   "back_text": "BACK",
   "next_text": "NEXT",
   "username_input_placeholder": "Enter username",
-  "password_input_placeholder": "Enter пароль",
+  "password_input_placeholder": "Enter password",
   "lobby_code_input_placeholder": "Enter lobby code",
   "connect_text": "CONNECT",
   "disconnect_text": "DISCONNECT",

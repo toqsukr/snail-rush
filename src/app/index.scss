@@ -17,7 +17,6 @@
 }
 
 #root {
-  width: 100%;
   height: 100%;
   position: relative;
   max-width: var(--limit-width);
@@ -63,16 +62,20 @@ aside {
 
 html,
 body {
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
   font-style: 100%;
   line-height: 1;
   -ms-text-size-adjust: 100%;
   -moz-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   background-color: var(--main-background-color);
-  font-family: 'Roboto';
-  /* 'Jersey 25' */
+  font-family: 'Jersey 25';
+}
+
+body {
+  height: 100dvh;
+  width: 100dvw;
+  overflow: hidden;
 }
 
 input,
