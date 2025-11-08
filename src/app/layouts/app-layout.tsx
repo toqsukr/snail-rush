@@ -1,14 +1,12 @@
-import { Logflow } from '@features/logflow'
 import { getTexturePath, PlayerSkins } from '@pages/home/model/status'
-import { useGameStore } from '@pages/home/model/store'
 import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
-import { FC, PropsWithChildren, useState } from 'react'
+import { FC, PropsWithChildren } from 'react'
 import '../i18n'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
-  const started = useGameStore(s => s.started)
+  // const started = useGameStore(s => s.started)
   // const [leftKey, updateLeftKey] = useState('ArrowLeft')
   // const [rightKey, updateRightKey] = useState('ArrowRight')
 

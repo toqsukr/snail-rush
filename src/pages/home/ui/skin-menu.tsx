@@ -9,10 +9,10 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { getTexturePath, PlayerSkins } from '../model/status'
 
-export const SKIN_MENU_POSITION = [25, 35, 5] satisfies [number, number, number]
-const SKIN_MENU_ROTATION = [0, -Math.PI / 2, 0] satisfies [number, number, number]
-const SKIN_SNAIL_POSITION = [25, 41, 5] satisfies [number, number, number]
-const SKIN_SNAIL_ROTATION = [0, (32 * Math.PI) / 24, 0] satisfies [number, number, number]
+export const SKIN_MENU_POSITION = [7, 35, 5] satisfies [number, number, number]
+const SKIN_MENU_ROTATION = [0, Math.PI / 2, 0] satisfies [number, number, number]
+const SKIN_SNAIL_POSITION = [7, 41, 5] satisfies [number, number, number]
+const SKIN_SNAIL_ROTATION = [0, (8 * Math.PI) / 24, 0] satisfies [number, number, number]
 
 const SkinMenu = () => {
   const { data: user } = useUser()

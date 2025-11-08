@@ -3,8 +3,8 @@ import { Html } from '@react-three/drei'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
 
-export const FEEDBACK_MENU_POSITION = [7, 35, 5] satisfies [number, number, number]
-const FEEDBACK_MENU_ROTATION = [0, Math.PI / 2, 0] satisfies [number, number, number]
+export const FEEDBACK_MENU_POSITION = [25, 35, 5] satisfies [number, number, number]
+const FEEDBACK_MENU_ROTATION = [0, -Math.PI / 2, 0] satisfies [number, number, number]
 
 const FeedbackMenu = () => {
   const mainMenuContextValue = useMainMenuDeps()
