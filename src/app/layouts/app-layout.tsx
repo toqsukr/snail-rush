@@ -3,10 +3,13 @@ import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 import { FC, PropsWithChildren } from 'react'
+import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import '../i18n'
+import ButtonController from '@shared/lib/mobile-control/button'
+import { useGameStore } from '@pages/home/model/store'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
-  // const started = useGameStore(s => s.started)
+  const started = useGameStore(s => s.started)
   // const [leftKey, updateLeftKey] = useState('ArrowLeft')
   // const [rightKey, updateRightKey] = useState('ArrowRight')
 
@@ -19,6 +22,29 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   //     updateRightKey('ArrowRight')
   //   }
   // }
+
+  const handleLeft = () => {
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight' }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }))
+  }
+
+  const handleRight = () => {
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowLeft' }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }))
+  }
+
+  const handleReset = () => {
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight' }))
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowLeft' }))
+  }
+
+  const handlePressButton = () => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Space' }))
+  }
+
+  const handleUnpressButton = () => {
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'Space' }))
+  }
 
   return (
     <div className='h-full relative'>
@@ -37,6 +63,19 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
           </Physics>
         </KeyboardControls>
       </Canvas>
+      {started && (
+        <>
+          <JoystickController onLeft={handleLeft} onRight={handleRight} onReset={handleReset} />
+          <ButtonController
+            className='absolute right-8 bottom-8'
+            onMouseDown={handlePressButton}
+            onMouseUp={handleUnpressButton}
+            onTouchStart={handlePressButton}
+            onTouchEnd={handleUnpressButton}>
+            JUMP
+          </ButtonController>
+        </>
+      )}
     </div>
   )
 }
