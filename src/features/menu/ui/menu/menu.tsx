@@ -6,10 +6,10 @@ import { useIsFeedbackSending, useSendFeedback } from '@features/menu/api/send-f
 import { useLobbyMenuDeps, useMainMenuDeps } from '@features/menu/deps'
 import { useCreateLobby } from '@features/menu/model/use-create-lobby'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Button from '@shared/uikit/button/Button'
+import Button, { ButtonProps } from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
 import Textarea from '@shared/uikit/textarea/textarea'
-import { FC, PropsWithChildren, ReactNode, useState } from 'react'
+import { FC, FormEvent, PropsWithChildren, ReactNode, useState } from 'react'
 import { Controller, ControllerRenderProps, useForm, UseFormReturn } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -32,6 +32,7 @@ import { useToggleReady } from '@features/menu/api/toggle-ready'
 import { removeTokenEverywhere } from '@shared/config/token'
 import { resetUser } from '@entities/user/query'
 import { ClipboardText } from '@shared/uikit/clipboard-text/clipboard-text'
+import UnderlinedText from '@shared/uikit/underlined-text/underlined-text'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
@@ -175,18 +176,27 @@ export const SkinMenu = () => {
           {skins
             ?.filter(({ name }) => name.includes('.'))
             .map(skin => (
-              <li
-                key={skin.skinID}
-                style={{ cursor: skin.skinID !== user?.skinID ? 'pointer' : 'auto' }}
-                className='flex justify-between hover:opacity-80 transition-opacity'
-                onClick={() => choseSkin(skin)}>
-                <div>{skin.name}</div>
-                <div>{skin.skinID === user?.skinID && '●'}</div>
+              <li key={skin.skinID}>
+                <button
+                  disabled={skin.skinID === user?.skinID}
+                  style={{
+                    cursor: skin.skinID !== user?.skinID ? 'pointer' : 'auto',
+                    opacity: skin.skinID === user?.skinID ? '1' : '',
+                    color:
+                      skin.skinID === user?.skinID
+                        ? 'rgb(222, 128, 0)'
+                        : 'rgba(255, 255, 255, .87)',
+                  }}
+                  className='flex w-full justify-between transition-opacity hover:opacity-80 focus-visible:opacity-80'
+                  onClick={() => choseSkin(skin)}>
+                  <div>{skin.name}</div>
+                  <div>{skin.skinID === user?.skinID && '●'}</div>
+                </button>
               </li>
             ))}
         </ul>
       </section>
-      <BackButton />
+      <BackButton disabled={mode !== 'main-menu-skin'} />
     </Menu>
   )
 }
@@ -303,7 +313,18 @@ export const JoinLobbyConnected = () => {
   )
 }
 
-type TAuthFormData = { username: string; password: string }
+const AuthFormDataSchema = z.object({
+  username: z
+    .string()
+    .min(1)
+    .transform(val => val.trim()),
+  password: z
+    .string()
+    .min(5)
+    .transform(val => val.trim()),
+})
+
+type TAuthFormData = z.infer<typeof AuthFormDataSchema>
 type AuthMode = 'login' | 'register'
 
 export const AuthMenu = () => {
@@ -322,23 +343,10 @@ export const AuthMenu = () => {
   const formData = useForm<TAuthFormData>({
     mode: 'onChange',
     defaultValues: { username: '', password: '' },
-    resolver: zodResolver(z.object({ username: z.string().min(1), password: z.string().min(5) })),
+    resolver: zodResolver(AuthFormDataSchema),
   })
 
   if (mode === 'auth-username') return <UsernameMenu formData={formData} />
-
-  const username = formData.watch('username')
-  const password = formData.watch('password')
-
-  const onRegisterClick = () => {
-    backToMainMenu()
-    onRegister(username, password)
-  }
-
-  const onLoginClick = () => {
-    backToMainMenu()
-    onLogin(username, password)
-  }
 
   const renderPasswordInput = (field: ControllerRenderProps<TAuthFormData, 'password'>) => {
     const { name, onBlur, onChange, value, disabled } = field
@@ -347,17 +355,9 @@ export const AuthMenu = () => {
     return <Input {...props} type='password' placeholder={t('password_input_placeholder')} />
   }
 
-  const defineAuthButton: Record<AuthMode, ReactNode> = {
-    login: (
-      <Button onClick={onLoginClick} disabled={!password.length}>
-        {t('login_text')}
-      </Button>
-    ),
-    register: (
-      <Button onClick={onRegisterClick} disabled={!password.length}>
-        {t('register_text')}
-      </Button>
-    ),
+  const defineAuthButtonText: Record<AuthMode, string> = {
+    login: t('login_text'),
+    register: t('register_text'),
   }
 
   const defineChangeModeText: Record<AuthMode, string> = {
@@ -365,20 +365,29 @@ export const AuthMenu = () => {
     register: 'to_login_text',
   }
 
+  const defineSubmitCallback: Record<AuthMode, (data: TAuthFormData) => void> = {
+    login: onLogin,
+    register: onRegister,
+  }
+
+  const onSubmit = ({ username, password }: TAuthFormData) => {
+    backToMainMenu()
+
+    defineSubmitCallback[authMode]({ username, password })
+  }
+
   return (
     <Menu>
-      <Controller
-        name='password'
-        control={formData.control}
-        render={({ field }) => renderPasswordInput(field)}
-      />
-      {defineAuthButton[authMode]}
-      <Button onClick={toAuthUsername}>{t('back_text')}</Button>
-      <p
-        onClick={toggleMode}
-        className='text-xs underline cursor-pointer transition-opacity opacity-75 hover:opacity-100'>
-        {t(defineChangeModeText[authMode])}
-      </p>
+      <form onSubmit={formData.handleSubmit(onSubmit)}>
+        <Controller
+          name='password'
+          control={formData.control}
+          render={({ field }) => renderPasswordInput(field)}
+        />
+        <Button type='submit'>{defineAuthButtonText[authMode]}</Button>
+        <Button onClick={toAuthUsername}>{t('back_text')}</Button>
+        <UnderlinedText onClick={toggleMode}>{t(defineChangeModeText[authMode])}</UnderlinedText>
+      </form>
     </Menu>
   )
 }
@@ -407,16 +416,22 @@ const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: s
     )
   }
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+  }
+
   return (
     <Menu>
-      <Controller
-        name='username'
-        control={formData.control}
-        render={({ field }) => renderUsernameInput(field)}
-      />
-      <Button onClick={toAuthPassword} disabled={!username.length}>
-        {t('next_text')}
-      </Button>
+      <form onSubmit={handleSubmit}>
+        <Controller
+          name='username'
+          control={formData.control}
+          render={({ field }) => renderUsernameInput(field)}
+        />
+        <Button type='submit' onClick={toAuthPassword} disabled={!username.length}>
+          {t('next_text')}
+        </Button>
+      </form>
     </Menu>
   )
 }

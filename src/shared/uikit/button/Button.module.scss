@@ -2,23 +2,25 @@
   /* font-size: 1.1rem;
   letter-spacing: 0.15rem; */
   font-size: 1rem;
-
   font-weight: semibold;
   color: white;
-  background-color: rgb(233, 128, 0);
-  border: 2px solid black;
+  background-color: rgb(222, 128, 0);
+  box-shadow: 0 0 6px 1px black;
   padding-block: 0.7rem;
   border-radius: 0.7rem;
-  transition: scale 0.3s, background-color 0.3s, color 0.3s;
-  &:hover {
-    scale: 1.01;
+  transition: box-shadow 0.2s, background-color 0.3s, color 0.3s;
+
+  @media (hover: hover) {
+    &:hover,
+    &:focus-visible {
+      box-shadow: 0 0 4px 1px rgb(222, 128, 0);
+    }
   }
+
   &:disabled {
-    background-color: rgb(192, 100, 0);
+    background-color: rgb(150, 78, 0);
     color: rgb(210, 210, 210);
     cursor: auto;
-    &:hover {
-      scale: 1;
-    }
+    box-shadow: 0 0 4px 1px black;
   }
 }

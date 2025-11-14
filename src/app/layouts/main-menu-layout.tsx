@@ -51,14 +51,14 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     await focusTo(new Vector3(...FEEDBACK_MENU_POSITION))
   }
 
-  const onLogin = async (username: string, password: string) => {
-    const { access_token } = await login({ username, password })
+  const onLogin = async (data: { username: string; password: string }) => {
+    const { access_token } = await login(data)
 
     updateToken(access_token)
   }
 
-  const onRegister = async (username: string, password: string) => {
-    const { token } = await register({ username, password })
+  const onRegister = async (data: { username: string; password: string }) => {
+    const { token } = await register(data)
 
     updateToken(token.access_token)
     // await updateUser(parseFromRegisterDTO(player))

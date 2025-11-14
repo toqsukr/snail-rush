@@ -1,0 +1,22 @@
+.underlined_text {
+  @apply text-xs cursor-pointer;
+
+  opacity: 0.8;
+
+  transition: opacity 0.2s;
+
+  user-select: none;
+
+  @media (hover: hover) {
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+      opacity: 1;
+    }
+  }
+
+  &:disabled {
+    cursor: auto;
+    opacity: 0.8;
+  }
+}

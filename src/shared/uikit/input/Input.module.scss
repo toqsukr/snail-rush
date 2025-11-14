@@ -1,4 +1,9 @@
 .input {
   padding: 0.4rem 0.6rem;
   border-radius: 0.4rem;
+  transition: box-shadow 0.2s;
+
+  &:focus-visible {
+    box-shadow: 0 0 6px 1px rgb(222, 128, 0);
+  }
 }
