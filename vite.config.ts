@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
           short_name: 'Snail Rush',
           start_url: '/',
           orientation: 'landscape',
-          display: 'fullscreen',
+          display: 'standalone',
           icons: [
             {
               src: 'windows11/Square44x44Logo.targetsize-256.png',
