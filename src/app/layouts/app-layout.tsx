@@ -7,9 +7,15 @@ import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import '../i18n'
 import ButtonController from '@shared/lib/mobile-control/button'
 import { useGameStore } from '@pages/home/model/store'
+import { useDeviceDetection } from '@shared/lib/device'
+import { useTranslation } from 'react-i18next'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
+  const device = useDeviceDetection()
+  const { t } = useTranslation()
+
   const started = useGameStore(s => s.started)
+
   // const [leftKey, updateLeftKey] = useState('ArrowLeft')
   // const [rightKey, updateRightKey] = useState('ArrowRight')
 
@@ -63,7 +69,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
           </Physics>
         </KeyboardControls>
       </Canvas>
-      {started && (
+      {device !== 'desktop' && started && (
         <>
           <JoystickController onLeft={handleLeft} onRight={handleRight} onReset={handleReset} />
           <ButtonController
@@ -72,7 +78,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
             onMouseUp={handleUnpressButton}
             onTouchStart={handlePressButton}
             onTouchEnd={handleUnpressButton}>
-            JUMP
+            {t('jump_text')}
           </ButtonController>
         </>
       )}
