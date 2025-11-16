@@ -16,19 +16,6 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const started = useGameStore(s => s.started)
 
-  // const [leftKey, updateLeftKey] = useState('ArrowLeft')
-  // const [rightKey, updateRightKey] = useState('ArrowRight')
-
-  // const handleChangeControl = () => {
-  //   if (leftKey === 'ArrowLeft') {
-  //     updateLeftKey('KeyA')
-  //     updateRightKey('KeyD')
-  //   } else {
-  //     updateLeftKey('ArrowLeft')
-  //     updateRightKey('ArrowRight')
-  //   }
-  // }
-
   const handleLeft = () => {
     window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight' }))
     window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }))
@@ -54,7 +41,6 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
 
   return (
     <div className='h-full relative'>
-      {/* {started || <Logflow />} */}
       <Canvas>
         <KeyboardControls
           map={[
@@ -62,8 +48,6 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
             { name: 'right', keys: ['ArrowRight'] },
             { name: 'jump', keys: ['Space'] },
           ]}>
-          {/* <OrbitControls /> */}
-          {/* <Perf position='top-left' /> */}
           <Physics gravity={[0, -15, 0]} debug timeStep='vary'>
             {children}
           </Physics>
