@@ -14,7 +14,11 @@ const AnimatedPauseIcon: FC<HTMLAttributes<HTMLDivElement>> = props => {
 
   return (
     <animated.div {...props} style={pauseIconProp} className='fixed top-0 right-0 m-4'>
-      <SettingsIcon />
+      <button
+        disabled={visibility}
+        className='focus-visible:text-[var(--primary-color)] transition-colors'>
+        <SettingsIcon />
+      </button>
     </animated.div>
   )
 }

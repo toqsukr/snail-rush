@@ -16,7 +16,11 @@ const KickPlayerButton: FC<{ lobbyPlayerID: string }> = ({ lobbyPlayerID }) => {
 
   if (!isHost(user?.id ?? '') || user?.id === lobbyPlayerID) return
 
-  return <RxCross2 className='w-[18px] h-[18px]' onClick={kickClick} />
+  return (
+    <button className='focus-visible:text-[var(--primary-color)]'>
+      <RxCross2 className='w-[18px] h-[18px]' onClick={kickClick} />
+    </button>
+  )
 }
 
 export default KickPlayerButton

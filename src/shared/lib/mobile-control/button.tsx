@@ -10,6 +10,7 @@ const ButtonController: FC<ButtonControllerProps> = ({ children, className, ...p
   return (
     <button
       {...props}
+      tabIndex={-1}
       className={clsx(
         'xl:hidden p-6 text-[3rem] select-none rounded-3xl transition-opacity active:opacity-100 opacity-80 bg-[#ffffff66]',
         className

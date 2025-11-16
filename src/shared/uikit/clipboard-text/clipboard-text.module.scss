@@ -9,8 +9,8 @@
   @media (hover: hover) {
     &:hover,
     &:focus-visible {
-      background-color: rgb(222, 128, 0);
-      box-shadow: 0 0 4px 1px rgb(222, 128, 0);
+      background-color: var(--primary-color);
+      box-shadow: 0 0 4px 1px var(--primary-color);
     }
   }
 }

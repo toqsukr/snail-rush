@@ -114,6 +114,7 @@ export const JoystickController: FC<JoystickControllerProps> = ({
       )}>
       <button
         ref={stickRef}
+        tabIndex={-1}
         className='absolute top-1/2 left-1/2 p-6 rounded-full bg-[#ffffff66]'
         style={{
           transform: `translate(${stickPercentPosition.x}, ${stickPercentPosition.y})`,

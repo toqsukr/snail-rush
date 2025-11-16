@@ -4,7 +4,7 @@
   font-size: 1rem;
   font-weight: semibold;
   color: white;
-  background-color: rgb(222, 128, 0);
+  background-color: var(--primary-color);
   box-shadow: 0 0 6px 1px black;
   padding-block: 0.7rem;
   border-radius: 0.7rem;
@@ -13,7 +13,7 @@
   @media (hover: hover) {
     &:hover,
     &:focus-visible {
-      box-shadow: 0 0 4px 1px rgb(222, 128, 0);
+      box-shadow: 0 0 4px 1px var(--primary-color);
     }
   }
 
