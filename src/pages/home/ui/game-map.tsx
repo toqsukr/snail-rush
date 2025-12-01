@@ -3,7 +3,7 @@ import { getPlayer } from '@entities/players'
 import { TUser } from '@entities/user'
 import { useSendFinishGame } from '@features/lobby-events'
 import { useFollowTarget } from '@features/tracking-camera'
-import { useGameStore } from '../model/store'
+import { useGameStore } from '@features/game'
 import { GameMap, MapData } from '@shared/lib/game/map'
 
 type TUserData = {

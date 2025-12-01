@@ -13,7 +13,7 @@ import { FC, PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Vector3 } from 'three'
-import { useGameStore } from '../../pages/home/model/store'
+import { useGameStore } from '@features/game'
 
 const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const focusTo = useFocusTo()

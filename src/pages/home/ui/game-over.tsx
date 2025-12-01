@@ -4,7 +4,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { useRef } from 'react'
-import { useGameStore } from '../model/store'
+import { useGameStore } from '@features/game'
 
 const GAME_OVER_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
 const GAME_OVER_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]

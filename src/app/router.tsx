@@ -20,6 +20,7 @@ import WebSocketLayout from './layouts/websocket-layout'
 import GrassGameMap from '@pages/home/ui/game-map'
 import EditorMap from '@pages/editor'
 import { TrackingCamera } from '@features/tracking-camera'
+import SinglePlayerPage from '@pages/single-player'
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        path: Routes.SINGLE,
+        element: <SinglePlayerPage />,
       },
       {
         path: Routes.EDITOR,

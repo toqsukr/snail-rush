@@ -1,4 +1,3 @@
-import { getTexturePath, PlayerSkins } from '@pages/home/model/status'
 import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
@@ -6,9 +5,9 @@ import { FC, PropsWithChildren } from 'react'
 import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import '../i18n'
 import ButtonController from '@shared/lib/mobile-control/button'
-import { useGameStore } from '@pages/home/model/store'
 import { useDeviceDetection } from '@shared/lib/device'
 import { useTranslation } from 'react-i18next'
+import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const device = useDeviceDetection()
@@ -48,7 +47,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
             { name: 'right', keys: ['ArrowRight'] },
             { name: 'jump', keys: ['Space'] },
           ]}>
-          <Physics gravity={[0, -15, 0]} debug timeStep='vary'>
+          <Physics gravity={[0, -9.8, 0]} debug timeStep={1 / 60}>
             {children}
           </Physics>
         </KeyboardControls>

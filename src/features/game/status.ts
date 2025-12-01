@@ -1,8 +1,8 @@
 import { Vector3 } from 'three'
 
-export const HOST_START_POSITION = new Vector3(19, 0.1, -10)
+const HOST_START_POSITION = new Vector3(19, 0.1, -10)
 
-export const JOINED_START_POSITION = new Vector3(12.2, 0.1, -10)
+const JOINED_START_POSITION = new Vector3(12.2, 0.1, -10)
 
 export type PlayerStatus = 'host' | 'joined'
 

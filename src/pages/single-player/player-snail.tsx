@@ -1,6 +1,6 @@
-import { useSkinById } from '@entities/skin/query'
+import { FC, Suspense, useCallback } from 'react'
+import { Euler, Vector3 } from 'three'
 import { TUser, useUser } from '@entities/user'
-import { useSendMoveImpulse, useSendShrink, useSendTargetRotation } from '@features/lobby-events'
 import {
   Player,
   playerDepsContext,
@@ -15,31 +15,18 @@ import {
   useCalcAnimationDuration,
   useSnailContext,
 } from '@features/snail'
-import { FC, Suspense, useCallback } from 'react'
-import { Euler, Vector3 } from 'three'
-import {
-  getPlayerPosition,
-  getStartPosition,
-  getTexturePath,
-  PlayerSkins,
-  useGameStore,
-} from '@features/game'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { isObstacle } from '@shared/lib/game/obstacle'
+import { useGameStore, getTexturePath, PlayerSkins, getStartPosition } from '@features/game'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
-  const sendStartShrink = useSendShrink()
-  const sendTargetPosition = useSendMoveImpulse()
-  const sendTargetRotation = useSendTargetRotation()
   const calcAnimationDuration = useCalcAnimationDuration()
 
-  const { rotation, getIsJumping, startShrinkAnimation, stopShrinkAnimation, getPosition } =
-    useSnailContext()
+  const { rotation, startShrinkAnimation, stopShrinkAnimation, getIsJumping } = useSnailContext()
 
   const onStartShrink = () => {
     startShrinkAnimation?.()
-    sendStartShrink(getPosition())
   }
 
   const onStopShrink = () => {
@@ -48,21 +35,12 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
   const onJump = (
     koef: number,
-    holdTime: number,
+    _holdTime: number,
     pushCallback: (impulse: Vector3, duration: number) => void
   ) => {
     const impulse = calculateImpulse(rotation, koef)
     const duration = calcAnimationDuration(0)
     pushCallback(impulse, duration)
-    const move = {
-      x: impulse.x,
-      y: impulse.y,
-      z: impulse.z,
-      duration,
-      position: getPosition(),
-      hold_time: holdTime,
-    }
-    sendTargetPosition({ move })
   }
 
   const onRotate = (
@@ -72,14 +50,6 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
     const targetRotation = rotation.set(rotation.x, rotation.y + pitchIncrement, rotation.z)
     const duration = 0
     pushCallback(targetRotation, duration)
-    sendTargetRotation({
-      rotation: {
-        duration,
-        roll: targetRotation.x,
-        pitch: targetRotation.y,
-        yaw: targetRotation.z,
-      },
-    })
   }
 
   const canMove = () => {
@@ -104,8 +74,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
 const PlayerSuspense = () => {
   const { data: user } = useUser()
-  const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle } = useGameStore()
-  const { data: skin } = useSkinById(user?.skinID ?? '')
+  const { moveable, updateMoveable, updatePlayerModelHandle } = useGameStore()
 
   const onCollision = useCallback(() => {
     if (moveable) {
@@ -116,11 +85,11 @@ const PlayerSuspense = () => {
     }
   }, [moveable])
 
-  if (!playerStatus || !user) return
+  if (!user) return
 
-  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? PlayerSkins.HERBIVORE)
+  const texturePath = getTexturePath(PlayerSkins.HERBIVORE)
 
-  const playerStartPosition = getStartPosition(getPlayerPosition(playerStatus))
+  const playerStartPosition = getStartPosition(0)
 
   const playerStartRotation = new Euler(0, Math.PI, 0)
 

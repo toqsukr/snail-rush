@@ -19,8 +19,7 @@ import {
   pushOpponentShrink,
 } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
-import { getPlayerPosition, getStartPosition } from '@pages/home/model/status'
-import { useGameStore } from '@pages/home/model/store'
+import { getPlayerPosition, getStartPosition, useGameStore } from '@features/game'
 import { grassMapData } from '@pages/home/ui/game-map'
 import { WS_HOST_URL } from '@shared/api/base-template'
 import { unixFloatToDate } from '@shared/lib/time'

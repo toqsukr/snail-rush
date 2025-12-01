@@ -2,7 +2,7 @@ import { Euler, Vector3 } from 'three'
 import { FC } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
-import { ChopperObstacle, StaticObstacle } from './obstacle'
+import { StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
 import { StartModel } from './start'
 import { ModelPrimitive } from './primitive'
@@ -75,8 +75,8 @@ export const GameMap: FC<{
   mapData: MapData
   isStarted: boolean
   onFinish: (userData: unknown) => Promise<void>
-}> = ({ mapData, isStarted, onFinish }) => {
-  const { stone, smallStone, bigStone, chopper } = mapData.obstacle
+}> = ({ mapData, onFinish }) => {
+  const { stone, smallStone, bigStone } = mapData.obstacle
   const { planeModelPath, wallsModelPath } = mapData
 
   return (

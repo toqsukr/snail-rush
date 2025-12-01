@@ -3,4 +3,5 @@ export const Routes = {
   AUTH: '/auth',
   LOBBY: '/lobby',
   EDITOR: '/editor',
+  SINGLE: '/single',
 } as const

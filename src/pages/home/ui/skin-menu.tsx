@@ -7,7 +7,7 @@ import { RigidBody } from '@react-three/rapier'
 import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
-import { getTexturePath, PlayerSkins } from '../model/status'
+import { getTexturePath, PlayerSkins } from '@features/game'
 
 export const SKIN_MENU_POSITION = [7, 35, 5] satisfies [number, number, number]
 const SKIN_MENU_ROTATION = [0, Math.PI / 2, 0] satisfies [number, number, number]
