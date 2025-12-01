@@ -18,21 +18,17 @@ import NonAuthLayout from './layouts/non-auth-layout'
 import TrackCameraLayout from './layouts/track-camera-layout'
 import WebSocketLayout from './layouts/websocket-layout'
 import GrassGameMap from '@pages/home/ui/game-map'
+import EditorMap from '@pages/editor'
+import { TrackingCamera } from '@features/tracking-camera'
 
 export const router = createBrowserRouter([
   {
     element: (
       <QueryClientProvider client={queryClient}>
         <AppLayout>
-          <LobbyRedirectLayout>
-            <TrackCameraLayout>
-              <CountdownLayout>
-                <MainMenuLayout>
-                  <Outlet />
-                </MainMenuLayout>
-              </CountdownLayout>
-            </TrackCameraLayout>
-          </LobbyRedirectLayout>
+          <Outlet />
+          {/* <OrbitControls /> */}
+          {/* <Perf position='top-left' /> */}
         </AppLayout>
       </QueryClientProvider>
     ),
@@ -40,10 +36,18 @@ export const router = createBrowserRouter([
       {
         path: Routes.HOME,
         element: (
-          <AuthLayout>
-            <HomePage />
-            <Outlet />
-          </AuthLayout>
+          <LobbyRedirectLayout>
+            <CountdownLayout>
+              <TrackCameraLayout>
+                <MainMenuLayout>
+                  <AuthLayout>
+                    <HomePage />
+                    <Outlet />
+                  </AuthLayout>
+                </MainMenuLayout>
+              </TrackCameraLayout>
+            </CountdownLayout>
+          </LobbyRedirectLayout>
         ),
         children: [
           {
@@ -63,11 +67,24 @@ export const router = createBrowserRouter([
         ],
       },
       {
+        path: Routes.EDITOR,
+        element: <EditorMap />,
+      },
+      {
         path: Routes.AUTH,
         element: (
-          <NonAuthLayout>
-            <AuthPage />
-          </NonAuthLayout>
+          <LobbyRedirectLayout>
+            <CountdownLayout>
+              <TrackCameraLayout>
+                <MainMenuLayout>
+                  <NonAuthLayout>
+                    <AuthPage />
+                    <TrackingCamera />
+                  </NonAuthLayout>
+                </MainMenuLayout>
+              </TrackCameraLayout>
+            </CountdownLayout>
+          </LobbyRedirectLayout>
         ),
       },
     ],

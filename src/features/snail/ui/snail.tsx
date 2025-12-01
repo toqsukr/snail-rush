@@ -2,7 +2,6 @@ import { Text, useAnimations, useGLTF, useTexture } from '@react-three/drei'
 import { useFrame, useGraph, useThree } from '@react-three/fiber'
 import {
   CuboidCollider,
-  interactionGroups,
   RapierRigidBody,
   RigidBody,
   RoundCuboidCollider,
@@ -117,18 +116,11 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       userData={userData}
       friction={1.5}
       linearDamping={1.2}
-      collisionGroups={interactionGroups(0b01, 0b01)}
       onCollisionEnter={handleCollision}
       enabledRotations={[false, false, false]}
       restitution={0}>
-      <RoundCuboidCollider
-        name='neck'
-        args={[0.05, 0.05, 0.5, 0.2]}
-        position={[0, 0.85, 0.7]}
-        rotation={[-Math.PI / 2.5, 0, 0]}
-      />
       <CuboidCollider name='leg' args={[0.27, 0.2, 0.8]} position={[0, 0.22, -0.2]} />
-      <RoundCuboidCollider name='shell' args={[0.08, 0.15, 0.15, 0.5]} position={[0, 0.85, -0.4]} />
+      <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.5, 0.5]} position={[0, 1, 0]} />
       <Text ref={textRef} fontSize={0.8} fontWeight={800} fillOpacity={0.8} position={[0, 4, 0]}>
         {username}
       </Text>

@@ -17,6 +17,46 @@ export const grassMapData: MapData = {
   startLine: { position: [15.5, 0.1, -12], rotation: [0, -Math.PI / 2, 0] },
   finishLine: { position: [54, 0.5, -4], rotation: [0, Math.PI + Math.PI / 2.8, 0] },
   obstacle: {
+    chopper: {
+      items: [
+        {
+          extremePositions: [
+            [30, 4, -45],
+            [15, 4, -70],
+          ],
+          speed: 12,
+        },
+        {
+          extremePositions: [
+            [75, 4, -60],
+            [53, 4, -48],
+          ],
+          speed: 12,
+        },
+        {
+          extremePositions: [
+            [25, 4, -35],
+            [5, 4, -45],
+          ],
+          speed: 11,
+        },
+        {
+          extremePositions: [
+            [49, 4, -59],
+            [65, 4, -72],
+          ],
+          speed: 10,
+        },
+        {
+          extremePositions: [
+            [58, 4, -24],
+            [80, 4, -26],
+          ],
+          speed: 15,
+        },
+      ],
+      modelPath: 'models/chopper.glb',
+    },
     stone: {
       items: [
         { position: [67, 0, -12], rotation: [0, Math.PI / 2.8, 0] },
@@ -29,25 +69,25 @@ export const grassMapData: MapData = {
         { position: [26, 0, -68], rotation: [0, 0, 0] },
         { position: [28, 0, -60], rotation: [0, 0, 0] },
         { position: [34, 0, -53], rotation: [0, Math.PI / 4, 0] },
-        { position: [15, 0, -44], rotation: [0, 0, 0] },
+        { position: [15, 0, -48], rotation: [0, 0, 0] },
         { position: [11, 0, -32], rotation: [0, Math.PI / 2.5, 0] },
         { position: [20, 0, -28], rotation: [0, -Math.PI / 3, 0] },
       ],
-      modelPath: 'models/desert-stone.glb',
+      modelPath: 'models/stone.glb',
     },
     smallStone: {
       items: [
         { position: [45, 0, -62], rotation: [0, 0, 0] },
         { position: [73, 0, -21], rotation: [0, Math.PI / 3, 0] },
-        { position: [63, 0, -26], rotation: [0, -Math.PI / 2.5, 0] },
+        { position: [67, 0, -30], rotation: [0, -Math.PI / 2.5, 0] },
         { position: [15, 0, -23], rotation: [0, 0, 0] },
         { position: [65, 0, -59], rotation: [0, Math.PI / 3.5, 0] },
       ],
-      modelPath: 'models/small-desert-stone.glb',
+      modelPath: 'models/small-stone.glb',
     },
     bigStone: {
       items: [],
-      modelPath: 'models/big-desert-stone.glb',
+      modelPath: 'models/big-stone.glb',
     },
   },
 }
@@ -64,7 +104,7 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
 const GrassGameMap = () => {
   const sendFinishGame = useSendFinishGame()
   const followTarget = useFollowTarget()
-  const { finishGame, updateWinner, updateMoveable, winner } = useGameStore()
+  const { finishGame, updateWinner, updateMoveable, winner, started } = useGameStore()
 
   const onFinish = async (userData: unknown) => {
     if (containsUserdata(userData) && !winner) {
@@ -82,7 +122,7 @@ const GrassGameMap = () => {
     }
   }
 
-  return <GameMap onFinish={onFinish} mapData={grassMapData} />
+  return <GameMap isStarted={started} onFinish={onFinish} mapData={grassMapData} />
 }
 
 export default GrassGameMap
