@@ -22,6 +22,20 @@ import EditorMap from '@pages/editor'
 import { TrackingCamera } from '@features/tracking-camera'
 import SinglePlayerPage from '@pages/single-player'
 
+const devRoutes =
+  process.env.NODE_ENV === 'development'
+    ? [
+        {
+          path: Routes.SINGLE,
+          element: <SinglePlayerPage />,
+        },
+        {
+          path: Routes.EDITOR,
+          element: <EditorMap />,
+        },
+      ]
+    : []
+
 export const router = createBrowserRouter([
   {
     element: (
@@ -68,14 +82,6 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: Routes.SINGLE,
-        element: <SinglePlayerPage />,
-      },
-      {
-        path: Routes.EDITOR,
-        element: <EditorMap />,
-      },
-      {
         path: Routes.AUTH,
         element: (
           <LobbyRedirectLayout>
@@ -92,6 +98,7 @@ export const router = createBrowserRouter([
           </LobbyRedirectLayout>
         ),
       },
+      ...devRoutes,
     ],
   },
 ])

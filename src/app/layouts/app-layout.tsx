@@ -8,12 +8,13 @@ import ButtonController from '@shared/lib/mobile-control/button'
 import { useDeviceDetection } from '@shared/lib/device'
 import { useTranslation } from 'react-i18next'
 import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
+import { DevTools } from '@shared/lib/devtools'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const device = useDeviceDetection()
   const { t } = useTranslation()
 
-  const started = useGameStore(s => s.started)
+  const { started } = useGameStore()
 
   const handleLeft = () => {
     window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight' }))
@@ -52,6 +53,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
           </Physics>
         </KeyboardControls>
       </Canvas>
+      {process.env.NODE_ENV === 'development' && <DevTools />}
       {device !== 'desktop' && started && (
         <>
           <JoystickController onLeft={handleLeft} onRight={handleRight} onReset={handleReset} />
