@@ -25,6 +25,8 @@ const SwitchTool = (tool: Tool) => {
 export const DevTools = () => {
   const { tools } = useDevTools()
 
+  if (!Object.values(tools).length) return
+
   return (
     <aside className='fixed bottom-0 right-0 flex flex-col gap-4 bg-neutral-600 overflow-auto max-h-[180px] p-4'>
       {Object.values(tools).map((tool, index) => (
