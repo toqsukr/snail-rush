@@ -7,7 +7,7 @@ type FinishControlProp = {
   onFinish: (userData: unknown) => void
 } & RigidBodyProps
 
-const FINISH_MODEL_PATH = 'models/finish-line.glb'
+const FINISH_MODEL_PATH = 'models/compressed_finish-line.glb'
 
 export const FinishControl: FC<FinishControlProp> = ({ onFinish, ...props }) => {
   const timerRef = useRef<NodeJS.Timeout>()

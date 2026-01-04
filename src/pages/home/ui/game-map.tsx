@@ -12,7 +12,7 @@ type TUserData = {
 
 //TODO в бд итд
 export const grassMapData: MapData = {
-  planeModelPath: 'models/grass-map.glb',
+  planeModelPath: 'models/compressed_grass-map.glb',
   wallsModelPath: 'models/grass-walls.glb',
   startLine: { position: [15.5, 0.1, -12], rotation: [0, -Math.PI / 2, 0] },
   finishLine: { position: [54, 0.5, -4], rotation: [0, Math.PI + Math.PI / 2.8, 0] },
