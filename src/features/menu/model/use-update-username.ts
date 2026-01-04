@@ -8,10 +8,11 @@ export const useUpdateUsername = () => {
   const { data: user } = useUser()
 
   const debouncedUpdateUser = useCallback(
-    debounce((user: TUser) => {
-      return updatePlayer.mutateAsync(user)
+    debounce(async (user: TUser) => {
+      await updatePlayer.mutateAsync(user)
+      invalidateUser()
     }, 1500),
-    [updatePlayer]
+    []
   )
 
   return async (username: string) => {
@@ -19,7 +20,6 @@ export const useUpdateUsername = () => {
 
     const updatedUser = { ...user, username }
 
-    await debouncedUpdateUser(updatedUser)
-    invalidateUser()
+    debouncedUpdateUser(updatedUser)
   }
 }

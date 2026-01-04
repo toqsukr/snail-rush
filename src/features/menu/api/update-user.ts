@@ -1,6 +1,6 @@
 import { TUser } from '@entities/user'
 import playerService from '@shared/api/player'
-import { useMutation } from '@tanstack/react-query'
+import { useIsMutating, useMutation } from '@tanstack/react-query'
 
 const updateUserMutationKey = 'update-user'
 
@@ -13,4 +13,8 @@ export const useUpdatePlayer = () => {
       return playerService.updatePlayer(playerDTO)
     },
   })
+}
+
+export const useIsPlayerUpdating = () => {
+  return !!useIsMutating({ mutationKey: [updateUserMutationKey] })
 }

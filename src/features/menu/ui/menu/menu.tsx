@@ -100,6 +100,7 @@ const MainMenuContent = () => {
   const username = formData.watch('username')
 
   const isActiveMenu = mode === 'main-menu'
+  const globalDisable = !isActiveMenu
 
   const renderUsernameInput = (field: ControllerRenderProps<{ username: string }, 'username'>) => {
     const { name, onBlur, onChange, value, disabled } = field
@@ -131,22 +132,22 @@ const MainMenuContent = () => {
       <Controller
         name='username'
         control={formData.control}
-        disabled={!isActiveMenu}
+        disabled={globalDisable}
         render={({ field }) => renderUsernameInput(field)}
       />
-      <Button onClick={createLobby} disabled={!username.length || !isActiveMenu}>
+      <Button onClick={createLobby} disabled={!username.length || globalDisable}>
         {session ? t('lobby_text') : t('create_lobby_text')}
       </Button>
-      <Button onClick={joinLobby} disabled={!username.length || !!session || !isActiveMenu}>
+      <Button onClick={joinLobby} disabled={!username.length || !!session || globalDisable}>
         {t('join_text')}
       </Button>
-      <Button onClick={changeSkin} disabled={!isActiveMenu}>
+      <Button onClick={changeSkin} disabled={globalDisable}>
         {t('change_skin_text')}
       </Button>
-      <Button onClick={onExit} disabled={!isActiveMenu}>
+      <Button onClick={onExit} disabled={globalDisable}>
         {t('exit_text')}
       </Button>
-      {/* <Button onClick={leaveFeedback} disabled={!isActiveMenu}>
+      {/* <Button onClick={leaveFeedback} disabled={globalDisable}>
         {t('leave_feedback_text')}
       </Button> */}
     </>
