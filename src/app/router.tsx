@@ -27,11 +27,19 @@ const devRoutes =
     ? [
         {
           path: Routes.SINGLE,
-          element: <SinglePlayerPage />,
+          element: (
+            <AuthLayout>
+              <SinglePlayerPage />
+            </AuthLayout>
+          ),
         },
         {
           path: Routes.EDITOR,
-          element: <EditorMap />,
+          element: (
+            <AuthLayout>
+              <EditorMap />
+            </AuthLayout>
+          ),
         },
       ]
     : []
