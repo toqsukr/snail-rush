@@ -14,8 +14,16 @@ type TUserData = {
 export const grassMapData: MapData = {
   planeModelPath: 'models/compressed_grass-map.glb',
   wallsModelPath: 'models/grass-walls.glb',
-  startLine: { position: [15.5, 0.1, -12], rotation: [0, -Math.PI / 2, 0] },
-  finishLine: { position: [54, 0.5, -4], rotation: [0, Math.PI + Math.PI / 2.8, 0] },
+  startLine: {
+    name: 'start-15.5,0.1,-12',
+    position: [15.5, 0.1, -12],
+    rotation: [0, -Math.PI / 2, 0],
+  },
+  finishLine: {
+    name: 'finish-54,0.5,-4',
+    position: [54, 0.5, -4],
+    rotation: [0, Math.PI + Math.PI / 2.8, 0],
+  },
   obstacle: {
     chopper: {
       items: [
@@ -59,29 +67,101 @@ export const grassMapData: MapData = {
     },
     stone: {
       items: [
-        { position: [67, 0, -12], rotation: [0, Math.PI / 2.8, 0] },
-        { position: [62, 0, -19], rotation: [0, 0, 0] },
-        { position: [63, 0, -31], rotation: [0, Math.PI / 3, 0] },
-        { position: [73, 0, -36], rotation: [0, -Math.PI / 2.5, 0] },
-        { position: [61, 0, -42], rotation: [0, 0, 0] },
-        { position: [70, 0, -49], rotation: [0, Math.PI / 3.5, 0] },
-        { position: [57, 0, -58], rotation: [0, Math.PI / 4, 0] },
-        { position: [26, 0, -68], rotation: [0, 0, 0] },
-        { position: [28, 0, -60], rotation: [0, 0, 0] },
-        { position: [34, 0, -53], rotation: [0, Math.PI / 4, 0] },
-        { position: [15, 0, -48], rotation: [0, 0, 0] },
-        { position: [11, 0, -32], rotation: [0, Math.PI / 2.5, 0] },
-        { position: [20, 0, -28], rotation: [0, -Math.PI / 3, 0] },
+        {
+          position: [67, 0, -12],
+          rotation: [0, Math.PI / 2.8, 0],
+          name: 'stone-67,0,-12',
+        },
+        {
+          position: [62, 0, -19],
+          rotation: [0, 0, 0],
+          name: 'stone-62,0,-19',
+        },
+        {
+          position: [63, 0, -31],
+          rotation: [0, Math.PI / 3, 0],
+          name: 'stone-63,0,-31',
+        },
+        {
+          position: [73, 0, -36],
+          rotation: [0, -Math.PI / 2.5, 0],
+          name: 'stone-73,0,-36',
+        },
+        {
+          position: [61, 0, -42],
+          rotation: [0, 0, 0],
+          name: 'stone-61,0,-42',
+        },
+        {
+          position: [70, 0, -49],
+          rotation: [0, Math.PI / 3.5, 0],
+          name: 'stone-70,0,-49',
+        },
+        {
+          position: [57, 0, -58],
+          rotation: [0, Math.PI / 4, 0],
+          name: 'stone-57,0,-58',
+        },
+        {
+          position: [26, 0, -68],
+          rotation: [0, 0, 0],
+          name: 'stone-26,0,-68',
+        },
+        {
+          position: [28, 0, -60],
+          rotation: [0, 0, 0],
+          name: 'stone-28,0,-60',
+        },
+        {
+          position: [34, 0, -53],
+          rotation: [0, Math.PI / 4, 0],
+          name: 'stone-34,0,-53',
+        },
+        {
+          position: [15, 0, -48],
+          rotation: [0, 0, 0],
+          name: 'stone-15,0,-48',
+        },
+        {
+          position: [11, 0, -32],
+          rotation: [0, Math.PI / 2.5, 0],
+          name: 'stone-11,0,-32',
+        },
+        {
+          position: [20, 0, -28],
+          rotation: [0, -Math.PI / 3, 0],
+          name: 'stone-20,0,-28',
+        },
       ],
       modelPath: 'models/stone.glb',
     },
     smallStone: {
       items: [
-        { position: [45, 0, -62], rotation: [0, 0, 0] },
-        { position: [73, 0, -21], rotation: [0, Math.PI / 3, 0] },
-        { position: [67, 0, -30], rotation: [0, -Math.PI / 2.5, 0] },
-        { position: [15, 0, -23], rotation: [0, 0, 0] },
-        { position: [65, 0, -59], rotation: [0, Math.PI / 3.5, 0] },
+        {
+          position: [45, 0, -62],
+          rotation: [0, 0, 0],
+          name: 'smallStone-45,0,-62',
+        },
+        {
+          position: [73, 0, -21],
+          rotation: [0, Math.PI / 3, 0],
+          name: 'smallStone-73,0,-21',
+        },
+        {
+          position: [67, 0, -30],
+          rotation: [0, -Math.PI / 2.5, 0],
+          name: 'smallStone-67,0,-30',
+        },
+        {
+          position: [15, 0, -23],
+          rotation: [0, 0, 0],
+          name: 'smallStone-15,0,-23',
+        },
+        {
+          position: [65, 0, -59],
+          rotation: [0, Math.PI / 3.5, 0],
+          name: 'smallStone-65,0,-59',
+        },
       ],
       modelPath: 'models/small-stone.glb',
     },
