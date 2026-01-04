@@ -16,6 +16,10 @@ import { useJump } from '../model/use-jump'
 import { useSnailContext } from './snail-provider'
 import { DreiTextProps } from '@shared/lib/three'
 
+const STUN_ANIMATION_NAME = 'stun-animation'
+const JUMP_ANIMATION_NAME = 'BakedAnimation'
+const SHRINK_ANIMATION_NAME = 'shrink-animation'
+
 export const textures = [
   '/textures/snail-metal.png',
   '/textures/snail-normal.png',
@@ -32,32 +36,37 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
   const { animate, stopAnimation, isAnimationRunning } = useAnimation(actions)
-  const { updateStartShrinkAnimation, updateStopShrinkAnimation, updateIsJumping } =
-    useSnailContext()
+  const {
+    updateStartShrinkAnimation,
+    updateStopShrinkAnimation,
+    updateIsJumping,
+    updateIsStuning,
+  } = useSnailContext()
 
   useFrame(() => {
-    updateIsJumping(isAnimationRunning('BakedAnimation'))
+    updateIsJumping(isAnimationRunning(JUMP_ANIMATION_NAME))
+    updateIsStuning(isAnimationRunning(STUN_ANIMATION_NAME))
   })
 
-  const startJumpAnimation = (duration: number) => animate('BakedAnimation', { duration })
+  const startJumpAnimation = (duration: number) => animate(JUMP_ANIMATION_NAME, { duration })
 
-  const stopJumpAnimation = () => stopAnimation('BakedAnimation')
+  const stopJumpAnimation = () => stopAnimation(JUMP_ANIMATION_NAME)
 
   useJump(rigidBodyRef, startJumpAnimation)
 
   const startShrinkAnimation = () =>
-    animate('shrink-animation', {
+    animate(SHRINK_ANIMATION_NAME, {
       pauseOnEnd: true,
       loop: false,
       duration: shrinkDuration / 1000,
     })
 
-  const stopShrinkAnimation = () => stopAnimation('shrink-animation')
+  const stopShrinkAnimation = () => stopAnimation(SHRINK_ANIMATION_NAME)
 
-  const stopStunAnimation = () => stopAnimation('stun-animation')
+  const stopStunAnimation = () => stopAnimation(STUN_ANIMATION_NAME)
 
   const startStunAnimation = () => {
-    animate('stun-animation', { duration: stunTimeout / 1000 })
+    animate(STUN_ANIMATION_NAME, { duration: stunTimeout / 1000 })
   }
 
   const stopAllAnimation = () => {

@@ -34,8 +34,14 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const sendTargetRotation = useSendTargetRotation()
   const calcAnimationDuration = useCalcAnimationDuration()
 
-  const { rotation, getIsJumping, startShrinkAnimation, stopShrinkAnimation, getPosition } =
-    useSnailContext()
+  const {
+    rotation,
+    getIsJumping,
+    startShrinkAnimation,
+    stopShrinkAnimation,
+    getPosition,
+    getIsStuning,
+  } = useSnailContext()
 
   const onStartShrink = () => {
     startShrinkAnimation?.()
@@ -83,7 +89,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   }
 
   const canMove = () => {
-    return moveable && !getIsJumping()
+    return moveable && !getIsStuning() && !getIsJumping()
   }
 
   return (

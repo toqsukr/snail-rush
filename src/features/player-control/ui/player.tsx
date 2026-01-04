@@ -45,7 +45,13 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   }
 
   useFrame(() => {
-    if (!canMove()) return
+    if (!canMove()) {
+      wasJumping.current = false
+      wasRight.current = false
+      wasLeft.current = false
+      resetX()
+      return
+    }
 
     const keys = getKeys()
 

@@ -23,7 +23,8 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
   const calcAnimationDuration = useCalcAnimationDuration()
 
-  const { rotation, startShrinkAnimation, stopShrinkAnimation, getIsJumping } = useSnailContext()
+  const { rotation, startShrinkAnimation, stopShrinkAnimation, getIsJumping, getIsStuning } =
+    useSnailContext()
 
   const onStartShrink = () => {
     startShrinkAnimation?.()
@@ -53,7 +54,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   }
 
   const canMove = () => {
-    return moveable && !getIsJumping()
+    return moveable && !getIsStuning() && !getIsJumping()
   }
 
   return (
