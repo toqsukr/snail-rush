@@ -61,7 +61,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       duration: shrinkDuration / 1000,
     })
 
-  const stopShrinkAnimation = () => stopAnimation(SHRINK_ANIMATION_NAME)
+  const stopShrinkAnimation = (reset = false) => stopAnimation(SHRINK_ANIMATION_NAME, reset)
 
   const stopStunAnimation = () => stopAnimation(STUN_ANIMATION_NAME)
 

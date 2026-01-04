@@ -1,7 +1,7 @@
 import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
-import { FC, PropsWithChildren } from 'react'
+import { FC, PropsWithChildren, useEffect } from 'react'
 import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import '../i18n'
 import ButtonController from '@shared/lib/mobile-control/button'
@@ -9,6 +9,7 @@ import { useDeviceDetection } from '@shared/lib/device'
 import { useTranslation } from 'react-i18next'
 import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
 import { DevTools } from '@shared/lib/devtools'
+import { useObserveTabFocus } from '@shared/lib/tab-focus'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const device = useDeviceDetection()
@@ -38,6 +39,22 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const handleUnpressButton = () => {
     window.dispatchEvent(new KeyboardEvent('keyup', { key: 'Space' }))
   }
+
+  useEffect(() => {
+    const handleBlur = () => {
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'ArrowLeft' }))
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'ArrowRight' }))
+      window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Space' }))
+    }
+
+    window.addEventListener('blur', handleBlur)
+
+    return () => {
+      window.removeEventListener('blur', handleBlur)
+    }
+  }, [])
+
+  useObserveTabFocus()
 
   return (
     <div className='h-full relative'>

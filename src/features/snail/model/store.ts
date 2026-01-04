@@ -4,7 +4,7 @@ import { RotationType } from './types'
 export type SnailStore = {
   rotation: RotationType['rotation']
   startShrinkAnimation: (() => void) | null
-  stopShrinkAnimation: (() => void) | null
+  stopShrinkAnimation: ((reset?: boolean) => void) | null
   updateStartShrinkAnimation: (cb: () => void) => void
   updateStopShrinkAnimation: (cb: () => void) => void
   updateRotation: (rotation: RotationType['rotation']) => void

@@ -8,10 +8,12 @@ import { pushPlayerPosition } from '../model/position-emitter'
 import { pushPlayerRotation } from '../model/rotation-emitter'
 import { Euler, Vector3 } from 'three'
 import { MAX_SPACE_HOLD_TIME } from '@shared/config/game'
+import { useTabFocus } from '@shared/lib/tab-focus'
 
 export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { handleKeyUp, handleKeyDown } = useSpaceHold()
   const { incrementX, decrementX, resetX, calcRotationIncrement } = useAdditiveRotation()
+  const isTabFocus = useTabFocus()
 
   const [, getKeys] = useKeyboardControls<'left' | 'right' | 'jump'>()
   const wasLeft = useRef(false)
@@ -21,8 +23,6 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { onJump, onRotate, canMove } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
-    if (!canMove()) return
-
     const koef = Math.max(0.4, holdTime / MAX_SPACE_HOLD_TIME)
     const callback = (impulse: Vector3, duration: number) =>
       pushPlayerPosition({
@@ -34,8 +34,6 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const handleRotate = (directionKoef: number) => {
-    if (!canMove()) return
-
     const callback = (updatedRotation: Euler, duration: number) =>
       pushPlayerRotation({
         rotation: updatedRotation,
@@ -45,7 +43,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   }
 
   useFrame(() => {
-    if (!canMove()) {
+    if (!canMove() || !isTabFocus) {
       wasJumping.current = false
       wasRight.current = false
       wasLeft.current = false

@@ -25,8 +25,6 @@ const updateToolValue = (toolToUpdate: Tool, tools: Record<string, Tool>) => {
     return acc
   }, {})
 
-  console.log(updatedTools)
-
   return updatedTools
 }
 
