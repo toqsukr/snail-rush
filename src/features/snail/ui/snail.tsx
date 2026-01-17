@@ -90,6 +90,10 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     if (textRef.current) {
       textRef.current.lookAt?.(camera.position)
     }
+    const playerPos = rigidBodyRef.current?.translation()
+    if (playerPos) {
+      rigidBodyRef.current?.setTranslation({ ...playerPos, y: 0 }, true)
+    }
   })
 
   const userData = useMemo(() => ({ userID }), [])
@@ -128,7 +132,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       onCollisionEnter={handleCollision}
       enabledRotations={[false, false, false]}
       restitution={0}>
-      <CuboidCollider name='leg' args={[0.27, 0.2, 0.8]} position={[0, 0.22, -0.2]} />
+      <CuboidCollider name='leg' args={[0.27, 0.2, 1]} position={[0, 0.22, -0.2]} />
       <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.5, 0.5]} position={[0, 1, 0]} />
       <Text ref={textRef} fontSize={0.8} fontWeight={800} fillOpacity={0.8} position={[0, 4, 0]}>
         {username}

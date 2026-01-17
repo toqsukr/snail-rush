@@ -21,36 +21,43 @@ export const grassMapData: MapData = {
       items: [
         {
           extremePositions: [
-            [30, 4, -45],
-            [15, 4, -70],
+            [22.5, 3, -35],
+            [5, 3, -45],
+          ],
+          speed: 0,
+        },
+        {
+          extremePositions: [
+            [25, 3, -45],
+            [17.5, 3, -67.5],
           ],
           speed: 12,
         },
         {
           extremePositions: [
-            [75, 4, -60],
-            [53, 4, -48],
-          ],
-          speed: 12,
-        },
-        {
-          extremePositions: [
-            [25, 4, -35],
-            [5, 4, -45],
-          ],
-          speed: 11,
-        },
-        {
-          extremePositions: [
-            [49, 4, -59],
-            [65, 4, -72],
+            [50, 3, -60],
+            [62.5, 3, -70],
           ],
           speed: 10,
         },
         {
           extremePositions: [
-            [58, 4, -24],
-            [80, 4, -26],
+            [70, 3, -60],
+            [55, 3, -48],
+          ],
+          speed: 12,
+        },
+        {
+          extremePositions: [
+            [59, 3, -24],
+            [80, 3, -26],
+          ],
+          speed: 15,
+        },
+        {
+          extremePositions: [
+            [80, 3, -26],
+            [59, 3, -24],
           ],
           speed: 15,
         },
