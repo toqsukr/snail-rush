@@ -1,6 +1,6 @@
-import { Euler, EulerTuple, Group, Mesh, Quaternion, Vector3, Vector3Tuple } from 'three'
+import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
 import { FC, useState } from 'react'
-import { TransformControls, TransformControlsProps, useCursor, useGLTF } from '@react-three/drei'
+import { TransformControls, TransformControlsProps, useGLTF } from '@react-three/drei'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
 import { StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
@@ -133,7 +133,7 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, ...props }) => {
                 .toArray()
                 .map(value => parseFloat(value.toFixed(2))) as Vector3Tuple,
               rotation: [euler.x, euler.y, euler.z].map(value =>
-                parseFloat(value.toFixed(2))
+                parseFloat(value.toFixed(2)),
               ) as EulerTuple,
               mode: editMode,
             })
