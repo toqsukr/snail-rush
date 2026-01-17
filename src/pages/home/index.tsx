@@ -1,7 +1,6 @@
 import { TrackingCamera } from '@features/tracking-camera'
 import { Floor } from '@shared/lib/three'
 import CountdownWithDeps from './ui/countdown-with-deps'
-import FeedbackMenu from './ui/feedback-menu'
 import MainMenu from './ui/main-menu'
 import OpponentSuspense from './ui/opponent-snail'
 import SkinMenu from './ui/skin-menu'
@@ -13,7 +12,6 @@ const HomePage = () => {
       <OpponentSuspense />
       <CountdownWithDeps />
       <MainMenu />
-      <FeedbackMenu />
       <SkinMenu />
       <Floor />
     </>

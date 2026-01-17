@@ -9,8 +9,7 @@ type MainMenuDeps = {
   onChangeSkin: (skin: TSkin) => void
   onRegister: (data: { username: string; password: string }) => void
   onLogin: (data: { username: string; password: string }) => void
-  onSendFeedback: () => void
-  onToFeedback: () => void
+  isLoading?: boolean
 }
 
 type LobbyMenuDeps = {

@@ -1,15 +1,16 @@
 import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
+import { useTranslation } from 'react-i18next'
 import { FC, PropsWithChildren, useEffect } from 'react'
+
+import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
 import { JoystickController } from '@shared/lib/mobile-control/joystick'
-import '../i18n'
 import ButtonController from '@shared/lib/mobile-control/button'
 import { useDeviceDetection } from '@shared/lib/device'
-import { useTranslation } from 'react-i18next'
-import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
 import { DevTools } from '@shared/lib/devtools'
 import { useObserveTabFocus } from '@shared/lib/tab-focus'
+import '../i18n'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const device = useDeviceDetection()

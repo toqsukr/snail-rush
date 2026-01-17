@@ -1,10 +1,10 @@
+import { FC } from 'react'
+import { TbFlagCheck } from 'react-icons/tb'
+import { useTranslation } from 'react-i18next'
 import { TPlayer, usePlayerByID } from '@entities/players'
 import { useSession } from '@entities/session'
-import { FC } from 'react'
-import { useTranslation } from 'react-i18next'
 import KickPlayerButton from '../action-buttons/kick-player-button'
 import css from './lobby-board.module.scss'
-import { TbFlagCheck } from 'react-icons/tb'
 
 const LobbyBoard = () => {
   const { t } = useTranslation()

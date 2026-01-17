@@ -1,6 +1,6 @@
+import { FC, PropsWithChildren } from 'react'
 import { CountdownProvider } from '@features/countdown'
 import { getPlayerPosition, getStartPosition, useGameStore } from '@features/game'
-import { FC, PropsWithChildren } from 'react'
 
 const START_TIMER_VALUE = 3
 

@@ -1,5 +1,5 @@
-import authService from '@shared/api/auth'
 import { useMutation } from '@tanstack/react-query'
+import authService from '@shared/api/auth'
 
 const registerMutationKey = 'account-register'
 

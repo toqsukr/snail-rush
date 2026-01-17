@@ -1,18 +1,19 @@
-import { getPlayer, TPlayer } from '@entities/players'
-import { invalidateSession, useSession } from '@entities/session'
-import { useUser } from '@entities/user'
+import { FC, PropsWithChildren, Suspense } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Navigate } from 'react-router-dom'
+import { Euler, Vector3 } from 'three'
+
+import { grassMapData } from '@widgets/game-map'
 import { useStartTimer } from '@features/countdown'
 import {
   MessageType,
   OpponentPositionType,
   OpponentRotationType,
   useEventsHandler,
+  type OpponentStartJumpType,
 } from '@features/lobby-events'
-import { OpponentStartJumpType } from '@features/lobby-events/model/types'
 import { useAppendLog, useClearLogs } from '@features/logflow'
-import { useMenuMode } from '@features/menu'
-import { useToggleReady } from '@features/menu/api/toggle-ready'
-import { useKickLobbyPlayer } from '@features/menu/model/use-kick-player'
+import { useMenuMode, useToggleReady, useKickLobbyPlayer } from '@features/menu'
 import {
   pushOpponentPosition,
   pushOpponentRotation,
@@ -20,14 +21,12 @@ import {
 } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
 import { getPlayerPosition, getStartPosition, useGameStore } from '@features/game'
-import { grassMapData } from '@pages/home/ui/game-map'
+import { getPlayer, TPlayer } from '@entities/players'
+import { invalidateSession, useSession } from '@entities/session'
+import { useUser } from '@entities/user'
 import { WS_HOST_URL } from '@shared/api/base-template'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
-import { FC, PropsWithChildren, Suspense } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Navigate } from 'react-router-dom'
-import { Euler, Vector3 } from 'three'
 
 const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()

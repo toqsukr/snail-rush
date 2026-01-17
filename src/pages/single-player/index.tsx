@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { grassMapData } from '@pages/home/ui/game-map'
+import { grassMapData } from '@widgets/game-map'
 import { TrackCameraProvider, TrackingCamera } from '@features/tracking-camera'
 import { useGameStore } from '@features/game'
 import { Floor } from '@shared/lib/three'

@@ -1,8 +1,8 @@
-import { useMenu } from '@features/menu/model/store'
-import { animated, useSpring } from '@react-spring/web'
-import { SettingsIcon } from '@shared/uikit/icons'
-import { FC, HTMLAttributes } from 'react'
 import { createPortal } from 'react-dom'
+import { FC, HTMLAttributes } from 'react'
+import { animated, useSpring } from '@react-spring/web'
+import { useMenu } from '@features/menu/model/store'
+import { SettingsIcon } from '@shared/uikit/icons'
 import { usePause } from '../../model/use-pause'
 
 const AnimatedPauseIcon: FC<HTMLAttributes<HTMLDivElement>> = props => {

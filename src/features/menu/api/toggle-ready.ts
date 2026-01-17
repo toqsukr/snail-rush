@@ -1,6 +1,6 @@
+import { useMutation } from '@tanstack/react-query'
 import { invalidateSession } from '@entities/session'
 import sessionService from '@shared/api/session'
-import { useMutation } from '@tanstack/react-query'
 
 const toggleReadyMutationKey = 'toggle-player-ready'
 

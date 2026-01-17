@@ -1,9 +1,9 @@
-import { resetSession, useSessionCode } from '@entities/session'
-import { useMenuMode } from '@features/menu'
-import { useToken } from '@shared/config/token'
-import { Routes } from '@shared/model/routes'
 import { FC, PropsWithChildren } from 'react'
 import { Navigate } from 'react-router-dom'
+import { useMenuMode } from '@features/menu'
+import { resetSession, useSessionCode } from '@entities/session'
+import { useToken } from '@shared/config/token'
+import { Routes } from '@shared/model/routes'
 
 const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
   const updateMenuMode = useMenuMode()

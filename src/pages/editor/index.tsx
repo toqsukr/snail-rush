@@ -1,9 +1,9 @@
-import { grassMapData } from '@pages/home/ui/game-map'
-import { Html, PerspectiveCamera } from '@react-three/drei'
-import { ChangeSelectedOptions, GameMap } from '@shared/lib/game/map'
-import { Floor } from '@shared/lib/three'
 import { useState } from 'react'
 import { Euler, Vector3 } from 'three'
+import { Html, PerspectiveCamera } from '@react-three/drei'
+import { grassMapData } from '@widgets/game-map'
+import { Floor } from '@shared/lib/three'
+import { ChangeSelectedOptions, GameMap } from '@shared/lib/game/map'
 import { useMapDataStore } from './store'
 
 const EditorMap = () => {

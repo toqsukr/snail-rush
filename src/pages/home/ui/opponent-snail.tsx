@@ -1,18 +1,18 @@
-import { usePlayerByID } from '@entities/players'
-import { useSession } from '@entities/session'
-import { useSkinById } from '@entities/skin/query'
-import { TUser, useUser } from '@entities/user'
+import { Euler } from 'three'
+import { FC, Suspense } from 'react'
 import {
   opponentPositionEmitter,
   opponentRotationEmitter,
   opponentShrinkEmitter,
 } from '@features/opponent-control'
-import { Snail, snailDepsContext, SnailProvider } from '@features/snail'
-import { FC, Suspense } from 'react'
-import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '@features/game'
 import { useGameStore } from '@features/game'
+import { Snail, snailDepsContext, SnailProvider } from '@features/snail'
+import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '@features/game'
+import { usePlayerByID } from '@entities/players'
+import { useSession } from '@entities/session'
+import { useSkinById } from '@entities/skin/query'
+import { TUser, useUser } from '@entities/user'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
-import { Euler } from 'three'
 import { isObstacle } from '@shared/lib/game/obstacle'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
@@ -49,7 +49,7 @@ const OpponentSuspense = () => {
         }}>
         <SnailProvider
           initPosition={getStartPosition(
-            getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined')
+            getPlayerPosition(playerStatus === 'joined' ? 'host' : 'joined'),
           )}
           initRotation={new Euler(0, Math.PI, 0)}>
           <OpponentSnail user={user} />

@@ -1,18 +1,21 @@
+import { FC, FormEvent, PropsWithChildren, useState } from 'react'
+import { Controller, ControllerRenderProps, useForm, UseFormReturn } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
+import { z } from 'zod'
+
 import { useSession } from '@entities/session'
 import { TSkin, useSkins } from '@entities/skin'
 import { useUser } from '@entities/user'
-import { useIsRegistering } from '@features/auth/api/use-register'
-import { useIsFeedbackSending, useSendFeedback } from '@features/menu/api/send-feedback'
-import { useLobbyMenuDeps, useMainMenuDeps } from '@features/menu/deps'
-import { useCreateLobby } from '@features/menu/model/use-create-lobby'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { invalidateUser, resetUser } from '@entities/user/query'
 import Button from '@shared/uikit/button/Button'
 import Input from '@shared/uikit/input/Input'
-import Textarea from '@shared/uikit/textarea/textarea'
-import { FC, FormEvent, PropsWithChildren, useState } from 'react'
-import { Controller, ControllerRenderProps, useForm, UseFormReturn } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
-import { z } from 'zod'
+import { removeTokenEverywhere } from '@shared/config/token'
+import { ClipboardText } from '@shared/uikit/clipboard-text/clipboard-text'
+import UnderlinedText from '@shared/uikit/underlined-text/underlined-text'
+
+import { useLobbyMenuDeps, useMainMenuDeps } from '../../deps'
+import { useCreateLobby } from '../../model/use-create-lobby'
 import { useIsConnectingSession } from '../../api/connect-session'
 import { useIsLobbyCreating } from '../../api/create-session'
 import { useIsUserCreating } from '../../api/create-user'
@@ -27,35 +30,28 @@ import BackButton from '../action-buttons/back-button'
 import BackToLobbyButton from '../action-buttons/back-to-lobby-button'
 import LobbyBoard from '../lobby-board/lobby-board'
 import UsernameInput from '../username-input'
+import { useToggleReady } from '../../api/toggle-ready'
+
 import css from './menu.module.scss'
-import { useToggleReady } from '@features/menu/api/toggle-ready'
-import { removeTokenEverywhere } from '@shared/config/token'
-import { resetUser } from '@entities/user/query'
-import { ClipboardText } from '@shared/uikit/clipboard-text/clipboard-text'
-import UnderlinedText from '@shared/uikit/underlined-text/underlined-text'
-import { useIsLogining } from '@features/auth/api/use-login'
+import { useUpdatePlayer } from '@features/menu/api/update-user'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
+  const { isLoading } = useMainMenuDeps()
   const isConnecting = useIsConnectingSession()
   const isLobbyCreating = useIsLobbyCreating()
   const isUserCreating = useIsUserCreating()
-  const isLogining = useIsLogining()
-  const isRegistering = useIsRegistering()
-  const isFeedbackSending = useIsFeedbackSending()
   const { isLoading: isUserLoading } = useUser()
   const { isLoading: isSkinsLoading } = useSkins()
   const { isLoading: isSessionLoading } = useSession()
 
   if (
-    isLogining ||
-    isRegistering ||
+    isLoading ||
     isUserLoading ||
     isSessionLoading ||
     isConnecting ||
     isLobbyCreating ||
     isUserCreating ||
-    isFeedbackSending ||
     isSkinsLoading
   )
     return <div>{t('loading_text')}</div>
@@ -86,11 +82,6 @@ const MainMenuContent = () => {
     toSkins()
     onToSkins()
   }
-
-  // const leaveFeedback = () => {
-  //   toFeedback()
-  //   onToFeedback()
-  // }
 
   const onExit = () => {
     removeTokenEverywhere()
@@ -147,9 +138,6 @@ const MainMenuContent = () => {
       <Button onClick={onExit} disabled={globalDisable}>
         {t('exit_text')}
       </Button>
-      {/* <Button onClick={leaveFeedback} disabled={globalDisable}>
-        {t('leave_feedback_text')}
-      </Button> */}
     </>
   )
 }
@@ -167,11 +155,15 @@ export const SkinMenu = () => {
   const { onChangeSkin } = useMainMenuDeps()
   const { data: skins } = useSkins()
   const { data: user } = useUser()
+  const { mutateAsync: updateUser } = useUpdatePlayer()
 
   if (!visibility || !mode.includes('main-menu')) return
 
-  const choseSkin = (skin: TSkin) => {
+  const choseSkin = async (skin: TSkin) => {
+    if (!user) return
     if (skin.skinID !== user?.skinID) {
+      await updateUser({ id: user.id, username: user.username, skinID: skin.skinID })
+      invalidateUser()
       onChangeSkin(skin)
     }
   }
@@ -464,47 +456,5 @@ const UsernameMenu: FC<{ formData: UseFormReturn<{ username: string; password: s
         </Button>
       </form>
     </Menu>
-  )
-}
-
-const FeedbackFormDataSchema = z.object({ feedback: z.string().min(1) })
-type TFeedbackFormData = z.infer<typeof FeedbackFormDataSchema>
-
-export const FeedbackMenu = () => {
-  const { t } = useTranslation()
-  const { data: user } = useUser()
-  const { mode, visibility } = useMenu()
-  const { mutateAsync: sendFeedback } = useSendFeedback()
-  const { onSendFeedback } = useMainMenuDeps()
-
-  const formData = useForm<TFeedbackFormData>({
-    mode: 'onChange',
-    defaultValues: { feedback: '' },
-    resolver: zodResolver(FeedbackFormDataSchema),
-  })
-
-  if (!visibility || !mode.includes('main-menu')) return
-
-  const handleSendFeedback = async (data: TFeedbackFormData) => {
-    if (!user) return
-    await sendFeedback({ playerID: user.id, message: data.feedback })
-    formData.reset()
-    onSendFeedback()
-  }
-
-  return (
-    <form onSubmit={formData.handleSubmit(handleSendFeedback)}>
-      <Menu>
-        <Controller
-          control={formData.control}
-          name='feedback'
-          render={({ field }) => (
-            <Textarea {...field} placeholder={t('feedback_input_placeholder')} />
-          )}
-        />
-        <Button disabled={!formData.formState.isValid}>{t('send_text')}</Button>
-        <BackButton />
-      </Menu>
-    </form>
   )
 }

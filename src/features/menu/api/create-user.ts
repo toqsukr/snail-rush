@@ -1,5 +1,5 @@
-import playerService from '@shared/api/player'
 import { useIsMutating, useMutation } from '@tanstack/react-query'
+import playerService from '@shared/api/player'
 
 const createPlayerMutationKey = 'create-player'
 

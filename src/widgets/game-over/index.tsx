@@ -1,15 +1,15 @@
-import { GameOver as Menu, lobbyMenuDepsContext, useLobbyMenuDeps } from '@features/menu'
+import { useRef } from 'react'
 import { Html } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
-import { queryClient } from '@shared/api/query-client'
 import { QueryClientProvider } from '@tanstack/react-query'
-import { useRef } from 'react'
+import { GameOver as Menu, lobbyMenuDepsContext, useLobbyMenuDeps } from '@features/menu'
 import { useGameStore } from '@features/game'
+import { queryClient } from '@shared/api/query-client'
 
 const GAME_OVER_MENU_ROTATION = [0, 0, 0] satisfies [number, number, number]
 const GAME_OVER_MENU_POSITION = [16.1, 35, -5] satisfies [number, number, number]
 
-const GameOver = () => {
+export const GameOver = () => {
   const contextValue = useLobbyMenuDeps()
   const { started, finished, winner } = useGameStore()
   const positionRef = useRef(GAME_OVER_MENU_POSITION)
@@ -40,5 +40,3 @@ const GameOver = () => {
     </Html>
   )
 }
-
-export default GameOver

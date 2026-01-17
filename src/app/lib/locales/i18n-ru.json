@@ -5,6 +5,5 @@
   "lobby_created_text": "Комната создана",
   "you_connected_lobby_text": "Вы присоединились",
   "connected_lobby_text": "присоединился",
-  "kick_player_text": "Противник был отключен",
-  "feedback_delivered_text": "Ваш отзыв успешно доставлен"
+  "kick_player_text": "Противник был отключен"
 }

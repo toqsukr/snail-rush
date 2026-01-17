@@ -1,5 +1,5 @@
-import { useSkinById } from '@entities/skin/query'
-import { TUser, useUser } from '@entities/user'
+import { FC, Suspense, useCallback } from 'react'
+import { Euler, Vector3 } from 'three'
 import { useSendMoveImpulse, useSendShrink, useSendTargetRotation } from '@features/lobby-events'
 import {
   Player,
@@ -15,8 +15,6 @@ import {
   useCalcAnimationDuration,
   useSnailContext,
 } from '@features/snail'
-import { FC, Suspense, useCallback } from 'react'
-import { Euler, Vector3 } from 'three'
 import {
   getPlayerPosition,
   getStartPosition,
@@ -24,6 +22,8 @@ import {
   PlayerSkins,
   useGameStore,
 } from '@features/game'
+import { useSkinById } from '@entities/skin'
+import { TUser, useUser } from '@entities/user'
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { isObstacle } from '@shared/lib/game/obstacle'
 
@@ -55,7 +55,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const onJump = (
     koef: number,
     holdTime: number,
-    pushCallback: (impulse: Vector3, duration: number) => void
+    pushCallback: (impulse: Vector3, duration: number) => void,
   ) => {
     const impulse = calculateImpulse(rotation, koef)
     const duration = calcAnimationDuration(0)
@@ -73,7 +73,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
   const onRotate = (
     pitchIncrement: number,
-    pushCallback: (updatedRotation: Euler, duration: number) => void
+    pushCallback: (updatedRotation: Euler, duration: number) => void,
   ) => {
     const targetRotation = rotation.set(rotation.x, rotation.y + pitchIncrement, rotation.z)
     const duration = 0
@@ -108,7 +108,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   )
 }
 
-const PlayerSuspense = () => {
+export const PlayerSuspense = () => {
   const { data: user } = useUser()
   const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle } = useGameStore()
   const { data: skin } = useSkinById(user?.skinID ?? '')
@@ -154,5 +154,3 @@ const PlayerSuspense = () => {
     </Suspense>
   )
 }
-
-export default PlayerSuspense

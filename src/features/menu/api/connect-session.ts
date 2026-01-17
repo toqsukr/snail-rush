@@ -1,5 +1,5 @@
-import sessionService from '@shared/api/session'
 import { useIsMutating, useMutation } from '@tanstack/react-query'
+import sessionService from '@shared/api/session'
 
 const connectSessionMutationKey = 'connect-session'
 

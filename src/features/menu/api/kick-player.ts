@@ -1,5 +1,5 @@
-import sessionService from '@shared/api/session'
 import { useMutation } from '@tanstack/react-query'
+import sessionService from '@shared/api/session'
 
 const kickPlayerMutationKey = 'kick-player'
 

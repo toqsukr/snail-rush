@@ -25,9 +25,6 @@
   "game_over_text": "Игра окончена",
   "won_text": "Победил",
   "loading_text": "Загрузка...",
-  "leave_feedback_text": "Оставить отзыв",
-  "feedback_input_placeholder": "Напишите отзыв здесь",
   "rating_text": "Ваш рейтинг",
-  "total_games_text": "Всего игр",
-  "send_text": "Отправить"
+  "total_games_text": "Всего игр"
 }

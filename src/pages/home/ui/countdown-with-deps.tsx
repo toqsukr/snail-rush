@@ -1,5 +1,5 @@
-import { Countdown } from '@features/countdown'
 import { Suspense } from 'react'
+import { Countdown } from '@features/countdown'
 import { useGameStore } from '@features/game'
 
 const COUNTDOWN_ROTATION = [Math.PI / 8, 0, 0]

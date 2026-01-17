@@ -1,7 +1,7 @@
-import { grassMapData } from '@pages/home/ui/game-map'
-import { MapData, MapObject } from '@shared/lib/game/map'
-import { EulerTuple, Vector3Tuple } from 'three'
 import { create } from 'zustand'
+import { EulerTuple, Vector3Tuple } from 'three'
+import { grassMapData } from '@widgets/game-map'
+import { MapData, MapObject } from '@shared/lib/game/map'
 
 type MapDataStore = MapData & {
   updateStone: (name: string, position: Vector3Tuple, rotation: EulerTuple) => void
@@ -12,7 +12,7 @@ const getNewStoneObject = (
   type: Exclude<keyof MapDataStore['obstacle'], 'chopper'>,
   mapData: MapDataStore,
   position: Vector3Tuple,
-  rotation: EulerTuple
+  rotation: EulerTuple,
 ) => {
   const obstacle = mapData.obstacle
 
@@ -28,7 +28,7 @@ const getNewStoneObject = (
       [type]: {
         ...stone,
         items: (mapData.obstacle[type]?.items ?? []).map(stone =>
-          stone.name === name ? { ...stone, position, rotation } : stone
+          stone.name === name ? { ...stone, position, rotation } : stone,
         ),
       },
     },

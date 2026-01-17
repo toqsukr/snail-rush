@@ -1,4 +1,4 @@
-import { useSession } from '@entities/session'
+import { useSession } from '../query'
 
 export const useIsHost = () => {
   const { data: session } = useSession()

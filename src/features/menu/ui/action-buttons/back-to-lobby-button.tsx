@@ -1,5 +1,5 @@
-import Button from '@shared/uikit/button/Button'
 import { useTranslation } from 'react-i18next'
+import Button from '@shared/uikit/button/Button'
 import { useBackToLobby } from '../../model/use-back-to-lobby'
 
 const BackToLobbyButton = () => {

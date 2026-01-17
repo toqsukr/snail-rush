@@ -129,8 +129,12 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, ...props }) => {
 
             props.onChangeSelected({
               name: obj.name,
-              position: worldPosition.toArray(),
-              rotation: [euler.x, euler.y, euler.z],
+              position: worldPosition
+                .toArray()
+                .map(value => parseFloat(value.toFixed(2))) as Vector3Tuple,
+              rotation: [euler.x, euler.y, euler.z].map(value =>
+                parseFloat(value.toFixed(2))
+              ) as EulerTuple,
               mode: editMode,
             })
           }}

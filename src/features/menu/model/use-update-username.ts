@@ -1,6 +1,6 @@
-import { invalidateUser, TUser, useUser } from '@entities/user'
-import debounce from 'lodash.debounce'
 import { useCallback } from 'react'
+import debounce from 'lodash.debounce'
+import { invalidateUser, TUser, useUser } from '@entities/user'
 import { useUpdatePlayer } from '../api/update-user'
 
 export const useUpdateUsername = () => {
@@ -12,7 +12,7 @@ export const useUpdateUsername = () => {
       await updatePlayer.mutateAsync(user)
       invalidateUser()
     }, 1500),
-    []
+    [],
   )
 
   return async (username: string) => {

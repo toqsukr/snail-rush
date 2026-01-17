@@ -25,9 +25,6 @@
   "game_over_text": "GAME OVER",
   "won_text": "WON",
   "loading_text": "Loading...",
-  "leave_feedback_text": "LEAVE FEEDBACK",
-  "feedback_input_placeholder": "Enter some text",
   "rating_text": "Your rating",
-  "total_games_text": "Total games",
-  "send_text": "SEND"
+  "total_games_text": "Total games"
 }

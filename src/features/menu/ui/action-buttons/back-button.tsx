@@ -1,7 +1,7 @@
-import { useMainMenuDeps } from '@features/menu/deps'
-import Button from '@shared/uikit/button/Button'
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
+import Button from '@shared/uikit/button/Button'
+import { useMainMenuDeps } from '../../../menu/deps'
 import { useBack } from '../../model/use-back'
 
 const BackButton: FC<

@@ -1,31 +1,29 @@
-import { TSkin } from '@entities/skin'
-import { invalidateUser, useUser } from '@entities/user'
-import { useLogin, useRegister } from '@features/auth'
-import { useAppendLog } from '@features/logflow'
-import { mainMenuDepsContext } from '@features/menu'
-import { useUpdatePlayer } from '@features/menu/api/update-user'
-import { useFocusTo } from '@features/tracking-camera'
-import { MAIN_MENU_POSITION, SKIN_MENU_POSITION } from '@pages/home'
-import { FEEDBACK_MENU_POSITION } from '@pages/home/ui/feedback-menu'
-import { useToken } from '@shared/config/token'
-import { Routes } from '@shared/model/routes'
 import { FC, PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Vector3 } from 'three'
+
+import { MAIN_MENU_POSITION, SKIN_MENU_POSITION } from '@pages/home'
+import { useLogin, useRegister, useIsLogining, useIsRegistering } from '@features/auth'
 import { useGameStore } from '@features/game'
+import { useAppendLog } from '@features/logflow'
+import { mainMenuDepsContext } from '@features/menu'
+import { useFocusTo } from '@features/tracking-camera'
+import { TSkin } from '@entities/skin'
+import { useToken } from '@shared/config/token'
+import { Routes } from '@shared/model/routes'
 
 const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const focusTo = useFocusTo()
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { data: user } = useUser()
   const appendLog = useAppendLog()
   const { updatePlayerStatus } = useGameStore()
   const { mutateAsync: register } = useRegister()
   const { mutateAsync: login } = useLogin()
+  const isLogining = useIsLogining()
+  const isRegistering = useIsRegistering()
   const updateToken = useToken(s => s.updateToken)
-  const { mutateAsync: updateUser } = useUpdatePlayer()
 
   const onConnectLobby = () => {
     navigate(Routes.LOBBY)
@@ -47,10 +45,6 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     await focusTo(new Vector3(...SKIN_MENU_POSITION))
   }
 
-  const onToFeedback = async () => {
-    await focusTo(new Vector3(...FEEDBACK_MENU_POSITION))
-  }
-
   const onLogin = async (data: { username: string; password: string }) => {
     const { access_token } = await login(data)
 
@@ -61,19 +55,10 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     const { token } = await register(data)
 
     updateToken(token.access_token)
-    // await updateUser(parseFromRegisterDTO(player))
-    // invalidateUser()
   }
 
-  const onChangeSkin = async ({ name, skinID }: TSkin) => {
-    if (!user) return
-    await updateUser({ id: user.id, username: user.username, skinID })
-    invalidateUser()
+  const onChangeSkin = async ({ name }: TSkin) => {
     appendLog(`${t('you_changed_skin_text')} ${name}!`)
-  }
-
-  const onSendFeedback = () => {
-    appendLog(`${t('feedback_delivered_text')}!`)
   }
 
   return (
@@ -82,12 +67,11 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
         onConnectLobby,
         onCreateLobby,
         onToSkins,
-        onToFeedback,
-        onSendFeedback,
         onBackToMainMenu,
         onChangeSkin,
         onRegister,
         onLogin,
+        isLoading: isRegistering || isLogining,
       }}>
       {children}
     </mainMenuDepsContext.Provider>

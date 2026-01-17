@@ -1,6 +1,6 @@
-import { TrackCameraProvider } from '@features/tracking-camera'
-import { useGameStore } from '@features/game'
 import { FC, PropsWithChildren } from 'react'
+import { useGameStore } from '@features/game'
+import { TrackCameraProvider } from '@features/tracking-camera'
 
 const cameraStartPosition = [16.1, 35, 5] satisfies [number, number, number]
 const cameraStartRotation = [0, 0, 0] satisfies [number, number, number]
