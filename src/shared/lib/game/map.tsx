@@ -1,12 +1,12 @@
-import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
 import { FC, useState } from 'react'
-import { TransformControls, TransformControlsProps, useGLTF } from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
-import { StaticObstacle } from './obstacle'
+import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
+import { TransformControls, TransformControlsProps, useGLTF } from '@react-three/drei'
+import { ChopperObstacle, StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
 import { StartModel } from './start'
 import { ModelPrimitive } from './primitive'
-import { useThree } from '@react-three/fiber'
 
 export type MapObject = {
   name: string
@@ -101,8 +101,8 @@ export const MapModelConstruct = ({
   )
 }
 
-export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, ...props }) => {
-  const { stone, smallStone, bigStone } = mapData.obstacle
+export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, ...props }) => {
+  const { stone, smallStone, bigStone, chopper } = mapData.obstacle
   const { planeModelPath, wallsModelPath } = mapData
   const { scene } = useThree()
   const [editMode, setEditMode] = useState<EditMode>('translate')
@@ -191,18 +191,24 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, ...props }) => {
           }
         />
       ))}
-      {/* {isStarted &&
+      {isStarted &&
         chopper?.items.map(({ extremePositions, speed }) => (
           <ChopperObstacle
             speed={speed}
             key={`chopper-${extremePositions.join()}`}
-            model={<ModelPrimitive name={`chopper-${extremePositions.join()}`} scale={3} modelPath={chopper.modelPath} />}
+            model={
+              <ModelPrimitive
+                name={`chopper-${extremePositions.join()}`}
+                scale={3}
+                modelPath={chopper.modelPath}
+              />
+            }
             extremePositions={[
               new Vector3(...extremePositions[0]),
               new Vector3(...extremePositions[1]),
             ]}
           />
-        ))} */}
+        ))}
     </>
   )
 }

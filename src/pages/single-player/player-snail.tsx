@@ -18,6 +18,7 @@ import {
 import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { isObstacle } from '@shared/lib/game/obstacle'
 import { useGameStore, getTexturePath, PlayerSkins, getStartPosition } from '@features/game'
+import { useSkinById } from '@entities/skin'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const { moveable } = useGameStore()
@@ -37,7 +38,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
   const onJump = (
     koef: number,
     _holdTime: number,
-    pushCallback: (impulse: Vector3, duration: number) => void
+    pushCallback: (impulse: Vector3, duration: number) => void,
   ) => {
     const impulse = calculateImpulse(rotation, koef)
     const duration = calcAnimationDuration(0)
@@ -46,7 +47,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
   const onRotate = (
     pitchIncrement: number,
-    pushCallback: (updatedRotation: Euler, duration: number) => void
+    pushCallback: (updatedRotation: Euler, duration: number) => void,
   ) => {
     const targetRotation = rotation.set(rotation.x, rotation.y + pitchIncrement, rotation.z)
     const duration = 0
@@ -75,6 +76,7 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
 const PlayerSuspense = () => {
   const { data: user } = useUser()
+  const { data: skin } = useSkinById(user?.skinID ?? '')
   const { moveable, updateMoveable, updatePlayerModelHandle } = useGameStore()
 
   const onCollision = useCallback(() => {
@@ -88,7 +90,7 @@ const PlayerSuspense = () => {
 
   if (!user) return
 
-  const texturePath = getTexturePath(PlayerSkins.HERBIVORE)
+  const texturePath = getTexturePath(skin?.name.split('.')[0] ?? PlayerSkins.HERBIVORE)
 
   const playerStartPosition = getStartPosition(0)
 
