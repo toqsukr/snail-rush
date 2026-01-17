@@ -1,11 +1,11 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { Euler, Quaternion, Vector3 } from 'three'
 import {
+  CuboidCollider,
   interactionGroups,
   RapierRigidBody,
   RigidBody,
   RigidBodyProps,
-  RoundCuboidCollider,
 } from '@react-three/rapier'
 import { FC, ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
@@ -68,7 +68,7 @@ export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacl
         currentPosition.current.add(moveDir)
       }
 
-      bodyRef.current?.setTranslation(currentPosition.current, true)
+      bodyRef.current?.setNextKinematicTranslation(currentPosition.current)
     })
 
     useFrame((_, delta) => {
@@ -76,7 +76,7 @@ export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacl
 
       if (bodyRef.current) {
         const q = new Quaternion().setFromEuler(rotationRef.current)
-        bodyRef.current.setRotation(q, true)
+        bodyRef.current.setNextKinematicRotation(q)
       }
     })
 
@@ -85,17 +85,17 @@ export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacl
         {...props}
         ref={bodyRef}
         type='kinematicPosition'
-        collisionGroups={interactionGroups(0b01, 0b10)}
         colliders={false}
-        userData={{ isObstacle: true }}>
-        <RoundCuboidCollider
+        userData={{ isObstacle: true }}
+        collisionGroups={interactionGroups(0b01, 0b10)}>
+        <CuboidCollider
           name='chopper'
-          args={[1, 1, 1, 1]}
-          position={[0, -0.5, 0]}
+          args={[1.8, 3, 1.8]}
+          position={[0, -2, 0]}
           rotation={[0, Math.PI / 4, 0]}
         />
         {model}
       </RigidBody>
     )
-  }
+  },
 )
