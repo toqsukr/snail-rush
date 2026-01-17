@@ -24,7 +24,7 @@ export const grassMapData: MapData = {
             [22.5, 3, -35],
             [5, 3, -45],
           ],
-          speed: 0,
+          speed: 12,
         },
         {
           extremePositions: [
