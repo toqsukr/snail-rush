@@ -2,8 +2,16 @@ import { useRegisterTools } from '@shared/lib/devtools'
 import { useControlParams } from './params'
 
 export const useControlTools = () => {
-  const { minIncrement, maxIncrement, step, updateMinIncrement, updateMaxIncrement, updateStep } =
-    useControlParams.getState()
+  const {
+    minIncrement,
+    maxIncrement,
+    step,
+    maxSpaceHoldTime,
+    updateMinIncrement,
+    updateMaxIncrement,
+    updateStep,
+    updateMaxSpaceHoldTime,
+  } = useControlParams.getState()
 
   useRegisterTools([
     {
@@ -23,6 +31,12 @@ export const useControlTools = () => {
       name: 'STEP',
       value: [step, 0.005, 0.2, 0.005],
       onChange: ([value]) => updateStep(value),
+    },
+    {
+      type: 'range',
+      name: 'MAX_SPACE_HOLD_TIME',
+      value: [maxSpaceHoldTime, 100, 3000, 50],
+      onChange: ([value]) => updateMaxSpaceHoldTime(value),
     },
   ])
 }
