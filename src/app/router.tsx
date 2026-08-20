@@ -14,6 +14,7 @@ import { TrackingCamera } from '@features/tracking-camera'
 import { queryClient } from '@shared/api/query-client'
 import { Routes } from '@shared/model/routes'
 
+import { DevScene } from './dev-scene'
 import AppLayout from './layouts/app-layout'
 import AuthLayout from './layouts/auth-layout'
 import CountdownLayout from './layouts/countdown-layout'
@@ -52,8 +53,7 @@ export const router = createBrowserRouter([
       <QueryClientProvider client={queryClient}>
         <AppLayout>
           <Outlet />
-          {/* <OrbitControls /> */}
-          {/* <Perf position='top-left' /> */}
+          {process.env.NODE_ENV === 'development' && <DevScene />}
         </AppLayout>
       </QueryClientProvider>
     ),

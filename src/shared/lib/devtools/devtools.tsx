@@ -1,4 +1,4 @@
-import { ChangeEvent, FC } from 'react'
+import { ChangeEvent, FC, useState } from 'react'
 import { useDevTools } from './store'
 import { Tool, ToolItem } from './type'
 
@@ -24,14 +24,26 @@ const SwitchTool = (tool: Tool) => {
 
 export const DevTools = () => {
   const { tools } = useDevTools()
+  const [collapsed, setCollapsed] = useState(false)
 
   if (!Object.values(tools).length) return
 
   return (
-    <aside className='fixed bottom-0 right-0 flex flex-col gap-4 bg-neutral-600 overflow-auto max-h-[180px] p-4'>
-      {Object.values(tools).map((tool, index) => (
-        <SwitchTool key={index} {...tool} />
-      ))}
+    <aside className='fixed bottom-0 right-0 z-50 flex w-[280px] flex-col rounded-tl bg-neutral-800/90 text-xs text-neutral-100'>
+      <button
+        type='button'
+        className='flex items-center justify-between px-3 py-2 font-semibold uppercase tracking-wide'
+        onClick={() => setCollapsed(!collapsed)}>
+        <span>devtools</span>
+        <span>{collapsed ? '+' : '–'}</span>
+      </button>
+      {!collapsed && (
+        <div className='flex max-h-[320px] flex-col gap-3 overflow-auto px-3 pb-3'>
+          {Object.values(tools).map((tool, index) => (
+            <SwitchTool key={index} {...tool} />
+          ))}
+        </div>
+      )}
     </aside>
   )
 }
@@ -45,9 +57,9 @@ const FieldTool: FC<ToolItem<'field'>> = tool => {
   }
 
   return (
-    <div className='flex gap-4'>
+    <div className='flex items-center justify-between gap-2'>
       <label>{name}</label>
-      <input value={value} onChange={handleChange} />
+      <input className='w-[120px] bg-neutral-700 px-1' value={value} onChange={handleChange} />
     </div>
   )
 }
@@ -55,20 +67,22 @@ const FieldTool: FC<ToolItem<'field'>> = tool => {
 const RangeTool: FC<ToolItem<'range'>> = tool => {
   const {
     name,
-    value: [current, min, max],
+    value: [current, min, max, step],
     onChange,
   } = tool
   const { updateTool } = useDevTools()
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange([parseInt(e.target.value), min, max])
-    updateTool({ ...tool, value: [parseInt(e.target.value), min, max], type: 'range' })
+    onChange([parseFloat(e.target.value), min, max, step])
+    updateTool({ ...tool, value: [parseFloat(e.target.value), min, max, step], type: 'range' })
   }
 
   return (
-    <div className='flex gap-4'>
-      <label>{name}</label>
-      <input type='range' value={current} min={min} max={max} step={1} onChange={handleChange} />
-      <output>{current}</output>
+    <div className='flex flex-col gap-1'>
+      <div className='flex justify-between'>
+        <label>{name}</label>
+        <output>{current}</output>
+      </div>
+      <input type='range' value={current} min={min} max={max} step={step} onChange={handleChange} />
     </div>
   )
 }
@@ -83,7 +97,7 @@ const ToggleTool: FC<ToolItem<'toggle'>> = tool => {
   }
 
   return (
-    <div className='flex gap-4'>
+    <div className='flex items-center justify-between gap-2'>
       <label>{name}</label>
       <input type='checkbox' checked={value} onChange={handleChange} />
     </div>

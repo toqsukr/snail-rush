@@ -1,6 +1,8 @@
 import { Euler, Vector3 } from 'three'
-import { IMPULSE_MULTIPLIER } from './constants'
+import { useSnailParams } from './params'
 
 export const calculateImpulse = (rotation: Euler, koef: number) => {
-  return new Vector3(0, 0, koef).applyEuler(rotation).multiplyScalar(IMPULSE_MULTIPLIER)
+  return new Vector3(0, 0, koef)
+    .applyEuler(rotation)
+    .multiplyScalar(useSnailParams.getState().impulseMultiplier)
 }

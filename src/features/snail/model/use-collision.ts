@@ -2,7 +2,7 @@ import { Vector3 } from 'three'
 import { RefObject, useRef } from 'react'
 import { CollisionEnterPayload, RapierRigidBody, RigidBodyTypeString } from '@react-three/rapier'
 import { useSnailDeps } from '../deps'
-import { BOUNCE_MULTIPLIER } from './constants'
+import { useSnailParams } from './params'
 import { useSnailContext } from '../ui/snail-provider'
 
 const DYNAMIC_OBSTACLE_MULTIPLIER = 0.3
@@ -13,7 +13,7 @@ export const calculateBounce = (
   obstacleType?: RigidBodyTypeString,
 ) => {
   const { x, z } = event.manifold.normal()
-  let multiplier = BOUNCE_MULTIPLIER
+  let multiplier = useSnailParams.getState().bounceMultiplier
   if (obstacleType === 'kinematicPosition' || obstacleType === 'kinematicVelocity') {
     multiplier *= DYNAMIC_OBSTACLE_MULTIPLIER
   }

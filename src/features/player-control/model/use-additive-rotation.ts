@@ -1,15 +1,15 @@
 import { useRef } from 'react'
-import { MAX_INCREMENT, MIN_INCREMENT, STEP } from './constants'
+import { useControlParams } from './params'
 
 export const useAdditiveRotation = () => {
   const x = useRef(0)
 
   const incrementX = () => {
-    x.current += STEP
+    x.current += useControlParams.getState().step
   }
 
   const decrementX = () => {
-    x.current -= STEP
+    x.current -= useControlParams.getState().step
   }
 
   const resetX = () => {
@@ -17,14 +17,15 @@ export const useAdditiveRotation = () => {
   }
 
   const calcRotationIncrement = () => {
+    const { minIncrement, maxIncrement } = useControlParams.getState()
     const sign = Math.sign(x.current)
-    const y = (MAX_INCREMENT / Math.PI) * Math.atan(x.current)
+    const y = (maxIncrement / Math.PI) * Math.atan(x.current)
 
     if (sign > 0) {
-      return Math.max(MIN_INCREMENT, y)
+      return Math.max(minIncrement, y)
     }
 
-    return Math.min(sign * MIN_INCREMENT, y)
+    return Math.min(sign * minIncrement, y)
   }
 
   return { incrementX, decrementX, resetX, calcRotationIncrement }
