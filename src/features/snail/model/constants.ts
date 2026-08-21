@@ -1,6 +1,7 @@
-export const BOUNCE_MULTIPLIER = 5
-export const IMPULSE_MULTIPLIER = 12
-export const DYNAMIC_OBSTACLE_MULTIPLIER = 0.3
+export const BOUNCE_MULTIPLIER = 6
+export const IMPULSE_MULTIPLIER = 15
+export const DYNAMIC_OBSTACLE_MULTIPLIER = 3
 export const COLLISION_COOLDOWN = 150
 export const BOUNCE_JITTER = 0.4
+export const LINEAR_DAMPING = 5
 export const HORIZONTAL_EPSILON = 0.001
