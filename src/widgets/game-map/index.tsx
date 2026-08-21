@@ -106,7 +106,7 @@ const containsUserdata = (userData: unknown): userData is TUserData => {
 export const GrassGameMap = () => {
   const sendFinishGame = useSendFinishGame()
   const followTarget = useFollowTarget()
-  const { finishGame, updateWinner, updateMoveable, winner, started } = useGameStore()
+  const { finishGame, updateWinner, updateMoveable, winner, started, startedAt } = useGameStore()
 
   const onFinish = async (userData: unknown) => {
     if (containsUserdata(userData) && !winner) {
@@ -124,5 +124,12 @@ export const GrassGameMap = () => {
     }
   }
 
-  return <GameMap isStarted={started} onFinish={onFinish} mapData={grassMapData} />
+  return (
+    <GameMap
+      isStarted={started}
+      startedAt={startedAt}
+      onFinish={onFinish}
+      mapData={grassMapData}
+    />
+  )
 }

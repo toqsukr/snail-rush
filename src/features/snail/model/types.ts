@@ -8,6 +8,7 @@ export type PositionType = {
   impulse: Vector3
   holdTime: number
   duration: number
+  bounced?: boolean
 }
 
 export type PositionWithCorrectType = {

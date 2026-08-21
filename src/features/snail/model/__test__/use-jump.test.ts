@@ -123,3 +123,57 @@ describe('useJump', () => {
     })
   })
 })
+
+describe('useJump of a replayed bounce', () => {
+  const bounced: PositionWithCorrectType = {
+    correctStartPosition: true,
+    startPosition: new Vector3(4, 0, 9),
+    bounced: true,
+    duration: 0,
+    holdTime: 0,
+    impulse: new Vector3(0, 0, -2),
+  }
+
+  it('cannot replay a bounce as a jump', async () => {
+    const jump = vi.fn()
+    const bounce = vi.fn()
+    const snail = {
+      translation: () => ({ x: 4, y: 0, z: 9 }),
+      applyImpulse: vi.fn(),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      setRotation: vi.fn(),
+      setTranslation: vi.fn(),
+    } as unknown as RapierRigidBody
+
+    renderHook(() => useJump({ current: snail }, jump, bounce))
+    const { result } = renderHook(() => useSnailDeps())
+    ;(result.current.positionEmitter as Emitter<PositionWithCorrectType>).emitNextValue(bounced)
+
+    await waitFor(() =>
+      expect(jump, 'a replayed bounce cannot animate a snail jumping').not.toHaveBeenCalled()
+    )
+  })
+
+  it('cannot replay a bounce without stopping the snail first', async () => {
+    const snail = {
+      translation: () => ({ x: 4, y: 0, z: 9 }),
+      applyImpulse: vi.fn(),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      setRotation: vi.fn(),
+      setTranslation: vi.fn(),
+    } as unknown as RapierRigidBody
+
+    renderHook(() => useJump({ current: snail }, vi.fn(), vi.fn()))
+    const { result } = renderHook(() => useSnailDeps())
+    ;(result.current.positionEmitter as Emitter<PositionWithCorrectType>).emitNextValue(bounced)
+
+    await waitFor(() =>
+      expect(
+        snail.setLinvel,
+        'a replayed bounce cannot inherit the speed a snail already carried'
+      ).toHaveBeenCalledWith({ x: 0, y: 0, z: 0 }, true)
+    )
+  })
+})

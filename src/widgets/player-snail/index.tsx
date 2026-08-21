@@ -1,6 +1,11 @@
-import { FC, Suspense, useCallback } from 'react'
+import { FC, Suspense } from 'react'
 import { Euler, Vector3 } from 'three'
-import { useSendMoveImpulse, useSendShrink, useSendTargetRotation } from '@features/lobby-events'
+import {
+  BOUNCE_HOLD_TIME,
+  useSendMoveImpulse,
+  useSendShrink,
+  useSendTargetRotation,
+} from '@features/lobby-events'
 import {
   Player,
   playerDepsContext,
@@ -111,19 +116,33 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
 export const PlayerSuspense = () => {
   const { data: user } = useUser()
-  const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle } = useGameStore()
+  const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle, started, finished, pause } =
+    useGameStore()
   const { data: skin } = useSkinById(user?.skinID ?? '')
+  const sendBounce = useSendMoveImpulse()
   const { stunTimeout } = useSnailParams()
   const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
 
-  const onCollision = useCallback(() => {
+  const onCollision = ({ position, impulse }: { position: Vector3; impulse: Vector3 }) => {
+    if (!started || finished || pause) return
+    sendBounce({
+      move: {
+        x: impulse.x,
+        y: impulse.y,
+        z: impulse.z,
+        duration: 0,
+        position,
+        bounced: true,
+        hold_time: BOUNCE_HOLD_TIME,
+      },
+    })
     if (moveable) {
       updateMoveable(false)
       setTimeout(() => {
         updateMoveable(true)
       }, stunTimeout)
     }
-  }, [moveable, stunTimeout])
+  }
 
   if (!playerStatus || !user) return
 
