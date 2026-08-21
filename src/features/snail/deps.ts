@@ -1,3 +1,4 @@
+import { Vector3 } from 'three'
 import { Emitter } from '@shared/lib/emitter'
 import { createStrictContext, useStrictContext } from '@shared/lib/react'
 import {
@@ -15,7 +16,7 @@ type SnailDeps = {
   positionEmitter: Emitter<PositionWithCorrectType> | Emitter<PositionWithoutCorrectType>
   rotationEmitter: Emitter<RotationType>
   shrinkEmitter?: Emitter<ShrinkType>
-  onCollision?: () => void
+  onCollision?: (bounce: { position: Vector3; impulse: Vector3 }) => void
   startPosition?: [number, number, number]
   startRotation?: [number, number, number]
   handleModelHandle?: (modelHandle: number) => void

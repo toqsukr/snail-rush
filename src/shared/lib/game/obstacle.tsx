@@ -9,6 +9,7 @@ import {
 } from '@react-three/rapier'
 import { FC, ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { chopperPosition } from './chopper-path'
 
 export const isObstacle = (targetModelUserData: unknown) => {
   if (!targetModelUserData) return false
@@ -38,46 +39,27 @@ type DynamicObstacleProp = {
   model: ReactNode
   speed?: number
   rotateSpeed?: number
+  startedAt?: number
   extremePositions: [Vector3, Vector3]
 } & Omit<RigidBodyProps, 'position'>
 
 export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacleProp>(
-  ({ model, extremePositions, speed = 5, rotateSpeed = Math.PI, ...props }, ref) => {
+  ({ model, extremePositions, speed = 5, rotateSpeed = Math.PI, startedAt, ...props }, ref) => {
     const bodyRef = useRef<RapierRigidBody | null>(null)
     const rotationRef = useRef(new Euler(0, 0, 0))
-    const isForward = useRef(true)
-    const currentPosition = useRef(extremePositions[0].clone())
+    const mountedAt = useRef(Date.now())
 
     useImperativeHandle(ref, () => bodyRef.current!, [])
 
-    useFrame((_, delta) => {
-      const moveDistance = speed * delta
-      const target = isForward.current ? extremePositions[1] : extremePositions[0]
-
-      // направление на текущую цель
-      const moveDir = new Vector3().subVectors(target, currentPosition.current)
-      const distanceToTarget = moveDir.length()
-
-      if (distanceToTarget <= moveDistance) {
-        // достигли точки — переключаем направление
-        isForward.current = !isForward.current
-        currentPosition.current.copy(target)
-      } else {
-        // двигаемся к цели
-        moveDir.normalize().multiplyScalar(moveDistance)
-        currentPosition.current.add(moveDir)
-      }
-
-      bodyRef.current?.setNextKinematicTranslation(currentPosition.current)
-    })
-
-    useFrame((_, delta) => {
-      rotationRef.current.y += rotateSpeed * delta
-
-      if (bodyRef.current) {
-        const q = new Quaternion().setFromEuler(rotationRef.current)
-        bodyRef.current.setNextKinematicRotation(q)
-      }
+    useFrame(() => {
+      const elapsed = (Date.now() - (startedAt || mountedAt.current)) / 1000
+      bodyRef.current?.setNextKinematicTranslation(
+        chopperPosition(elapsed, extremePositions, speed),
+      )
+      rotationRef.current.y = (rotateSpeed * elapsed) % (2 * Math.PI)
+      bodyRef.current?.setNextKinematicRotation(
+        new Quaternion().setFromEuler(rotationRef.current),
+      )
     })
 
     return (

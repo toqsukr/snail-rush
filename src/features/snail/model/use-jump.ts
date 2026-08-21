@@ -7,7 +7,8 @@ import { PositionWithoutCorrectType, RotationType } from './types'
 
 export const useJump = (
   rigidBodyRef: RefObject<RapierRigidBody | null>,
-  animateJump: (duration: number) => void
+  animateJump: (duration: number) => void,
+  animateBounce?: () => void
 ) => {
   const {
     getPosition,
@@ -39,6 +40,17 @@ export const useJump = (
     }
   }
 
+  const triggerBounce = (impulse: Vector3) => {
+    animateBounce?.()
+    if (rigidBodyRef.current) {
+      rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true)
+      rigidBodyRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true)
+      rigidBodyRef.current.applyImpulse(impulse, true)
+      const { x, y, z } = rigidBodyRef.current.translation()
+      updatePosition(new Vector3(x, y, z))
+    }
+  }
+
   useEffect(() => {
     if (rigidBodyRef.current) {
       rigidBodyRef.current.setTranslation(new Vector3(...getPosition()), true)
@@ -56,6 +68,7 @@ export const useJump = (
       if (rest.correctStartPosition) {
         getRigidBody()?.setTranslation(rest.startPosition, true)
       }
+      if (position.bounced) return triggerBounce(impulse)
       triggerJump({ duration, holdTime, impulse })
     })
 

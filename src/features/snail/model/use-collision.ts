@@ -74,9 +74,10 @@ export const useCollision = (
       )
       rigidBodyRef.current.applyImpulse(bounceImpulse, true)
       const { x, y, z } = rigidBodyRef.current.translation()
-      updatePosition(new Vector3(x, y, z))
+      const position = new Vector3(x, y, z)
+      updatePosition(position)
+      onCollision?.({ position, impulse: bounceImpulse })
     }
-    onCollision?.()
   }
 
   const enter = (event: BouncePayload) => {

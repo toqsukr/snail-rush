@@ -54,7 +54,10 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   const stopJumpAnimation = () => stopAnimation(JUMP_ANIMATION_NAME)
 
-  useJump(rigidBodyRef, startJumpAnimation)
+  useJump(rigidBodyRef, startJumpAnimation, () => {
+    stopAllAnimation()
+    startStunAnimation()
+  })
 
   const startShrinkAnimation = () =>
     animate(SHRINK_ANIMATION_NAME, {

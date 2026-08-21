@@ -55,6 +55,7 @@ export type ChangeSelectedOptions = {
 type GameMapProp = {
   mapData: MapData
   isStarted: boolean
+  startedAt?: number
   onFinish: (userData: unknown) => Promise<void>
 } & (
   | {
@@ -101,7 +102,7 @@ export const MapModelConstruct = ({
   )
 }
 
-export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, ...props }) => {
+export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, startedAt, ...props }) => {
   const { stone, smallStone, bigStone, chopper } = mapData.obstacle
   const { planeModelPath, wallsModelPath } = mapData
   const { scene } = useThree()
@@ -195,6 +196,7 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, ...prop
         chopper?.items.map(({ extremePositions, speed }) => (
           <ChopperObstacle
             speed={speed}
+            startedAt={startedAt}
             key={`chopper-${extremePositions.join()}`}
             model={
               <ModelPrimitive

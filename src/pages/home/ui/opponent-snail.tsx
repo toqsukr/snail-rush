@@ -13,7 +13,6 @@ import { usePlayerByID } from '@entities/players'
 import { useSession } from '@entities/session'
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
-import { isObstacle } from '@shared/lib/game/obstacle'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { data: session } = useSession()
@@ -45,7 +44,7 @@ const OpponentSuspense = () => {
           rotationEmitter: opponentRotationEmitter,
           shrinkEmitter: opponentShrinkEmitter,
           stunTimeout,
-          shouldHandleCollision: isObstacle,
+          shouldHandleCollision: () => false,
           shrinkDuration,
           texturePath,
         }}>

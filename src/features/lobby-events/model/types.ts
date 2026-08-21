@@ -1,6 +1,8 @@
 import { PlayerDTOSchema } from '@shared/api/player'
 import { z } from 'zod'
 
+export const BOUNCE_HOLD_TIME = -1
+
 export enum Operations {
   SESSION_START = 'session.start',
   SESSION_DELETE = 'session.delete',

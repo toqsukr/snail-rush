@@ -8,6 +8,7 @@ const GAME_STORE_KEY = 'game-data-store'
 type GameStore = {
   pause: boolean
   started: boolean
+  startedAt: number
   moveable: boolean
   finished: boolean
   playerModelHandle: number
@@ -31,13 +32,15 @@ export const useGameStore = create(
       pause: false,
       winner: null,
       started: false,
+      startedAt: 0,
       moveable: false,
       finished: false,
       playerStatus: null,
       skin: PlayerSkins.HERBIVORE,
       playerModelHandle: -1,
       updatePlayerModelHandle: playerModelHandle => set({ ...get(), playerModelHandle }),
-      startGame: () => set({ ...get(), started: true, finished: false, winner: null }),
+      startGame: () =>
+        set({ ...get(), started: true, startedAt: Date.now(), finished: false, winner: null }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),
       updateMoveable: moveable => set({ ...get(), moveable }),
