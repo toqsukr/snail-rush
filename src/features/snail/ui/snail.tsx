@@ -11,6 +11,7 @@ import { BufferGeometry, Group, MeshPhysicalMaterial, Object3DEventMap, Skeleton
 import { SkeletonUtils } from 'three-stdlib'
 import { useSnailDeps } from '../deps'
 import { useAnimation } from '../model/use-animation'
+import { useSnailParams } from '../model/params'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
 import { useSnailContext } from './snail-provider'
@@ -33,6 +34,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   const { ref, actions } = useAnimations(animations)
 
   const [mapTexture] = useTexture([texturePath])
+  const linearDamping = useSnailParams(state => state.linearDamping)
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
   const { animate, stopAnimation, isAnimationRunning } = useAnimation(actions)
@@ -75,7 +77,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     stopStunAnimation()
   }
 
-  const handleCollision = useCollision(rigidBodyRef, startStunAnimation, stopAllAnimation)
+  const collision = useCollision(rigidBodyRef, startStunAnimation, stopAllAnimation)
 
   const { camera } = useThree()
   const textRef = useRef<DreiTextProps | null>(null)
@@ -90,10 +92,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     if (textRef.current) {
       textRef.current.lookAt?.(camera.position)
     }
-    const playerPos = rigidBodyRef.current?.translation()
-    if (playerPos) {
-      rigidBodyRef.current?.setTranslation({ ...playerPos, y: 0 }, true)
-    }
+    collision.tick()
   })
 
   const userData = useMemo(() => ({ userID }), [])
@@ -128,9 +127,13 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       ref={rigidBodyRef}
       userData={userData}
       friction={1.5}
-      linearDamping={1.2}
-      onCollisionEnter={handleCollision}
+      linearDamping={linearDamping}
+      onCollisionEnter={collision.enter}
+      onCollisionExit={collision.exit}
+      onIntersectionEnter={collision.enter}
+      onIntersectionExit={collision.exit}
       enabledRotations={[false, false, false]}
+      enabledTranslations={[true, false, true]}
       restitution={0}>
       <CuboidCollider name='leg' args={[0.27, 0.2, 1]} position={[0, 0.22, -0.2]} />
       <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.5, 0.5]} position={[0, 1, 0]} />

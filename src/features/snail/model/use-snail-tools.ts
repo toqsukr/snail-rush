@@ -9,12 +9,14 @@ export const useSnailTools = () => {
     collisionCooldown,
     stunTimeout,
     bounceJitter,
+    linearDamping,
     updateBounceMultiplier,
     updateImpulseMultiplier,
     updateDynamicObstacleMultiplier,
     updateCollisionCooldown,
     updateStunTimeout,
     updateBounceJitter,
+    updateLinearDamping,
   } = useSnailParams.getState()
 
   useRegisterTools([
@@ -33,7 +35,7 @@ export const useSnailTools = () => {
     {
       type: 'range',
       name: 'DYNAMIC_OBSTACLE_MULTIPLIER',
-      value: [dynamicObstacleMultiplier, 0, 1, 0.05],
+      value: [dynamicObstacleMultiplier, 0, 10, 0.5],
       onChange: ([value]) => updateDynamicObstacleMultiplier(value),
     },
     {
@@ -47,6 +49,12 @@ export const useSnailTools = () => {
       name: 'BOUNCE_JITTER',
       value: [bounceJitter, 0, 1, 0.02],
       onChange: ([value]) => updateBounceJitter(value),
+    },
+    {
+      type: 'range',
+      name: 'LINEAR_DAMPING',
+      value: [linearDamping, 0, 20, 0.1],
+      onChange: ([value]) => updateLinearDamping(value),
     },
     {
       type: 'range',

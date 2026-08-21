@@ -89,6 +89,7 @@ export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacl
         userData={{ isObstacle: true }}
         collisionGroups={interactionGroups(0b01, 0b10)}>
         <CuboidCollider
+          sensor
           name='chopper'
           args={[1.8, 3, 1.8]}
           position={[0, -2, 0]}
