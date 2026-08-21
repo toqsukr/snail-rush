@@ -15,6 +15,7 @@ type GameStore = {
   winner: TPlayer | null
   pauseGame: () => void
   startGame: () => void
+  markStart: (startedAt: number) => void
   finishGame: () => void
   toMainMenu: () => void
   resumeGame: () => void
@@ -39,8 +40,8 @@ export const useGameStore = create(
       skin: PlayerSkins.HERBIVORE,
       playerModelHandle: -1,
       updatePlayerModelHandle: playerModelHandle => set({ ...get(), playerModelHandle }),
-      startGame: () =>
-        set({ ...get(), started: true, startedAt: Date.now(), finished: false, winner: null }),
+      startGame: () => set({ ...get(), started: true, finished: false, winner: null }),
+      markStart: startedAt => set({ ...get(), startedAt }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),
       updateMoveable: moveable => set({ ...get(), moveable }),

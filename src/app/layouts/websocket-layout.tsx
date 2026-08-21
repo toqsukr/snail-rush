@@ -11,7 +11,7 @@ import {
   OpponentRotationType,
   useEventsHandler,
   type OpponentStartJumpType,
-  BOUNCE_HOLD_TIME,
+  isBounce,
 } from '@features/lobby-events'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { useMenuMode, useToggleReady, useKickLobbyPlayer } from '@features/menu'
@@ -61,6 +61,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const onGameStart = async () => {
+    gameStore.markStart(Date.now())
     await followTarget(new Vector3(...playerStartPosition))
     startTimer()
     gameStore.startGame()
@@ -102,7 +103,7 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     pushOpponentPosition({
       correctStartPosition: true,
       impulse: new Vector3(x, y, z),
-      bounced: hold_time === BOUNCE_HOLD_TIME,
+      bounced: isBounce(move),
       holdTime: hold_time,
       startPosition,
       duration,

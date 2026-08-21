@@ -137,7 +137,7 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
       }
     } catch (e) {
-      console.error(e)
+      console.error('cannot handle an inbound lobby message', event.data, e)
     }
   }
 

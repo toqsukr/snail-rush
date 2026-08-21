@@ -1,8 +1,6 @@
 import { PlayerDTOSchema } from '@shared/api/player'
 import { z } from 'zod'
 
-export const BOUNCE_HOLD_TIME = -1
-
 export enum Operations {
   SESSION_START = 'session.start',
   SESSION_DELETE = 'session.delete',
@@ -40,6 +38,7 @@ export const TransferPositionSchema = z.object({
   }),
   hold_time: z.number(),
   duration: z.number(),
+  bounced: z.boolean().optional(),
 })
 
 export const TransferStartJumpSchema = z.object({
