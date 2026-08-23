@@ -4,6 +4,7 @@ import {
   opponentPositionEmitter,
   opponentRotationEmitter,
   opponentShrinkEmitter,
+  opponentSnapshotEmitter,
 } from '@features/opponent-control'
 import { useControlParams } from '@features/player-control'
 import { useGameStore } from '@features/game'
@@ -43,6 +44,7 @@ const OpponentSuspense = () => {
           positionEmitter: opponentPositionEmitter,
           rotationEmitter: opponentRotationEmitter,
           shrinkEmitter: opponentShrinkEmitter,
+          snapshotEmitter: opponentSnapshotEmitter,
           stunTimeout,
           shouldHandleCollision: () => false,
           shrinkDuration,

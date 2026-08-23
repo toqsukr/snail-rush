@@ -1,6 +1,7 @@
 import { parseFromPlayerDTO, TPlayer } from '@entities/players'
 import { invalidateSession, resetSession, useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
+import { isSnapshot } from '../lib/is-snapshot'
 import {
   ConnectPlayerMessageType,
   KickPlayerMessageType,
@@ -91,7 +92,12 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
         case Operations.PLAYER_MOVE: {
           const { move } = PlayerMoveMessageSchema.parse(responseData.data) as PlayerMoveMessageType
           onChangeOpponentPosition?.({ move })
-          console.log('player moved from', move.position, 'with impulse', [move.x, move.y, move.z])
+          if (!isSnapshot(move))
+            console.log('player moved from', move.position, 'with impulse', [
+              move.x,
+              move.y,
+              move.z,
+            ])
           break
         }
         case Operations.PLAYER_ROTATION: {

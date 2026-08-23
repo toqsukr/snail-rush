@@ -39,6 +39,7 @@ export const TransferPositionSchema = z.object({
   hold_time: z.number(),
   duration: z.number(),
   bounced: z.boolean().optional(),
+  snapshot: z.boolean().optional(),
 })
 
 export const TransferStartJumpSchema = z.object({

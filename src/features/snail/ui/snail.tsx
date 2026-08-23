@@ -14,6 +14,7 @@ import { useAnimation } from '../model/use-animation'
 import { useSnailParams } from '../model/params'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
+import { useSnapshot } from '../model/use-snapshot'
 import { useSnailContext } from './snail-provider'
 import { DreiTextProps } from '@shared/lib/three'
 
@@ -82,6 +83,8 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   const collision = useCollision(rigidBodyRef, startStunAnimation, stopAllAnimation)
 
+  const snapshot = useSnapshot(rigidBodyRef)
+
   const { camera } = useThree()
   const textRef = useRef<DreiTextProps | null>(null)
 
@@ -96,6 +99,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       textRef.current.lookAt?.(camera.position)
     }
     collision.tick()
+    snapshot.tick()
   })
 
   const userData = useMemo(() => ({ userID }), [])

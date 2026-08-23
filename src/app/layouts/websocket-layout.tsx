@@ -12,6 +12,7 @@ import {
   useEventsHandler,
   type OpponentStartJumpType,
   isBounce,
+  isSnapshot,
 } from '@features/lobby-events'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { useMenuMode, useToggleReady, useKickLobbyPlayer } from '@features/menu'
@@ -19,6 +20,7 @@ import {
   pushOpponentPosition,
   pushOpponentRotation,
   pushOpponentShrink,
+  pushOpponentSnapshot,
 } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
 import { getPlayerPosition, getStartPosition, useGameStore } from '@features/game'
@@ -99,6 +101,12 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
   const onChangeOpponentPosition = ({ move }: OpponentPositionType) => {
     const { duration, hold_time, x, y, z, position } = move
     const startPosition = new Vector3(position.x, position.y, position.z)
+
+    if (isSnapshot(move))
+      return pushOpponentSnapshot({
+        position: startPosition,
+        velocity: new Vector3(x, y, z),
+      })
 
     pushOpponentPosition({
       correctStartPosition: true,

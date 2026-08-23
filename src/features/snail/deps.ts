@@ -6,6 +6,7 @@ import {
   PositionWithoutCorrectType,
   RotationType,
   ShrinkType,
+  SnapshotType,
 } from './model/types'
 
 type SnailDeps = {
@@ -16,7 +17,9 @@ type SnailDeps = {
   positionEmitter: Emitter<PositionWithCorrectType> | Emitter<PositionWithoutCorrectType>
   rotationEmitter: Emitter<RotationType>
   shrinkEmitter?: Emitter<ShrinkType>
+  snapshotEmitter?: Emitter<SnapshotType>
   onCollision?: (bounce: { position: Vector3; impulse: Vector3 }) => void
+  onSnapshot?: (snapshot: SnapshotType) => void
   startPosition?: [number, number, number]
   startRotation?: [number, number, number]
   handleModelHandle?: (modelHandle: number) => void

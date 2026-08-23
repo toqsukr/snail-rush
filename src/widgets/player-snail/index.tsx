@@ -2,6 +2,7 @@ import { FC, Suspense } from 'react'
 import { Euler, Vector3 } from 'three'
 import {
   BOUNCE_HOLD_TIME,
+  SNAPSHOT_HOLD_TIME,
   useSendMoveImpulse,
   useSendShrink,
   useSendTargetRotation,
@@ -21,6 +22,7 @@ import {
   useCalcAnimationDuration,
   useSnailContext,
   useSnailParams,
+  type SnapshotType,
 } from '@features/snail'
 import {
   getPlayerPosition,
@@ -119,13 +121,13 @@ export const PlayerSuspense = () => {
   const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle, started, finished, pause } =
     useGameStore()
   const { data: skin } = useSkinById(user?.skinID ?? '')
-  const sendBounce = useSendMoveImpulse()
+  const sendMove = useSendMoveImpulse()
   const { stunTimeout } = useSnailParams()
   const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
 
   const onCollision = ({ position, impulse }: { position: Vector3; impulse: Vector3 }) => {
     if (!started || finished || pause) return
-    sendBounce({
+    sendMove({
       move: {
         x: impulse.x,
         y: impulse.y,
@@ -142,6 +144,21 @@ export const PlayerSuspense = () => {
         updateMoveable(true)
       }, stunTimeout)
     }
+  }
+
+  const onSnapshot = ({ position, velocity }: SnapshotType) => {
+    if (!started || finished || pause) return
+    sendMove({
+      move: {
+        x: velocity.x,
+        y: velocity.y,
+        z: velocity.z,
+        duration: 0,
+        position,
+        snapshot: true,
+        hold_time: SNAPSHOT_HOLD_TIME,
+      },
+    })
   }
 
   if (!playerStatus || !user) return
@@ -162,6 +179,7 @@ export const PlayerSuspense = () => {
         value={{
           texturePath,
           onCollision,
+          onSnapshot,
           handleModelHandle,
           stunTimeout,
           shouldHandleCollision: isObstacle,

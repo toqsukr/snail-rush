@@ -5,3 +5,5 @@ export const COLLISION_COOLDOWN = 150
 export const BOUNCE_JITTER = 0.4
 export const LINEAR_DAMPING = 5
 export const HORIZONTAL_EPSILON = 0.001
+export const SNAPSHOT_INTERVAL = 100
+export const SNAPSHOT_TOLERANCE = 0.35
