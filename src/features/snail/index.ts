@@ -1,4 +1,5 @@
 export { snailDepsContext } from './deps'
+export type { SnapshotType } from './model/types'
 export { Snail } from './ui/snail'
 export { SnailProvider, useSnailContext } from './ui/snail-provider'
 export { StaticSnail } from './ui/static-snail'

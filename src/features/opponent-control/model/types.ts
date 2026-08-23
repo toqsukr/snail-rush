@@ -13,6 +13,11 @@ export type PositionType = {
   bounced?: boolean
 }
 
+export type SnapshotType = {
+  position: Vector3
+  velocity: Vector3
+}
+
 export type RotationType = {
   rotation: Euler
   duration: number

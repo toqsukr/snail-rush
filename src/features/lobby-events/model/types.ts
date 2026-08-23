@@ -39,6 +39,7 @@ export const TransferPositionSchema = z.object({
   hold_time: z.number(),
   duration: z.number(),
   bounced: z.boolean().optional(),
+  snapshot: z.boolean().optional(),
 })
 
 export const TransferStartJumpSchema = z.object({
@@ -71,6 +72,10 @@ export type OpponentPositionType = z.infer<typeof OpponentPositionSchema>
 export type OpponentStartJumpType = z.infer<typeof OpponentStartJumpSchema>
 
 export type OpponentRotationType = z.infer<typeof OpponentRotationSchema>
+
+export const ActorSchema = z.object({
+  actor_id: z.string(),
+})
 
 export const WebSocketResponseSchema = z.object({
   type: z.nativeEnum(Operations),

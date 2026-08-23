@@ -21,6 +21,11 @@ export type PositionWithoutCorrectType = {
   startPosition?: never
 } & PositionType
 
+export type SnapshotType = {
+  position: Vector3
+  velocity: Vector3
+}
+
 export type RotationType = {
   rotation: Euler
   duration: number
