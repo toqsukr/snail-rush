@@ -73,6 +73,10 @@ export type OpponentStartJumpType = z.infer<typeof OpponentStartJumpSchema>
 
 export type OpponentRotationType = z.infer<typeof OpponentRotationSchema>
 
+export const ActorSchema = z.object({
+  actor_id: z.string(),
+})
+
 export const WebSocketResponseSchema = z.object({
   type: z.nativeEnum(Operations),
   data: z.unknown(),

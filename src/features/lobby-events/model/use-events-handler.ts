@@ -3,6 +3,7 @@ import { invalidateSession, resetSession, useSessionCode } from '@entities/sessi
 import { useUser } from '@entities/user'
 import { isSnapshot } from '../lib/is-snapshot'
 import {
+  ActorSchema,
   ConnectPlayerMessageType,
   KickPlayerMessageType,
   MessageSchema,
@@ -63,6 +64,9 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
 
     try {
       const responseData: WebSocketResponse = WebSocketResponseSchema.parse(JSON.parse(event.data))
+
+      const actor = ActorSchema.safeParse(responseData.data)
+      if (actor.success && actor.data.actor_id === user?.id) return
 
       switch (responseData.type) {
         case Operations.PLAYER_CONNECT: {
