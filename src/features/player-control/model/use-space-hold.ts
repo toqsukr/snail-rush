@@ -28,9 +28,13 @@ export const useSpaceHold = () => {
     return pressDuration
   }
 
+  const resetHold = () => {
+    handleKeyUp()
+  }
+
   const blurCallback = () => {
     stopShrinkAnimation?.(true)
-    handleKeyUp()
+    resetHold()
   }
 
   useEffect(() => {
@@ -41,5 +45,5 @@ export const useSpaceHold = () => {
     }
   }, [stopShrinkAnimation])
 
-  return { handleKeyDown, handleKeyUp }
+  return { handleKeyDown, handleKeyUp, resetHold }
 }
