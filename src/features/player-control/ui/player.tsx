@@ -11,7 +11,7 @@ import { useControlParams } from '../model/params'
 import { useTabFocus } from '@shared/lib/tab-focus'
 
 export const Player: FC<PropsWithChildren> = ({ children }) => {
-  const { handleKeyUp, handleKeyDown } = useSpaceHold()
+  const { handleKeyUp, handleKeyDown, resetHold } = useSpaceHold()
   const { incrementX, decrementX, resetX, calcRotationIncrement } = useAdditiveRotation()
   const isTabFocus = useTabFocus()
 
@@ -44,6 +44,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
 
   useFrame(() => {
     if (!canMove() || !isTabFocus) {
+      resetHold()
       wasJumping.current = false
       wasRight.current = false
       wasLeft.current = false
