@@ -5,5 +5,13 @@
   "lobby_created_text": "Lobby was created",
   "you_connected_lobby_text": "YOU connected to lobby",
   "connected_lobby_text": "connected to lobby",
-  "kick_player_text": "Opponent was kicked"
+  "kick_player_text": "Opponent was kicked",
+  "error_title_text": "Something went wrong",
+  "error_hint_text": "The game crashed unexpectedly, reload the page to start over",
+  "reload_text": "RELOAD",
+  "webgl_title_text": "WebGL is unavailable",
+  "webgl_hint_text": "Enable WebGL in the browser settings or try another browser to play",
+  "not_found_title_text": "Page not found",
+  "not_found_hint_text": "There is no such track here, head back to the start",
+  "to_home_text": "TO HOME"
 }

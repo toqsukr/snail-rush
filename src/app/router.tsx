@@ -24,6 +24,8 @@ import MainMenuLayout from './layouts/main-menu-layout'
 import NonAuthLayout from './layouts/non-auth-layout'
 import TrackCameraLayout from './layouts/track-camera-layout'
 import WebSocketLayout from './layouts/websocket-layout'
+import ErrorScreen from './ui/error-screen'
+import NotFoundScreen from './ui/not-found-screen'
 
 const devRoutes =
   process.env.NODE_ENV === 'development'
@@ -49,6 +51,7 @@ const devRoutes =
 
 export const router = createBrowserRouter([
   {
+    errorElement: <ErrorScreen />,
     element: (
       <QueryClientProvider client={queryClient}>
         <AppLayout>
@@ -110,5 +113,9 @@ export const router = createBrowserRouter([
       },
       ...devRoutes,
     ],
+  },
+  {
+    path: '*',
+    element: <NotFoundScreen />,
   },
 ])

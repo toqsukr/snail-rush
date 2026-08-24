@@ -10,7 +10,9 @@ import ButtonController from '@shared/lib/mobile-control/button'
 import { useDeviceDetection } from '@shared/lib/device'
 import { DevTools } from '@shared/lib/devtools'
 import { useObserveTabFocus } from '@shared/lib/tab-focus'
+import { withWebgl } from '@shared/lib/webgl'
 import '../i18n'
+import WebglScreen from '../ui/webgl-screen'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const device = useDeviceDetection()
@@ -94,4 +96,4 @@ useGLTF.preload('models/grass-walls.glb')
 useTexture.preload(getTexturePath(PlayerSkins.HERBIVORE))
 useTexture.preload(getTexturePath(PlayerSkins.PREDATOR))
 
-export default AppLayout
+export default withWebgl(AppLayout, WebglScreen)

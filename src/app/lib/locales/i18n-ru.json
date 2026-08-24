@@ -5,5 +5,13 @@
   "lobby_created_text": "Комната создана",
   "you_connected_lobby_text": "Вы присоединились",
   "connected_lobby_text": "присоединился",
-  "kick_player_text": "Противник был отключен"
+  "kick_player_text": "Противник был отключен",
+  "error_title_text": "Что-то пошло не так",
+  "error_hint_text": "Игра неожиданно упала, перезагрузите страницу чтобы начать заново",
+  "reload_text": "Перезагрузить",
+  "webgl_title_text": "WebGL недоступен",
+  "webgl_hint_text": "Включите WebGL в настройках браузера или откройте игру в другом браузере",
+  "not_found_title_text": "Страница не найдена",
+  "not_found_hint_text": "Такой трассы здесь нет, вернитесь на старт",
+  "to_home_text": "На главную"
 }
