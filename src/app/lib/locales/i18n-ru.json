@@ -13,5 +13,7 @@
   "webgl_hint_text": "Включите WebGL в настройках браузера или откройте игру в другом браузере",
   "not_found_title_text": "Страница не найдена",
   "not_found_hint_text": "Такой трассы здесь нет, вернитесь на старт",
-  "to_home_text": "На главную"
+  "to_home_text": "На главную",
+  "request_error_text": "Ошибка запроса ({{status}})",
+  "network_error_text": "Сервер недоступен"
 }

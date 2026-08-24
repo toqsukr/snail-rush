@@ -13,5 +13,7 @@
   "webgl_hint_text": "Enable WebGL in the browser settings or try another browser to play",
   "not_found_title_text": "Page not found",
   "not_found_hint_text": "There is no such track here, head back to the start",
-  "to_home_text": "TO HOME"
+  "to_home_text": "TO HOME",
+  "request_error_text": "Request failed ({{status}})",
+  "network_error_text": "Server is unreachable"
 }

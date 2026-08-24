@@ -11,6 +11,7 @@ import { useDeviceDetection } from '@shared/lib/device'
 import { DevTools } from '@shared/lib/devtools'
 import { useObserveTabFocus } from '@shared/lib/tab-focus'
 import { withWebgl } from '@shared/lib/webgl'
+import { Toasts } from '@shared/uikit/toast/toasts'
 import '../i18n'
 import WebglScreen from '../ui/webgl-screen'
 
@@ -73,6 +74,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
           </Physics>
         </KeyboardControls>
       </Canvas>
+      <Toasts />
       {process.env.NODE_ENV === 'development' && <DevTools />}
       {device !== 'desktop' && started && (
         <>
