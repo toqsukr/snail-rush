@@ -1,6 +1,7 @@
 import { getRawTokenFromStorage, removeTokenEverywhere } from '@shared/config/token'
 import axios from 'axios'
 import baseTemplate from './base-template'
+import { notifyError } from './error-toast'
 
 const authTemplate = axios.create({
   ...baseTemplate.defaults,
@@ -22,7 +23,7 @@ authTemplate.interceptors.response.use(
     if (error.response?.status === 401) {
       removeTokenEverywhere()
     }
-    return Promise.reject(error)
+    return notifyError(error)
   }
 )
 

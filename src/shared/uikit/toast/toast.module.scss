@@ -1,0 +1,32 @@
+.toasts {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: min(90vw, 24rem);
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  text-align: center;
+  font-size: 1rem;
+  color: white;
+  background-color: #a32a1e;
+  box-shadow: 0 0 6px 1px black;
+  padding: 0.7rem 1rem;
+  border-radius: 0.7rem;
+  transition: box-shadow 0.2s, background-color 0.3s;
+
+  @media (hover: hover) {
+    &:hover,
+    &:focus-visible {
+      box-shadow: 0 0 4px 1px #a32a1e;
+    }
+  }
+}

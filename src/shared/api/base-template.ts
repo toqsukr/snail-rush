@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { notifyError } from './error-toast'
 
 const CLIENT_IP = import.meta.env.VITE_CLIENT_IP ?? 'localhost'
 const CLIENT_PORT = import.meta.env.VITE_CLIENT_PORT ?? '4173'
@@ -12,5 +13,7 @@ const baseTemplate = axios.create({
     'Content-Type': 'application/json',
   },
 })
+
+baseTemplate.interceptors.response.use(response => response, notifyError)
 
 export default baseTemplate
