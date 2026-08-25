@@ -10,7 +10,7 @@ export type ButtonProps = React.DetailedHTMLProps<
 
 const Button: FC<ButtonProps> = ({ children, ...props }) => {
   return (
-    <button {...props} className={css.button}>
+    <button tabIndex={0} {...props} className={css.button}>
       {children}
     </button>
   )
