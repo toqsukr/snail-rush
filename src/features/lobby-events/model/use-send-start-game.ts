@@ -5,9 +5,14 @@ import { Operations } from './types'
 export const useSendStartGame = () => {
   const websocket = useWebSocket()
   const { data: user } = useUser()
-  return () => {
+  return (startDelay: number) => {
     if (!user) return
 
-    websocket.send(JSON.stringify({ type: Operations.SESSION_START, data: { player_id: user.id } }))
+    websocket.send(
+      JSON.stringify({
+        type: Operations.SESSION_START,
+        data: { player_id: user.id, start_delay: startDelay },
+      })
+    )
   }
 }

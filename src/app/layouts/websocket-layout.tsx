@@ -28,6 +28,7 @@ import { getPlayer, TPlayer } from '@entities/players'
 import { invalidateSession, useSession } from '@entities/session'
 import { useUser } from '@entities/user'
 import { WS_HOST_URL } from '@shared/api/base-template'
+import { RACE_LEAD } from '@shared/config/game'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
 
@@ -62,11 +63,12 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     })
   }
 
-  const onGameStart = async () => {
-    gameStore.markStart(Date.now())
-    await followTarget(new Vector3(...playerStartPosition))
-    startTimer()
+  const onGameStart = (delay = RACE_LEAD) => {
+    const startAt = Date.now() + delay
+    gameStore.markStart(startAt)
     gameStore.startGame()
+    startTimer(startAt)
+    followTarget(new Vector3(...playerStartPosition))
     setTimeout(() => {
       if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
         toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })

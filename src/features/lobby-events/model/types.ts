@@ -112,6 +112,14 @@ export type PlayerRotateMessageType = z.infer<typeof PlayerRotateMessageSchema>
 
 export type MessageType = z.infer<typeof MessageSchema>
 
+export const StartMessageSchema = MessageSchema.merge(
+  z.object({
+    start_delay: z.number().optional(),
+  })
+)
+
+export type StartMessageType = z.infer<typeof StartMessageSchema>
+
 export const ConnectPlayerMessageSchema = MessageSchema.merge(
   z.object({
     players: PlayerDTOSchema.array(),

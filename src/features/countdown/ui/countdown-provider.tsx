@@ -3,7 +3,7 @@ import { FC, PropsWithChildren } from 'react'
 import { Vector3 } from 'three'
 
 type CountdownDeps = {
-  startValue: number
+  duration: number
   playerPosition: Vector3
   onAlarm: () => void
 }

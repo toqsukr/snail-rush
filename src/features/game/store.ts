@@ -5,6 +5,12 @@ import { PlayerSkins, PlayerStatus } from './status'
 
 const GAME_STORE_KEY = 'game-data-store'
 
+/**
+ * Race state shared by every screen of a running game. The startedAt attribute
+ * holds the instant the countdown begins, in local clock milliseconds, and is
+ * stamped ahead of time so both clients anchor their countdown and their
+ * choppers to the very same moment.
+ */
 type GameStore = {
   pause: boolean
   started: boolean
