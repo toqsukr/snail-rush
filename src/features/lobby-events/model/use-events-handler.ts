@@ -18,6 +18,8 @@ import {
   PlayerRotateMessageType,
   PlayerStartJumpMessageSchema,
   PlayerStartJumpMessageType,
+  StartMessageSchema,
+  StartMessageType,
   WebSocketResponse,
   WebSocketResponseSchema,
 } from './types'
@@ -25,7 +27,7 @@ import {
 type LobbyEventsProviderProp = {
   onKickMe?: () => void
   onKickPlayer?: (id: string) => Promise<void>
-  onGameStart?: () => void
+  onGameStart?: (delay?: number) => void
   onGameStop?: () => void
   onOpponentShrink?: (position: OpponentStartJumpType) => void
   onGameFinish?: (data: MessageType) => void
@@ -131,7 +133,8 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
         }
         case Operations.SESSION_START: {
-          onGameStart?.()
+          const { start_delay } = StartMessageSchema.parse(responseData.data) as StartMessageType
+          onGameStart?.(start_delay && start_delay * 1000)
           console.log('game started')
           break
         }

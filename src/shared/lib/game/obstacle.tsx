@@ -35,7 +35,8 @@ export const StaticObstacle: FC<StaticObstacleProp> = ({ model, ...props }) => {
   )
 }
 
-const elapsedSince = (startedAt?: number) => (startedAt ? (Date.now() - startedAt) / 1000 : 0)
+const elapsedSince = (startedAt?: number) =>
+  startedAt ? Math.max(0, (Date.now() - startedAt) / 1000) : 0
 
 type DynamicObstacleProp = {
   model: ReactNode
