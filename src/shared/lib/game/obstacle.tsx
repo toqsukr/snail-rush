@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { Euler, Quaternion, Vector3 } from 'three'
 import {
   CuboidCollider,
@@ -35,6 +35,8 @@ export const StaticObstacle: FC<StaticObstacleProp> = ({ model, ...props }) => {
   )
 }
 
+const elapsedSince = (startedAt?: number) => (startedAt ? (Date.now() - startedAt) / 1000 : 0)
+
 type DynamicObstacleProp = {
   model: ReactNode
   speed?: number
@@ -47,12 +49,13 @@ export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacl
   ({ model, extremePositions, speed = 5, rotateSpeed = Math.PI, startedAt, ...props }, ref) => {
     const bodyRef = useRef<RapierRigidBody | null>(null)
     const rotationRef = useRef(new Euler(0, 0, 0))
-    const mountedAt = useRef(Date.now())
+    const [spawn] = useState(() => chopperPosition(elapsedSince(startedAt), extremePositions, speed))
 
     useImperativeHandle(ref, () => bodyRef.current!, [])
 
     useFrame(() => {
-      const elapsed = (Date.now() - (startedAt || mountedAt.current)) / 1000
+      if (!startedAt) return
+      const elapsed = elapsedSince(startedAt)
       bodyRef.current?.setNextKinematicTranslation(
         chopperPosition(elapsed, extremePositions, speed),
       )
@@ -66,6 +69,7 @@ export const ChopperObstacle = forwardRef<RapierRigidBody | null, DynamicObstacl
       <RigidBody
         {...props}
         ref={bodyRef}
+        position={spawn}
         type='kinematicPosition'
         colliders={false}
         userData={{ isObstacle: true }}

@@ -107,6 +107,7 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, started
   const { planeModelPath, wallsModelPath } = mapData
   const { scene } = useThree()
   const [editMode, setEditMode] = useState<EditMode>('translate')
+  const [openedAt] = useState(() => Date.now())
 
   return (
     <>
@@ -192,25 +193,24 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, started
           }
         />
       ))}
-      {isStarted &&
-        chopper?.items.map(({ extremePositions, speed }) => (
-          <ChopperObstacle
-            speed={speed}
-            startedAt={startedAt}
-            key={`chopper-${extremePositions.join()}`}
-            model={
-              <ModelPrimitive
-                name={`chopper-${extremePositions.join()}`}
-                scale={3}
-                modelPath={chopper.modelPath}
-              />
-            }
-            extremePositions={[
-              new Vector3(...extremePositions[0]),
-              new Vector3(...extremePositions[1]),
-            ]}
-          />
-        ))}
+      {chopper?.items.map(({ extremePositions, speed }) => (
+        <ChopperObstacle
+          speed={speed}
+          startedAt={isStarted ? startedAt || openedAt : undefined}
+          key={`chopper-${extremePositions.join()}`}
+          model={
+            <ModelPrimitive
+              name={`chopper-${extremePositions.join()}`}
+              scale={3}
+              modelPath={chopper.modelPath}
+            />
+          }
+          extremePositions={[
+            new Vector3(...extremePositions[0]),
+            new Vector3(...extremePositions[1]),
+          ]}
+        />
+      ))}
     </>
   )
 }

@@ -21,6 +21,7 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     toMainMenu,
     finished,
     startGame,
+    markStart,
     playerStatus,
     updatePlayerStatus,
   } = useGameStore()
@@ -62,6 +63,7 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   const onPlay = async () => {
     sendStartGame()
     await followTarget(new Vector3(...playerStartPosition))
+    markStart(Date.now())
     startGame()
     startTimer()
     if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
