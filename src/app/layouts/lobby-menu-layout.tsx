@@ -61,13 +61,13 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     clearLogs()
   }
 
-  const onPlay = () => {
+  const onPlay = async () => {
     sendStartGame(RACE_LEAD / 1000)
     const startAt = Date.now() + RACE_LEAD
     markStart(startAt)
-    startGame()
     startTimer(startAt)
-    followTarget(new Vector3(...playerStartPosition))
+    await followTarget(new Vector3(...playerStartPosition))
+    startGame()
     if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
       toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
     }

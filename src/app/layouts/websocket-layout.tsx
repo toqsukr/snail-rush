@@ -63,12 +63,12 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     })
   }
 
-  const onGameStart = (delay = RACE_LEAD) => {
+  const onGameStart = async (delay = RACE_LEAD) => {
     const startAt = Date.now() + delay
     gameStore.markStart(startAt)
-    gameStore.startGame()
     startTimer(startAt)
-    followTarget(new Vector3(...playerStartPosition))
+    await followTarget(new Vector3(...playerStartPosition))
+    gameStore.startGame()
     setTimeout(() => {
       if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
         toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
