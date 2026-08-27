@@ -1,4 +1,4 @@
-import { parseFromPlayerDTO, TPlayer } from '@entities/players'
+import { invalidatePlayerByID, parseFromPlayerDTO, TPlayer } from '@entities/players'
 import { invalidateSession, resetSession, useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
 import { isSnapshot } from '../lib/is-snapshot'
@@ -74,6 +74,7 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
         case Operations.PLAYER_CONNECT: {
           invalidateSession()
           const connectData = responseData.data as ConnectPlayerMessageType
+          connectData.players.forEach(({ player_id }) => invalidatePlayerByID(player_id))
           console.log(responseData, connectData.players)
           onPlayerConnected?.(
             connectData.players.map(player => parseFromPlayerDTO(player)),

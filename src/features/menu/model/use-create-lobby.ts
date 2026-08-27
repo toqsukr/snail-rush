@@ -2,6 +2,7 @@ import { invalidateSession, useSession, useSessionCode } from '@entities/session
 import { useUser } from '@entities/user'
 import { useCreateSession } from '../api/create-session'
 import { useMainMenuDeps } from '../deps'
+import { flushRename } from './rename'
 import { useMenu } from './store'
 
 export const useCreateLobby = () => {
@@ -14,6 +15,8 @@ export const useCreateLobby = () => {
 
   return async () => {
     if (!user) return
+
+    await flushRename()
 
     if (session) {
       connectLobby()
