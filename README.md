@@ -48,25 +48,25 @@ Snail Rush — это гоночный баттл, где скорость и л
 
 ### Меню выбора скина
 Здесь вы выбираете внешний вид своей чемпионской улитки.
-<img width="769" height="663" alt="image" src="https://github.com/user-attachments/assets/471b9a42-6238-431f-9edf-19aa14751154" />
+<img width="856" height="810" alt="изображение" src="https://github.com/user-attachments/assets/39e4033d-7a18-4728-b836-4c7ffcf685dd" />
 
 ---
 
 ### Лобби перед игрой
 Экран лобби, где видно, кто есть кто и сколько побед за каждым.
-<img width="660" height="702" alt="image" src="https://github.com/user-attachments/assets/38fbd582-fd91-4715-a4a1-9f83f0c9276c" />
+<img width="850" height="761" alt="изображение" src="https://github.com/user-attachments/assets/389a978e-d8bd-4d3b-98fb-b90276a684d1" />
 
 ---
 
 ### Игровой процесс
 Самый азартный момент — гонка в разгаре! Уворачивайтесь и опережайте соперника.
-<img width="804" height="685" alt="image" src="https://github.com/user-attachments/assets/a1840ff6-f1e3-48db-9905-1c8a4e8b7bae" />
+<img width="979" height="905" alt="изображение" src="https://github.com/user-attachments/assets/d292cc8c-4c73-448d-aa79-795f0cd084ab" />
 
 ---
 
 ### Момент победы!
 Эмоции зашкаливают, когда один из игроков пересекает финишную черту!
-<img width="574" height="489" alt="image" src="https://github.com/user-attachments/assets/90a8eada-da56-46a6-bf7f-0a5f735cabd5" />
+<img width="914" height="792" alt="изображение" src="https://github.com/user-attachments/assets/6499f4f8-3262-4611-8009-9c9334625f22" />
 
 </div>
 
