@@ -1,11 +1,6 @@
 import { Text, useAnimations, useGLTF, useTexture } from '@react-three/drei'
 import { useFrame, useGraph, useThree } from '@react-three/fiber'
-import {
-  CuboidCollider,
-  RapierRigidBody,
-  RigidBody,
-  RoundCuboidCollider,
-} from '@react-three/rapier'
+import { RapierRigidBody, RigidBody, RoundCuboidCollider } from '@react-three/rapier'
 import React, { FC, RefObject, useEffect, useMemo, useRef } from 'react'
 import { BufferGeometry, Group, MeshPhysicalMaterial, Object3DEventMap, Skeleton } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
@@ -142,8 +137,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       enabledRotations={[false, false, false]}
       enabledTranslations={[true, false, true]}
       restitution={0}>
-      <CuboidCollider name='leg' args={[0.27, 0.2, 1]} position={[0, 0.22, -0.2]} />
-      <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.5, 0.5]} position={[0, 1, 0]} />
+      <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.7, 0.5]} position={[0, 1, 0]} />
       <Text ref={textRef} fontSize={0.8} fontWeight={800} fillOpacity={0.8} position={[0, 4, 0]}>
         {username}
       </Text>
