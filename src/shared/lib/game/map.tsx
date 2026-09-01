@@ -23,6 +23,7 @@ export type MapData = {
   finishLine: MapObject
   planeModelPath: string
   wallsModelPath: string
+  decorationModelPath?: string
   obstacle: {
     chopper?: {
       items: Chopper[]
@@ -72,29 +73,31 @@ type GameMapProp = {
 export const MapModelConstruct = ({
   planeModelPath,
   wallsModelPath,
+  decorationModelPath,
 }: {
   planeModelPath: string
   wallsModelPath: string
+  decorationModelPath?: string
 }) => {
   const mapPlane = useGLTF(planeModelPath)
   const mapWalls = useGLTF(wallsModelPath)
 
+  const Decoration = ({ decorationModelPath }: { decorationModelPath: string }) => {
+    const mapDecoration = useGLTF(decorationModelPath)
+
+    return <primitive object={mapDecoration.scene} />
+  }
+
   return (
     <>
-      <RigidBody
-        colliders='cuboid'
-        collisionGroups={interactionGroups(0b01, 0b10)}
-        type='fixed'
-        position={[0, 0, 0]}
-        rotation={[0, 0, 0]}>
+      {decorationModelPath && <Decoration decorationModelPath={decorationModelPath} />}
+      <RigidBody colliders='cuboid' collisionGroups={interactionGroups(0b01, 0b10)} type='fixed'>
         <primitive object={mapPlane.scene} />
       </RigidBody>
       <RigidBody
         type='fixed'
         colliders='trimesh'
         collisionGroups={interactionGroups(0b01, 0b10)}
-        rotation={[0, 0, 0]}
-        position={[0, 0, 0]}
         userData={{ isObstacle: true }}>
         <primitive object={mapWalls.scene} />
       </RigidBody>
@@ -104,14 +107,18 @@ export const MapModelConstruct = ({
 
 export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, startedAt, ...props }) => {
   const { stone, smallStone, bigStone, chopper } = mapData.obstacle
-  const { planeModelPath, wallsModelPath } = mapData
+  const { planeModelPath, wallsModelPath, decorationModelPath } = mapData
   const { scene } = useThree()
   const [editMode, setEditMode] = useState<EditMode>('translate')
   const [openedAt] = useState(() => Date.now())
 
   return (
     <>
-      <MapModelConstruct planeModelPath={planeModelPath} wallsModelPath={wallsModelPath} />
+      <MapModelConstruct
+        planeModelPath={planeModelPath}
+        wallsModelPath={wallsModelPath}
+        decorationModelPath={decorationModelPath}
+      />
       <StartModel {...mapData.startLine} />
       <FinishControl {...mapData.finishLine} onFinish={onFinish} />
       {props.editable && props.selectedName && (
@@ -201,7 +208,6 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, started
           model={
             <ModelPrimitive
               name={`chopper-${extremePositions.join()}`}
-              scale={3}
               modelPath={chopper.modelPath}
             />
           }
