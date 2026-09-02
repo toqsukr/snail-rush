@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { CollisionEnterPayload, RapierRigidBody } from '@react-three/rapier'
 import { renderHook } from '@testing-library/react'
 import { useSnailDeps } from '@features/snail/deps'
+import { useSnailContext } from '@features/snail/ui/snail-provider'
 import { Vector3 } from 'three'
 import { BouncePayload, calculateBounce, useCollision } from '../use-collision'
 
@@ -19,6 +20,7 @@ vi.mock('../params', () => ({
 vi.mock('@features/snail/ui/snail-provider', () => ({
   useSnailContext: vi.fn().mockReturnValue({
     updatePosition: vi.fn(),
+    getIsStuning: () => false,
   }),
 }))
 
@@ -320,5 +322,65 @@ describe('useCollision of a non obstacle', () => {
     result.current.enter(decoration)
 
     expect(snail.applyImpulse, 'a non obstacle cannot bounce a snail').not.toHaveBeenCalled()
+  })
+})
+
+const stunned = () => {
+  vi.spyOn(Math, 'random').mockReturnValue(0.5)
+  vi.mocked(useSnailDeps).mockReturnValue({
+    onCollision: vi.fn(),
+    shouldHandleCollision: () => true,
+  } as unknown as ReturnType<typeof useSnailDeps>)
+  vi.mocked(useSnailContext).mockReturnValue({
+    updatePosition: vi.fn(),
+    getIsStuning: () => true,
+  } as unknown as ReturnType<typeof useSnailContext>)
+  const snail = {
+    linvel: () => ({ x: 5, y: 0, z: 0 }),
+    translation: () => ({ x: 0, y: 0, z: 0 }),
+    setLinvel: vi.fn(),
+    setAngvel: vi.fn(),
+    applyImpulse: vi.fn(),
+  } as unknown as RapierRigidBody
+  const wall = {
+    target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+    other: { rigidBody: { userData: { isObstacle: true }, isKinematic: () => false } },
+    manifold: {
+      normal: () => ({ x: 1, y: 0, z: 0 }),
+      numSolverContacts: () => 1,
+      solverContactPoint: () => ({ x: 2, y: 0, z: 0 }),
+    },
+  } as unknown as BouncePayload
+  return { snail, wall }
+}
+
+describe('useCollision of a stunned snail', () => {
+  it('cannot restart a stun of an already stunned snail', () => {
+    const { snail, wall } = stunned()
+    const stun = vi.fn()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, stun, vi.fn()))
+    result.current.enter(wall)
+
+    expect(stun, 'a stun cannot restart while the previous one lasts').not.toHaveBeenCalled()
+  })
+
+  it('cannot interrupt animations of a stunned snail', () => {
+    const { snail, wall } = stunned()
+    const interrupt = vi.fn()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), interrupt))
+    result.current.enter(wall)
+
+    expect(interrupt, 'a repeat hit cannot interrupt a running stun animation').not.toHaveBeenCalled()
+  })
+
+  it('cannot pin a stunned snail against an obstacle', () => {
+    const { snail, wall } = stunned()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    result.current.enter(wall)
+
+    expect(snail.applyImpulse, 'a stunned snail cannot stay pinned to an obstacle').toHaveBeenCalledOnce()
   })
 })

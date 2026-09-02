@@ -30,6 +30,7 @@ import {
   getTexturePath,
   PlayerSkins,
   useGameStore,
+  useStunLock,
 } from '@features/game'
 import { useSkinById } from '@entities/skin'
 import { TUser, useUser } from '@entities/user'
@@ -118,10 +119,10 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
 export const PlayerSuspense = () => {
   const { data: user } = useUser()
-  const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle, started, finished, pause } =
-    useGameStore()
+  const { playerStatus, updatePlayerModelHandle, started, finished, pause } = useGameStore()
   const { data: skin } = useSkinById(user?.skinID ?? '')
   const sendMove = useSendMoveImpulse()
+  const stunLock = useStunLock()
   const { stunTimeout } = useSnailParams()
   const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
 
@@ -138,12 +139,7 @@ export const PlayerSuspense = () => {
         hold_time: BOUNCE_HOLD_TIME,
       },
     })
-    if (moveable) {
-      updateMoveable(false)
-      setTimeout(() => {
-        updateMoveable(true)
-      }, stunTimeout)
-    }
+    stunLock(stunTimeout)
   }
 
   const onSnapshot = ({ position, velocity }: SnapshotType) => {

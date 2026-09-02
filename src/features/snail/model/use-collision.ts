@@ -75,7 +75,7 @@ export const useCollision = (
   stopAllAnimation: () => void,
 ) => {
   const { onCollision, shouldHandleCollision } = useSnailDeps()
-  const { updatePosition } = useSnailContext()
+  const { updatePosition, getIsStuning } = useSnailContext()
 
   const lastCollisionRef = useRef(0)
 
@@ -88,8 +88,10 @@ export const useCollision = (
     const impulse = calculateBounce(event, new Vector3(approach.x, 0, approach.z), obstacleType)
     if (!impulse) return
     lastCollisionRef.current = now
-    stopAllAnimation()
-    animateCollision()
+    if (!getIsStuning()) {
+      stopAllAnimation()
+      animateCollision()
+    }
     rigidBodyRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true)
     rigidBodyRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true)
     rigidBodyRef.current.applyImpulse(impulse, true)
