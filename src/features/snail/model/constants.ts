@@ -1,7 +1,8 @@
 export const BOUNCE_MULTIPLIER = 3
 export const IMPULSE_MULTIPLIER = 10
 export const DYNAMIC_OBSTACLE_MULTIPLIER = 2
-export const COLLISION_COOLDOWN = 150
+export const COLLISION_COOLDOWN = 400
+export const MIN_APPROACH_SPEED = 0.5
 export const BOUNCE_JITTER = 0.4
 export const LINEAR_DAMPING = 5
 export const HORIZONTAL_EPSILON = 0.001

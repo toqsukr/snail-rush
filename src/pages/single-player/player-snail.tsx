@@ -18,7 +18,13 @@ import {
   useSnailParams,
 } from '@features/snail'
 import { isObstacle } from '@shared/lib/game/obstacle'
-import { useGameStore, getTexturePath, PlayerSkins, getStartPosition } from '@features/game'
+import {
+  useGameStore,
+  useStunLock,
+  getTexturePath,
+  PlayerSkins,
+  getStartPosition,
+} from '@features/game'
 import { useSkinById } from '@entities/skin'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
@@ -78,18 +84,14 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 const PlayerSuspense = () => {
   const { data: user } = useUser()
   const { data: skin } = useSkinById(user?.skinID ?? '')
-  const { moveable, updateMoveable, updatePlayerModelHandle } = useGameStore()
+  const { updatePlayerModelHandle } = useGameStore()
   const { stunTimeout } = useSnailParams()
   const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
+  const stunLock = useStunLock()
 
   const onCollision = useCallback(() => {
-    if (moveable) {
-      updateMoveable(false)
-      setTimeout(() => {
-        updateMoveable(true)
-      }, stunTimeout)
-    }
-  }, [moveable, stunTimeout])
+    stunLock(stunTimeout)
+  }, [stunLock, stunTimeout])
 
   if (!user) return
 

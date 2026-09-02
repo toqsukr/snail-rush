@@ -1,7 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { CollisionEnterPayload, RapierRigidBody } from '@react-three/rapier'
-import { renderHook, waitFor } from '@testing-library/react'
+import { renderHook } from '@testing-library/react'
 import { useSnailDeps } from '@features/snail/deps'
+import { useSnailContext } from '@features/snail/ui/snail-provider'
 import { Vector3 } from 'three'
 import { BouncePayload, calculateBounce, useCollision } from '../use-collision'
 
@@ -12,6 +13,7 @@ vi.mock('../params', () => ({
       dynamicObstacleMultiplier: 0.3,
       collisionCooldown: 150,
       bounceJitter: 0.1,
+      minApproachSpeed: 0.5,
     }),
   },
 }))
@@ -19,6 +21,7 @@ vi.mock('../params', () => ({
 vi.mock('@features/snail/ui/snail-provider', () => ({
   useSnailContext: vi.fn().mockReturnValue({
     updatePosition: vi.fn(),
+    getIsStuning: () => false,
   }),
 }))
 
@@ -28,81 +31,6 @@ vi.mock('@features/snail/deps', () => ({
     shouldHandleCollision: vi.fn(),
   }),
 }))
-
-describe('useCollision', () => {
-  const mockedAnimateCollision = vi.fn()
-  const mockedStopAllAnimation = vi.fn()
-  const mockedRigidBody = {
-    translation: vi.fn().mockReturnValue({ x: 1, y: 2, z: 3 }),
-    applyImpulse: vi.fn(),
-    setRotation: vi.fn(),
-    setTranslation: vi.fn(),
-  } as unknown as RapierRigidBody
-
-  const rigidBodyRef = { current: mockedRigidBody }
-
-  beforeAll(() => {
-    vi.clearAllMocks()
-  })
-
-  afterAll(() => {
-    vi.restoreAllMocks()
-  })
-
-  it('should handle collision', () => {
-    vi.mock('@features/snail/deps', () => ({
-      useSnailDeps: vi.fn().mockReturnValue({
-        onCollision: vi.fn(),
-        shouldHandleCollision: vi.fn().mockReturnValue(true),
-      }),
-    }))
-    const debounceLinvel = { x: 1, y: 2, z: 3 }
-    const collisionPayload = {
-      manifold: { normal: () => debounceLinvel },
-      other: {},
-    } as CollisionEnterPayload
-
-    const { result: snailDepsResult } = renderHook(() => useSnailDeps())
-    const { result: collisionResult } = renderHook(() =>
-      useCollision(rigidBodyRef, mockedAnimateCollision, mockedStopAllAnimation)
-    )
-
-    collisionResult.current.enter(collisionPayload)
-
-    waitFor(() => {
-      expect(mockedAnimateCollision).toHaveBeenCalledOnce()
-      expect(snailDepsResult.current.onCollision).toHaveBeenCalledOnce()
-      expect(mockedRigidBody.setLinvel).toHaveBeenCalledWith(debounceLinvel, true)
-    })
-  })
-
-  it('should not handle collision', () => {
-    vi.mock('@features/snail/deps', () => ({
-      useSnailDeps: vi.fn().mockReturnValue({
-        onCollision: vi.fn(),
-        shouldHandleCollision: vi.fn().mockReturnValue(false),
-      }),
-    }))
-    const debounceLinvel = { x: 1, y: 2, z: 3 }
-    const collisionPayload = {
-      manifold: { normal: () => debounceLinvel },
-      other: {},
-    } as CollisionEnterPayload
-
-    const { result: snailDepsResult } = renderHook(() => useSnailDeps())
-    const { result: collisionResult } = renderHook(() =>
-      useCollision(rigidBodyRef, mockedAnimateCollision, mockedStopAllAnimation)
-    )
-
-    collisionResult.current.enter(collisionPayload)
-
-    waitFor(() => {
-      expect(mockedAnimateCollision).not.toHaveBeenCalled()
-      expect(snailDepsResult.current.onCollision).not.toHaveBeenCalled()
-      expect(mockedRigidBody.setLinvel).not.toHaveBeenCalled()
-    })
-  })
-})
 
 describe('calculateBounce', () => {
   it('cannot bounce a snail into an obstacle', () => {
@@ -118,7 +46,7 @@ describe('calculateBounce', () => {
 
     const bounce = calculateBounce(wallAhead as unknown as CollisionEnterPayload, new Vector3(5, 0, 0))
 
-    expect(bounce.x, 'bounce cannot push a snail towards an obstacle').toBeCloseTo(-7)
+    expect(bounce!.x, 'bounce cannot push a snail towards an obstacle').toBeCloseTo(-7)
   })
 
   it('cannot weaken bounce of a steep normal', () => {
@@ -134,7 +62,7 @@ describe('calculateBounce', () => {
 
     const bounce = calculateBounce(steepNormal as unknown as CollisionEnterPayload, new Vector3(0, 0, 0))
 
-    expect(bounce.length(), 'steep normal cannot weaken bounce').toBeCloseTo(7)
+    expect(bounce!.length(), 'steep normal cannot weaken bounce').toBeCloseTo(7)
   })
 
   it('cannot bounce a snail vertically', () => {
@@ -150,7 +78,7 @@ describe('calculateBounce', () => {
 
     const bounce = calculateBounce(ceiling as unknown as CollisionEnterPayload, new Vector3(0, 0, 0))
 
-    expect(bounce.y, 'bounce cannot get a vertical part').toBe(0)
+    expect(bounce!.y, 'bounce cannot get a vertical part').toBe(0)
   })
 
   it('cannot ignore a dynamic obstacle multiplier', () => {
@@ -170,7 +98,7 @@ describe('calculateBounce', () => {
       'kinematicPosition'
     )
 
-    expect(bounce.length(), 'dynamic obstacle cannot bounce at full power').toBeCloseTo(2.1)
+    expect(bounce!.length(), 'dynamic obstacle cannot bounce at full power').toBeCloseTo(2.1)
   })
 })
 
@@ -220,7 +148,7 @@ describe('useCollision bursts', () => {
 
     const bounce = calculateBounce(degenerate as unknown as CollisionEnterPayload, new Vector3(0, 0, 4))
 
-    expect(bounce.z, 'degenerate contact cannot keep a snail going forward').toBeCloseTo(-7)
+    expect(bounce!.z, 'degenerate contact cannot keep a snail going forward').toBeCloseTo(-7)
   })
 })
 
@@ -268,7 +196,7 @@ describe('calculateBounce of a sensor', () => {
 
     const bounce = calculateBounce(chopperSensor as unknown as BouncePayload, new Vector3(0, 0, 0))
 
-    expect(bounce.z, 'a sensor intersection cannot lose bounce direction').toBeCloseTo(-7)
+    expect(bounce!.z, 'a sensor intersection cannot lose bounce direction').toBeCloseTo(-7)
   })
 })
 
@@ -310,94 +238,237 @@ describe('useCollision of unequal approach speeds', () => {
   })
 })
 
-const touching = (handle: number, alive: () => boolean) => ({
-  target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
-  other: {
-    rigidBody: {
-      handle,
-      userData: { isObstacle: true },
-      isKinematic: () => true,
-      isValid: alive,
-      translation: () => ({ x: 0, y: 0, z: 6 }),
-    },
-  },
-  manifold: {
-    normal: () => ({ x: 0, y: 0, z: 1 }),
-    numSolverContacts: () => 1,
-    solverContactPoint: () => ({ x: 0, y: 0, z: 6 }),
-  },
+describe('calculateBounce of a sliding contact', () => {
+  it('cannot drag a snail along a wall', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+    const grazing = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      manifold: {
+        normal: () => ({ x: 1, y: 0, z: 0 }),
+        numSolverContacts: () => 1,
+        solverContactPoint: () => ({ x: 0.05, y: 0, z: 0.9 }),
+      },
+    }
+
+    const bounce = calculateBounce(grazing as unknown as CollisionEnterPayload, new Vector3(2, 0, 3))
+
+    expect(bounce!.z, 'a grazing contact cannot push a snail along a wall').toBeCloseTo(0)
+  })
+
+  it('cannot bounce a snail in its approach direction of a flipped normal', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+    const flipped = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      manifold: {
+        normal: () => ({ x: -1, y: 0, z: 0 }),
+        numSolverContacts: () => 1,
+        solverContactPoint: () => ({ x: -2, y: 0, z: 0 }),
+      },
+    }
+
+    const bounce = calculateBounce(flipped as unknown as CollisionEnterPayload, new Vector3(-5, 0, 0))
+
+    expect(bounce!.x, 'a flipped normal cannot push a snail deeper into a wall').toBeCloseTo(7)
+  })
 })
 
-const stunnedSnail = () =>
-  ({
-    linvel: () => ({ x: 0, y: 0, z: 5 }),
+describe('useCollision of a directionless contact', () => {
+  it('cannot crash on a contact with no direction', () => {
+    vi.mocked(useSnailDeps).mockReturnValue({
+      onCollision: vi.fn(),
+      shouldHandleCollision: () => true,
+    } as unknown as ReturnType<typeof useSnailDeps>)
+    const still = {
+      linvel: () => ({ x: 0, y: 0, z: 0 }),
+      translation: () => ({ x: 0, y: 0, z: 0 }),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      applyImpulse: vi.fn(),
+    } as unknown as RapierRigidBody
+    const contactless = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+    } as unknown as BouncePayload
+
+    const { result } = renderHook(() => useCollision({ current: still }, vi.fn(), vi.fn()))
+    result.current.enter(contactless)
+
+    expect(still.applyImpulse, 'a directionless contact cannot bounce a snail').not.toHaveBeenCalled()
+  })
+})
+
+describe('useCollision of a non obstacle', () => {
+  it('cannot bounce a snail off a non obstacle', () => {
+    vi.mocked(useSnailDeps).mockReturnValue({
+      onCollision: vi.fn(),
+      shouldHandleCollision: () => false,
+    } as unknown as ReturnType<typeof useSnailDeps>)
+    const snail = {
+      linvel: () => ({ x: 5, y: 0, z: 0 }),
+      translation: () => ({ x: 0, y: 0, z: 0 }),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      applyImpulse: vi.fn(),
+    } as unknown as RapierRigidBody
+    const decoration = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      other: { rigidBody: { userData: {}, isKinematic: () => false } },
+      manifold: {
+        normal: () => ({ x: 1, y: 0, z: 0 }),
+        numSolverContacts: () => 1,
+        solverContactPoint: () => ({ x: 2, y: 0, z: 0 }),
+      },
+    } as unknown as BouncePayload
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    result.current.enter(decoration)
+
+    expect(snail.applyImpulse, 'a non obstacle cannot bounce a snail').not.toHaveBeenCalled()
+  })
+})
+
+const stunned = () => {
+  vi.spyOn(Math, 'random').mockReturnValue(0.5)
+  vi.mocked(useSnailDeps).mockReturnValue({
+    onCollision: vi.fn(),
+    shouldHandleCollision: () => true,
+  } as unknown as ReturnType<typeof useSnailDeps>)
+  vi.mocked(useSnailContext).mockReturnValue({
+    updatePosition: vi.fn(),
+    getIsStuning: () => true,
+  } as unknown as ReturnType<typeof useSnailContext>)
+  const snail = {
+    linvel: () => ({ x: 5, y: 0, z: 0 }),
     translation: () => ({ x: 0, y: 0, z: 0 }),
     setLinvel: vi.fn(),
     setAngvel: vi.fn(),
     applyImpulse: vi.fn(),
-  }) as unknown as RapierRigidBody
+  } as unknown as RapierRigidBody
+  const wall = {
+    target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+    other: { rigidBody: { userData: { isObstacle: true }, isKinematic: () => false } },
+    manifold: {
+      normal: () => ({ x: 1, y: 0, z: 0 }),
+      numSolverContacts: () => 1,
+      solverContactPoint: () => ({ x: 2, y: 0, z: 0 }),
+    },
+  } as unknown as BouncePayload
+  return { snail, wall }
+}
 
-describe('useCollision of a lasting overlap', () => {
-  it('cannot let a snail shake off a stun it still touches', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.5)
-    vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
-    vi.mocked(useSnailDeps).mockReturnValue({
-      onCollision: vi.fn(),
-      shouldHandleCollision: () => true,
-    } as unknown as ReturnType<typeof useSnailDeps>)
+describe('useCollision of a stunned snail', () => {
+  it('cannot restart a stun of an already stunned snail', () => {
+    const { snail, wall } = stunned()
     const stun = vi.fn()
 
-    const { result } = renderHook(() =>
-      useCollision({ current: stunnedSnail() }, stun, vi.fn())
-    )
-    result.current.enter(touching(7, () => true) as unknown as BouncePayload)
-    vi.spyOn(Date, 'now').mockReturnValue(1_001_000)
-    result.current.tick()
+    const { result } = renderHook(() => useCollision({ current: snail }, stun, vi.fn()))
+    result.current.enter(wall)
 
-    expect(stun, 'a snail cannot shake off a stun it still touches').toHaveBeenCalledTimes(2)
+    expect(stun, 'a stun cannot restart while the previous one lasts').not.toHaveBeenCalled()
   })
 
-  it('cannot bounce a snail that has left the obstacle', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+  it('cannot interrupt animations of a stunned snail', () => {
+    const { snail, wall } = stunned()
+    const interrupt = vi.fn()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), interrupt))
+    result.current.enter(wall)
+
+    expect(interrupt, 'a repeat hit cannot interrupt a running stun animation').not.toHaveBeenCalled()
+  })
+
+  it('cannot pin a stunned snail against an obstacle', () => {
+    const { snail, wall } = stunned()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    result.current.enter(wall)
+
+    expect(snail.applyImpulse, 'a stunned snail cannot stay pinned to an obstacle').toHaveBeenCalledOnce()
+  })
+})
+
+describe('useCollision inside the cooldown window', () => {
+  it('cannot bounce twice inside the collision cooldown', () => {
+    const { snail, wall } = stunned()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
     vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+    result.current.enter(wall)
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_149)
+    result.current.enter(wall)
+
+    expect(snail.applyImpulse, 'the cooldown window cannot let a second bounce through').toHaveBeenCalledOnce()
+  })
+
+  it('cannot ignore a collision after the cooldown passes', () => {
+    const { snail, wall } = stunned()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+    result.current.enter(wall)
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_151)
+    result.current.enter(wall)
+
+    expect(snail.applyImpulse, 'an expired cooldown cannot swallow a collision').toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('useCollision of a turning snail', () => {
+  it('cannot bounce a snail off a wall it only turned into', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
     vi.mocked(useSnailDeps).mockReturnValue({
       onCollision: vi.fn(),
       shouldHandleCollision: () => true,
     } as unknown as ReturnType<typeof useSnailDeps>)
-    const snail = stunnedSnail()
-    const chopper = touching(8, () => true) as unknown as BouncePayload
+    const turning = {
+      linvel: () => ({ x: 0.2, y: 0, z: 0.2 }),
+      translation: () => ({ x: 0, y: 0, z: 0 }),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      applyImpulse: vi.fn(),
+    } as unknown as RapierRigidBody
+    const wall = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      other: { rigidBody: { userData: { isObstacle: true }, isKinematic: () => false } },
+      manifold: {
+        normal: () => ({ x: 1, y: 0, z: 0 }),
+        numSolverContacts: () => 1,
+        solverContactPoint: () => ({ x: 1, y: 0, z: 0 }),
+      },
+    } as unknown as BouncePayload
 
-    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    const { result } = renderHook(() => useCollision({ current: turning }, vi.fn(), vi.fn()))
+    result.current.enter(wall)
+
+    expect(turning.applyImpulse, 'a turn in place cannot bounce a snail off a wall').not.toHaveBeenCalled()
+  })
+
+  it('cannot ignore a chopper hitting a resting snail', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+    vi.mocked(useSnailDeps).mockReturnValue({
+      onCollision: vi.fn(),
+      shouldHandleCollision: () => true,
+    } as unknown as ReturnType<typeof useSnailDeps>)
+    const resting = {
+      linvel: () => ({ x: 0, y: 0, z: 0 }),
+      translation: () => ({ x: 0, y: 0, z: 0 }),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      applyImpulse: vi.fn(),
+    } as unknown as RapierRigidBody
+    const chopper = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      other: {
+        rigidBody: {
+          userData: { isObstacle: true },
+          isKinematic: () => true,
+          translation: () => ({ x: 0, y: 0, z: 6 }),
+        },
+      },
+    } as unknown as BouncePayload
+
+    const { result } = renderHook(() => useCollision({ current: resting }, vi.fn(), vi.fn()))
     result.current.enter(chopper)
-    result.current.exit(chopper)
-    vi.spyOn(Date, 'now').mockReturnValue(1_001_000)
-    result.current.tick()
 
-    expect(
-      snail.applyImpulse,
-      'a snail cannot keep bouncing after leaving an obstacle'
-    ).toHaveBeenCalledOnce()
-  })
-
-  it('cannot bounce a snail off a vanished obstacle', () => {
-    vi.spyOn(Math, 'random').mockReturnValue(0.5)
-    vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
-    vi.mocked(useSnailDeps).mockReturnValue({
-      onCollision: vi.fn(),
-      shouldHandleCollision: () => true,
-    } as unknown as ReturnType<typeof useSnailDeps>)
-    const snail = stunnedSnail()
-    let alive = true
-
-    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
-    result.current.enter(touching(9, () => alive) as unknown as BouncePayload)
-    alive = false
-    vi.spyOn(Date, 'now').mockReturnValue(1_001_000)
-    result.current.tick()
-
-    expect(
-      snail.applyImpulse,
-      'a snail cannot bounce off an obstacle that no longer exists'
-    ).toHaveBeenCalledOnce()
+    expect(resting.applyImpulse, 'a moving chopper cannot pass through a resting snail').toHaveBeenCalledOnce()
   })
 })

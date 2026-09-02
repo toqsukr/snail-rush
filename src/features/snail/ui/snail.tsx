@@ -93,7 +93,6 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     if (textRef.current) {
       textRef.current.lookAt?.(camera.position)
     }
-    collision.tick()
     snapshot.tick()
   })
 
@@ -131,9 +130,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       friction={1.5}
       linearDamping={linearDamping}
       onCollisionEnter={collision.enter}
-      onCollisionExit={collision.exit}
       onIntersectionEnter={collision.enter}
-      onIntersectionExit={collision.exit}
       enabledRotations={[false, false, false]}
       enabledTranslations={[true, false, true]}
       restitution={0}>
