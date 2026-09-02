@@ -384,3 +384,29 @@ describe('useCollision of a stunned snail', () => {
     expect(snail.applyImpulse, 'a stunned snail cannot stay pinned to an obstacle').toHaveBeenCalledOnce()
   })
 })
+
+describe('useCollision inside the cooldown window', () => {
+  it('cannot bounce twice inside the collision cooldown', () => {
+    const { snail, wall } = stunned()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+    result.current.enter(wall)
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_149)
+    result.current.enter(wall)
+
+    expect(snail.applyImpulse, 'the cooldown window cannot let a second bounce through').toHaveBeenCalledOnce()
+  })
+
+  it('cannot ignore a collision after the cooldown passes', () => {
+    const { snail, wall } = stunned()
+
+    const { result } = renderHook(() => useCollision({ current: snail }, vi.fn(), vi.fn()))
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_000)
+    result.current.enter(wall)
+    vi.spyOn(Date, 'now').mockReturnValue(1_000_151)
+    result.current.enter(wall)
+
+    expect(snail.applyImpulse, 'an expired cooldown cannot swallow a collision').toHaveBeenCalledTimes(2)
+  })
+})

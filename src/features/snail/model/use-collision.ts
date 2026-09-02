@@ -77,17 +77,15 @@ export const useCollision = (
   const { onCollision, shouldHandleCollision } = useSnailDeps()
   const { updatePosition, getIsStuning } = useSnailContext()
 
-  const lastCollisionRef = useRef(0)
+  const lastBounceRef = useRef(0)
 
   const bounce = (event: BouncePayload) => {
-    const now = Date.now()
-    if (now - lastCollisionRef.current < useSnailParams.getState().collisionCooldown) return
     if (!rigidBodyRef.current) return
     const approach = rigidBodyRef.current.linvel()
     const obstacleType = event.other?.rigidBody?.isKinematic() ? 'kinematicPosition' : 'fixed'
     const impulse = calculateBounce(event, new Vector3(approach.x, 0, approach.z), obstacleType)
     if (!impulse) return
-    lastCollisionRef.current = now
+    lastBounceRef.current = Date.now()
     if (!getIsStuning()) {
       stopAllAnimation()
       animateCollision()
@@ -103,6 +101,7 @@ export const useCollision = (
 
   const enter = (event: BouncePayload) => {
     if (!shouldHandleCollision(event.other?.rigidBody?.userData)) return
+    if (Date.now() - lastBounceRef.current < useSnailParams.getState().collisionCooldown) return
     bounce(event)
   }
 
