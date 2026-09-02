@@ -7,6 +7,7 @@ import {
   IMPULSE_MULTIPLIER,
   LINEAR_DAMPING,
   COLLISION_COOLDOWN,
+  MIN_APPROACH_SPEED,
 } from './constants'
 
 type SnailParams = {
@@ -14,6 +15,7 @@ type SnailParams = {
   impulseMultiplier: number
   dynamicObstacleMultiplier: number
   collisionCooldown: number
+  minApproachSpeed: number
   stunTimeout: number
   bounceJitter: number
   linearDamping: number
@@ -21,6 +23,7 @@ type SnailParams = {
   updateImpulseMultiplier: (impulseMultiplier: number) => void
   updateDynamicObstacleMultiplier: (dynamicObstacleMultiplier: number) => void
   updateCollisionCooldown: (collisionCooldown: number) => void
+  updateMinApproachSpeed: (minApproachSpeed: number) => void
   updateStunTimeout: (stunTimeout: number) => void
   updateBounceJitter: (bounceJitter: number) => void
   updateLinearDamping: (linearDamping: number) => void
@@ -31,6 +34,7 @@ export const useSnailParams = create<SnailParams>((set, get) => ({
   impulseMultiplier: IMPULSE_MULTIPLIER,
   dynamicObstacleMultiplier: DYNAMIC_OBSTACLE_MULTIPLIER,
   collisionCooldown: COLLISION_COOLDOWN,
+  minApproachSpeed: MIN_APPROACH_SPEED,
   stunTimeout: STUN_TIMEOUT,
   bounceJitter: BOUNCE_JITTER,
   linearDamping: LINEAR_DAMPING,
@@ -39,6 +43,7 @@ export const useSnailParams = create<SnailParams>((set, get) => ({
   updateDynamicObstacleMultiplier: dynamicObstacleMultiplier =>
     set({ ...get(), dynamicObstacleMultiplier }),
   updateCollisionCooldown: collisionCooldown => set({ ...get(), collisionCooldown }),
+  updateMinApproachSpeed: minApproachSpeed => set({ ...get(), minApproachSpeed }),
   updateStunTimeout: stunTimeout => set({ ...get(), stunTimeout }),
   updateBounceJitter: bounceJitter => set({ ...get(), bounceJitter }),
   updateLinearDamping: linearDamping => set({ ...get(), linearDamping }),

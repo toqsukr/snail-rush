@@ -13,6 +13,7 @@ vi.mock('../params', () => ({
       dynamicObstacleMultiplier: 0.3,
       collisionCooldown: 150,
       bounceJitter: 0.1,
+      minApproachSpeed: 0.5,
     }),
   },
 }))
@@ -408,5 +409,66 @@ describe('useCollision inside the cooldown window', () => {
     result.current.enter(wall)
 
     expect(snail.applyImpulse, 'an expired cooldown cannot swallow a collision').toHaveBeenCalledTimes(2)
+  })
+})
+
+describe('useCollision of a turning snail', () => {
+  it('cannot bounce a snail off a wall it only turned into', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+    vi.mocked(useSnailDeps).mockReturnValue({
+      onCollision: vi.fn(),
+      shouldHandleCollision: () => true,
+    } as unknown as ReturnType<typeof useSnailDeps>)
+    const turning = {
+      linvel: () => ({ x: 0.2, y: 0, z: 0.2 }),
+      translation: () => ({ x: 0, y: 0, z: 0 }),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      applyImpulse: vi.fn(),
+    } as unknown as RapierRigidBody
+    const wall = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      other: { rigidBody: { userData: { isObstacle: true }, isKinematic: () => false } },
+      manifold: {
+        normal: () => ({ x: 1, y: 0, z: 0 }),
+        numSolverContacts: () => 1,
+        solverContactPoint: () => ({ x: 1, y: 0, z: 0 }),
+      },
+    } as unknown as BouncePayload
+
+    const { result } = renderHook(() => useCollision({ current: turning }, vi.fn(), vi.fn()))
+    result.current.enter(wall)
+
+    expect(turning.applyImpulse, 'a turn in place cannot bounce a snail off a wall').not.toHaveBeenCalled()
+  })
+
+  it('cannot ignore a chopper hitting a resting snail', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.5)
+    vi.mocked(useSnailDeps).mockReturnValue({
+      onCollision: vi.fn(),
+      shouldHandleCollision: () => true,
+    } as unknown as ReturnType<typeof useSnailDeps>)
+    const resting = {
+      linvel: () => ({ x: 0, y: 0, z: 0 }),
+      translation: () => ({ x: 0, y: 0, z: 0 }),
+      setLinvel: vi.fn(),
+      setAngvel: vi.fn(),
+      applyImpulse: vi.fn(),
+    } as unknown as RapierRigidBody
+    const chopper = {
+      target: { rigidBody: { translation: () => ({ x: 0, y: 0, z: 0 }) } },
+      other: {
+        rigidBody: {
+          userData: { isObstacle: true },
+          isKinematic: () => true,
+          translation: () => ({ x: 0, y: 0, z: 6 }),
+        },
+      },
+    } as unknown as BouncePayload
+
+    const { result } = renderHook(() => useCollision({ current: resting }, vi.fn(), vi.fn()))
+    result.current.enter(chopper)
+
+    expect(resting.applyImpulse, 'a moving chopper cannot pass through a resting snail').toHaveBeenCalledOnce()
   })
 })

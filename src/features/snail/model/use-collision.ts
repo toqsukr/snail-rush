@@ -81,9 +81,12 @@ export const useCollision = (
 
   const bounce = (event: BouncePayload) => {
     if (!rigidBodyRef.current) return
-    const approach = rigidBodyRef.current.linvel()
-    const obstacleType = event.other?.rigidBody?.isKinematic() ? 'kinematicPosition' : 'fixed'
-    const impulse = calculateBounce(event, new Vector3(approach.x, 0, approach.z), obstacleType)
+    const speed = rigidBodyRef.current.linvel()
+    const approach = horizontal(speed.x, speed.z)
+    const kinematic = event.other?.rigidBody?.isKinematic()
+    if (!kinematic && approach.length() < useSnailParams.getState().minApproachSpeed) return
+    const obstacleType = kinematic ? 'kinematicPosition' : 'fixed'
+    const impulse = calculateBounce(event, approach, obstacleType)
     if (!impulse) return
     lastBounceRef.current = Date.now()
     if (!getIsStuning()) {

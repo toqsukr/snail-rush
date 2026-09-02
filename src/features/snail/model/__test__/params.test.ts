@@ -6,6 +6,6 @@ describe('useSnailParams', () => {
     expect(
       useSnailParams.getState().collisionCooldown,
       'collision cooldown cannot stay a hair trigger'
-    ).toBe(800)
+    ).toBe(400)
   })
 })

@@ -7,6 +7,7 @@ export const useSnailTools = () => {
     impulseMultiplier,
     dynamicObstacleMultiplier,
     collisionCooldown,
+    minApproachSpeed,
     stunTimeout,
     bounceJitter,
     linearDamping,
@@ -14,6 +15,7 @@ export const useSnailTools = () => {
     updateImpulseMultiplier,
     updateDynamicObstacleMultiplier,
     updateCollisionCooldown,
+    updateMinApproachSpeed,
     updateStunTimeout,
     updateBounceJitter,
     updateLinearDamping,
@@ -43,6 +45,12 @@ export const useSnailTools = () => {
       name: 'COLLISION_COOLDOWN',
       value: [collisionCooldown, 0, 3000, 50],
       onChange: ([value]) => updateCollisionCooldown(value),
+    },
+    {
+      type: 'range',
+      name: 'MIN_APPROACH_SPEED',
+      value: [minApproachSpeed, 0, 5, 0.1],
+      onChange: ([value]) => updateMinApproachSpeed(value),
     },
     {
       type: 'range',
