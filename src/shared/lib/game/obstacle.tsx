@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'reac
 import { Euler, Quaternion, Vector3 } from 'three'
 import {
   ConvexHullCollider,
+  CuboidCollider,
   interactionGroups,
   RapierRigidBody,
   RigidBody,
@@ -23,13 +24,25 @@ export const isObstacle = (targetModelUserData: unknown) => {
   return targetModelUserData.isObstacle
 }
 
+export type ColliderBox = {
+  args: [halfWidth: number, halfHeight: number, halfDepth: number]
+  position: [x: number, y: number, z: number]
+  rotation: [x: number, y: number, z: number]
+}
+
 type StaticObstacleProp = {
   model: ReactNode
+  collider?: ColliderBox
 } & RigidBodyProps
 
-export const StaticObstacle: FC<StaticObstacleProp> = ({ model, ...props }) => {
+export const StaticObstacle: FC<StaticObstacleProp> = ({ model, collider, ...props }) => {
   return (
-    <RigidBody {...props} type='fixed' colliders='trimesh' userData={{ isObstacle: true }}>
+    <RigidBody
+      {...props}
+      type='fixed'
+      colliders={collider ? false : 'cuboid'}
+      userData={{ isObstacle: true }}>
+      {collider && <CuboidCollider {...collider} />}
       {model}
     </RigidBody>
   )
