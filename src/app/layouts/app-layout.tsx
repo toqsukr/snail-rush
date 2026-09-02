@@ -69,7 +69,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
             { name: 'right', keys: ['ArrowRight'] },
             { name: 'jump', keys: ['Space'] },
           ]}>
-          <Physics gravity={[0, -9.8, 0]} debug timeStep={1 / 60}>
+          <Physics gravity={[0, -9.8, 0]} timeStep={1 / 60}>
             {children}
           </Physics>
         </KeyboardControls>

@@ -3,7 +3,7 @@ import { useThree } from '@react-three/fiber'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
 import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
 import { TransformControls, TransformControlsProps, useGLTF } from '@react-three/drei'
-import { ChopperObstacle, StaticObstacle } from './obstacle'
+import { ChopperObstacle, ColliderBox, StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
 import { StartModel } from './start'
 import { ModelPrimitive } from './primitive'
@@ -42,6 +42,17 @@ export type MapData = {
       modelPath: string
     }
   }
+}
+
+const STONE_COLLIDER: ColliderBox = {
+  args: [1.25, 1.42, 1.64],
+  position: [-0.02, 1.42, -0.02],
+  rotation: [0, -0.44, 0],
+}
+const SMALL_STONE_COLLIDER: ColliderBox = {
+  args: [0.65, 0.57, 0.72],
+  position: [-0.03, 0.57, 0.01],
+  rotation: [0, -1.2, 0],
 }
 
 type EditMode = 'rotate' | 'translate'
@@ -152,6 +163,7 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, started
       {stone?.items.map(({ name, position, rotation }) => (
         <StaticObstacle
           key={name}
+          collider={STONE_COLLIDER}
           rotation={new Euler(...rotation)}
           position={new Vector3(...position)}
           model={
@@ -169,6 +181,7 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, started
       {smallStone?.items.map(({ name, position, rotation }) => (
         <StaticObstacle
           key={name}
+          collider={SMALL_STONE_COLLIDER}
           rotation={new Euler(...rotation)}
           position={new Vector3(...position)}
           model={
