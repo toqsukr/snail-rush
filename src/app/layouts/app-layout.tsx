@@ -95,6 +95,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
 
 useGLTF.preload('models/grass-plane.glb')
 useGLTF.preload('models/grass-walls.glb')
+useGLTF.preload('models/grass-decor.glb')
 useTexture.preload(getTexturePath(PlayerSkins.HERBIVORE))
 useTexture.preload(getTexturePath(PlayerSkins.PREDATOR))
 

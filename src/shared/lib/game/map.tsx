@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import { useThree } from '@react-three/fiber'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
 import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
@@ -7,6 +7,7 @@ import { ChopperObstacle, ColliderBox, StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
 import { StartModel } from './start'
 import { ModelPrimitive } from './primitive'
+import { modelInstance } from './model-instance'
 
 export type MapObject = {
   name: string
@@ -81,6 +82,17 @@ type GameMapProp = {
     }
 )
 
+const MapDecoration: FC<{ modelPath: string }> = ({ modelPath }) => {
+  const { scene } = useGLTF(modelPath)
+  const decoration = useMemo(() => modelInstance(scene), [scene])
+
+  return (
+    <group>
+      <primitive object={decoration} />
+    </group>
+  )
+}
+
 export const MapModelConstruct = ({
   planeModelPath,
   wallsModelPath,
@@ -93,15 +105,9 @@ export const MapModelConstruct = ({
   const mapPlane = useGLTF(planeModelPath)
   const mapWalls = useGLTF(wallsModelPath)
 
-  const Decoration = ({ decorationModelPath }: { decorationModelPath: string }) => {
-    const mapDecoration = useGLTF(decorationModelPath)
-
-    return <primitive object={mapDecoration.scene} />
-  }
-
   return (
     <>
-      {decorationModelPath && <Decoration decorationModelPath={decorationModelPath} />}
+      {decorationModelPath && <MapDecoration modelPath={decorationModelPath} />}
       <RigidBody colliders='cuboid' collisionGroups={interactionGroups(0b01, 0b10)} type='fixed'>
         <primitive object={mapPlane.scene} />
       </RigidBody>
