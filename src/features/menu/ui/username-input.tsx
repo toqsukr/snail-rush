@@ -1,6 +1,6 @@
 import { FC, HTMLProps } from 'react'
 import { useTranslation } from 'react-i18next'
-import Input from '@shared/uikit/input/Input'
+import { Input } from '@shared/uikit/input'
 import { useUpdateUsername } from '../model/use-update-username'
 
 const UsernameInput: FC<HTMLProps<HTMLInputElement>> = ({ onChange, ...props }) => {

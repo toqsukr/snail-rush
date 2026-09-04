@@ -1,10 +1,9 @@
-import { FC, useState } from 'react'
 import clsx from 'clsx'
-import css from './clipboard-text.module.scss'
+import { useState } from 'react'
+import { ClipboardTextProps } from './types'
+import css from './styles.module.scss'
 
-type ClipboardTextProps = { text: string; value: string; onCopy?: (value: string) => void }
-
-export const ClipboardText: FC<ClipboardTextProps> = ({ text, value, onCopy }) => {
+export const ClipboardText = ({ text, value, onCopy }: ClipboardTextProps) => {
   const [active, setActive] = useState(false)
 
   const handleTextClick = () => {

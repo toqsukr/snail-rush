@@ -1,6 +1,4 @@
 .button {
-  /* font-size: 1.1rem;
-  letter-spacing: 0.15rem; */
   font-size: 1rem;
   font-weight: semibold;
   color: white;
@@ -8,7 +6,10 @@
   box-shadow: 0 0 6px 1px black;
   padding-block: 0.7rem;
   border-radius: 0.7rem;
-  transition: box-shadow 0.2s, background-color 0.3s, color 0.3s;
+  transition:
+    box-shadow 0.2s,
+    background-color 0.3s,
+    color 0.3s;
 
   @media (hover: hover) {
     &:hover,

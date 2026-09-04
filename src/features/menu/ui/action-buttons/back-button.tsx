@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { useTranslation } from 'react-i18next'
-import Button from '@shared/uikit/button/Button'
+import { Button } from '@shared/uikit/button'
 import { useMainMenuDeps } from '../../../menu/deps'
 import { useBack } from '../../model/use-back'
 
