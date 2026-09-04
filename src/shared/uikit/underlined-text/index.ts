@@ -1,0 +1,1 @@
+export { UnderlinedText } from './component'

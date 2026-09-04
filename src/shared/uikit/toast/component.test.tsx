@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { pushToast, useToastStore } from '@shared/lib/toast'
-import { Toasts } from '../toasts'
+import { Toasts } from './component'
 
 const texts = () => useToastStore.getState().toasts.map(toast => toast.text)
 

@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Routes } from '@shared/model/routes'
-import Button from '@shared/uikit/button/Button'
+import { Button } from '@shared/uikit/button'
 import FailureScreen from './failure-screen'
 
 const NotFoundScreen = () => {
