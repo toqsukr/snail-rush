@@ -15,5 +15,6 @@
   "not_found_hint_text": "There is no such track here, head back to the start",
   "to_home_text": "TO HOME",
   "request_error_text": "Request failed ({{status}})",
-  "network_error_text": "Server is unreachable"
+  "network_error_text": "Server is unreachable",
+  "loading_text": "Loading..."
 }
