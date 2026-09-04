@@ -8,8 +8,9 @@ import {
   RoundCuboidCollider,
 } from '@react-three/rapier'
 import React, { FC } from 'react'
-import { BufferGeometry, MeshPhysicalMaterial, Skeleton } from 'three'
+import { BufferGeometry, Skeleton } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
+import { useMaterial } from '../model/use-material'
 
 type StaticSnailProps = { texturePath: string } & RigidBodyProps
 
@@ -30,16 +31,7 @@ export const StaticSnail: FC<StaticSnailProps> = ({ texturePath, ...props }) => 
     }
   }
 
-  mapTexture.flipY = false
-  mapTexture.colorSpace = 'srgb'
-
-  const material = new MeshPhysicalMaterial({
-    ...meshProps.material,
-    map: mapTexture,
-    color: 0xaaaaaa,
-    metalness: 0.1,
-    roughness: 0.1,
-  })
+  const material = useMaterial(meshProps.material, mapTexture)
 
   return (
     <RigidBody
@@ -81,6 +73,3 @@ export const StaticSnail: FC<StaticSnailProps> = ({ texturePath, ...props }) => 
 }
 
 useGLTF.preload('/models/snail.glb')
-// useTexture.preload(textures[0])
-// useTexture.preload(textures[1])
-// useTexture.preload(textures[2])

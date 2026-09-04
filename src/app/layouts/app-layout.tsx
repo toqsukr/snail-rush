@@ -1,10 +1,10 @@
-import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
+import { KeyboardControls, useGLTF } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 import { useTranslation } from 'react-i18next'
 import { FC, PropsWithChildren, useEffect } from 'react'
 
-import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
+import { useGameStore } from '@features/game'
 import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import ButtonController from '@shared/lib/mobile-control/button'
 import { useDeviceDetection } from '@shared/lib/device'
@@ -96,7 +96,5 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
 useGLTF.preload('models/grass-plane.glb')
 useGLTF.preload('models/grass-walls.glb')
 useGLTF.preload('models/grass-decor.glb')
-useTexture.preload(getTexturePath(PlayerSkins.HERBIVORE))
-useTexture.preload(getTexturePath(PlayerSkins.PREDATOR))
 
 export default withWebgl(AppLayout, WebglScreen)
