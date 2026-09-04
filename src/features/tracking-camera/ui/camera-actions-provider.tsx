@@ -42,7 +42,7 @@ export const TrackCameraProvider: FC<PropsWithChildren<TrackingCameraDeps>> = ({
     rotation: initRotation,
   }))
 
-  const cameraPosition: [number, number, number] = initPosition
+  const cameraPosition = initPosition
   const cameraPositionVector = new Vector3(...cameraPosition)
   const targetPosition = new Vector3(0, 0, 0)
 
