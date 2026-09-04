@@ -8,6 +8,7 @@ export type PositionType = {
   impulse: Vector3
   holdTime: number
   duration: number
+  bounced?: boolean
 }
 
 export type PositionWithCorrectType = {
@@ -19,6 +20,11 @@ export type PositionWithoutCorrectType = {
   correctStartPosition?: false
   startPosition?: never
 } & PositionType
+
+export type SnapshotType = {
+  position: Vector3
+  velocity: Vector3
+}
 
 export type RotationType = {
   rotation: Euler

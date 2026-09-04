@@ -6,6 +6,7 @@ import {
   playerDepsContext,
   playerPositionEmitter,
   playerRotationEmitter,
+  useControlParams,
 } from '@features/player-control'
 import {
   calculateImpulse,
@@ -14,10 +15,16 @@ import {
   SnailProvider,
   useCalcAnimationDuration,
   useSnailContext,
+  useSnailParams,
 } from '@features/snail'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { isObstacle } from '@shared/lib/game/obstacle'
-import { useGameStore, getTexturePath, PlayerSkins, getStartPosition } from '@features/game'
+import {
+  useGameStore,
+  useStunLock,
+  getTexturePath,
+  PlayerSkins,
+  getStartPosition,
+} from '@features/game'
 import { useSkinById } from '@entities/skin'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
@@ -77,16 +84,14 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 const PlayerSuspense = () => {
   const { data: user } = useUser()
   const { data: skin } = useSkinById(user?.skinID ?? '')
-  const { moveable, updateMoveable, updatePlayerModelHandle } = useGameStore()
+  const { updatePlayerModelHandle } = useGameStore()
+  const { stunTimeout } = useSnailParams()
+  const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
+  const stunLock = useStunLock()
 
   const onCollision = useCallback(() => {
-    if (moveable) {
-      updateMoveable(false)
-      setTimeout(() => {
-        updateMoveable(true)
-      }, STUN_TIMEOUT)
-    }
-  }, [moveable])
+    stunLock(stunTimeout)
+  }, [stunLock, stunTimeout])
 
   if (!user) return
 
@@ -107,9 +112,9 @@ const PlayerSuspense = () => {
           texturePath,
           onCollision,
           handleModelHandle,
-          stunTimeout: STUN_TIMEOUT,
+          stunTimeout,
           shouldHandleCollision: isObstacle,
-          shrinkDuration: MAX_SPACE_HOLD_TIME,
+          shrinkDuration,
           positionEmitter: playerPositionEmitter,
           rotationEmitter: playerRotationEmitter,
         }}>

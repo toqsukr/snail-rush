@@ -10,6 +10,12 @@ export type PositionType = {
   impulse: Vector3
   holdTime: number
   duration: number
+  bounced?: boolean
+}
+
+export type SnapshotType = {
+  position: Vector3
+  velocity: Vector3
 }
 
 export type RotationType = {

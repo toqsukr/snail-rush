@@ -2,8 +2,8 @@ import { afterAll, beforeAll, describe, it, vi, expect } from 'vitest'
 import { calculateImpulse } from '../impulse'
 import { Euler, Vector3 } from 'three'
 
-vi.mock('../constants', () => ({
-  IMPULSE_MULTIPLIER: 10
+vi.mock('../params', () => ({
+  useSnailParams: { getState: () => ({ impulseMultiplier: 10 }) }
 }))
 
 describe('calculateImpulse', () => {

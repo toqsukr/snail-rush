@@ -1,4 +1,5 @@
 import { useThree } from '@react-three/fiber'
+import { CAMERA_FOCUS_DURATION } from '@shared/config/game'
 import { Euler, Matrix4, Quaternion, Vector3 } from 'three'
 import { useTrackCameraContext } from '../ui/camera-actions-provider'
 
@@ -23,7 +24,7 @@ export const useGetFocusToConfig = () => {
 
     return {
       rotation: targetRotation,
-      config: { mass: 1, tension: 50, friction: 40, duration: 1400 },
+      config: { mass: 1, tension: 50, friction: 40, duration: CAMERA_FOCUS_DURATION },
     }
   }
 }

@@ -38,6 +38,8 @@ export const TransferPositionSchema = z.object({
   }),
   hold_time: z.number(),
   duration: z.number(),
+  bounced: z.boolean().optional(),
+  snapshot: z.boolean().optional(),
 })
 
 export const TransferStartJumpSchema = z.object({
@@ -70,6 +72,10 @@ export type OpponentPositionType = z.infer<typeof OpponentPositionSchema>
 export type OpponentStartJumpType = z.infer<typeof OpponentStartJumpSchema>
 
 export type OpponentRotationType = z.infer<typeof OpponentRotationSchema>
+
+export const ActorSchema = z.object({
+  actor_id: z.string(),
+})
 
 export const WebSocketResponseSchema = z.object({
   type: z.nativeEnum(Operations),
@@ -105,6 +111,14 @@ export type PlayerStartJumpMessageType = z.infer<typeof PlayerStartJumpMessageSc
 export type PlayerRotateMessageType = z.infer<typeof PlayerRotateMessageSchema>
 
 export type MessageType = z.infer<typeof MessageSchema>
+
+export const StartMessageSchema = MessageSchema.merge(
+  z.object({
+    start_delay: z.number().optional(),
+  })
+)
+
+export type StartMessageType = z.infer<typeof StartMessageSchema>
 
 export const ConnectPlayerMessageSchema = MessageSchema.merge(
   z.object({

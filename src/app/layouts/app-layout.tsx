@@ -1,16 +1,19 @@
-import { KeyboardControls, useGLTF, useTexture } from '@react-three/drei'
+import { KeyboardControls, useGLTF } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { Physics } from '@react-three/rapier'
 import { useTranslation } from 'react-i18next'
 import { FC, PropsWithChildren, useEffect } from 'react'
 
-import { getTexturePath, PlayerSkins, useGameStore } from '@features/game'
+import { useGameStore } from '@features/game'
 import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import ButtonController from '@shared/lib/mobile-control/button'
 import { useDeviceDetection } from '@shared/lib/device'
 import { DevTools } from '@shared/lib/devtools'
 import { useObserveTabFocus } from '@shared/lib/tab-focus'
+import { withWebgl } from '@shared/lib/webgl'
+import { Toasts } from '@shared/uikit/toast'
 import '../i18n'
+import WebglScreen from '../ui/webgl-screen'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const device = useDeviceDetection()
@@ -66,11 +69,12 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
             { name: 'right', keys: ['ArrowRight'] },
             { name: 'jump', keys: ['Space'] },
           ]}>
-          <Physics gravity={[0, -9.8, 0]} debug timeStep={1 / 60}>
+          <Physics gravity={[0, -9.8, 0]} timeStep={1 / 60}>
             {children}
           </Physics>
         </KeyboardControls>
       </Canvas>
+      <Toasts />
       {process.env.NODE_ENV === 'development' && <DevTools />}
       {device !== 'desktop' && started && (
         <>
@@ -89,9 +93,8 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   )
 }
 
-useGLTF.preload('models/compressed_grass-map.glb')
+useGLTF.preload('models/grass-plane.glb')
 useGLTF.preload('models/grass-walls.glb')
-useTexture.preload(getTexturePath(PlayerSkins.HERBIVORE))
-useTexture.preload(getTexturePath(PlayerSkins.PREDATOR))
+useGLTF.preload('models/grass-decor.glb')
 
-export default AppLayout
+export default withWebgl(AppLayout, WebglScreen)

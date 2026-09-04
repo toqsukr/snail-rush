@@ -6,6 +6,8 @@ const SkinDTOSchema = z.object({
   skin_id: z.string(),
 })
 
+export type SkinDTO = z.infer<typeof SkinDTOSchema>
+
 class SkinService {
   readonly SKIN_PREFIX = '/skin'
 

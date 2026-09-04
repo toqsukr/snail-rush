@@ -1,11 +1,18 @@
-import { FC, Suspense, useCallback } from 'react'
+import { FC, Suspense } from 'react'
 import { Euler, Vector3 } from 'three'
-import { useSendMoveImpulse, useSendShrink, useSendTargetRotation } from '@features/lobby-events'
+import {
+  BOUNCE_HOLD_TIME,
+  SNAPSHOT_HOLD_TIME,
+  useSendMoveImpulse,
+  useSendShrink,
+  useSendTargetRotation,
+} from '@features/lobby-events'
 import {
   Player,
   playerDepsContext,
   playerPositionEmitter,
   playerRotationEmitter,
+  useControlParams,
 } from '@features/player-control'
 import {
   calculateImpulse,
@@ -14,6 +21,8 @@ import {
   SnailProvider,
   useCalcAnimationDuration,
   useSnailContext,
+  useSnailParams,
+  type SnapshotType,
 } from '@features/snail'
 import {
   getPlayerPosition,
@@ -21,10 +30,10 @@ import {
   getTexturePath,
   PlayerSkins,
   useGameStore,
+  useStunLock,
 } from '@features/game'
 import { useSkinById } from '@entities/skin'
 import { TUser, useUser } from '@entities/user'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
 import { isObstacle } from '@shared/lib/game/obstacle'
 
 const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
@@ -110,17 +119,43 @@ const PlayerSnail: FC<{ user: TUser }> = ({ user }) => {
 
 export const PlayerSuspense = () => {
   const { data: user } = useUser()
-  const { moveable, updateMoveable, playerStatus, updatePlayerModelHandle } = useGameStore()
+  const { playerStatus, updatePlayerModelHandle, started, finished, pause } = useGameStore()
   const { data: skin } = useSkinById(user?.skinID ?? '')
+  const sendMove = useSendMoveImpulse()
+  const stunLock = useStunLock()
+  const { stunTimeout } = useSnailParams()
+  const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
 
-  const onCollision = useCallback(() => {
-    if (moveable) {
-      updateMoveable(false)
-      setTimeout(() => {
-        updateMoveable(true)
-      }, STUN_TIMEOUT)
-    }
-  }, [moveable])
+  const onCollision = ({ position, impulse }: { position: Vector3; impulse: Vector3 }) => {
+    if (!started || finished || pause) return
+    sendMove({
+      move: {
+        x: impulse.x,
+        y: impulse.y,
+        z: impulse.z,
+        duration: 0,
+        position,
+        bounced: true,
+        hold_time: BOUNCE_HOLD_TIME,
+      },
+    })
+    stunLock(stunTimeout)
+  }
+
+  const onSnapshot = ({ position, velocity }: SnapshotType) => {
+    if (!started || finished || pause) return
+    sendMove({
+      move: {
+        x: velocity.x,
+        y: velocity.y,
+        z: velocity.z,
+        duration: 0,
+        position,
+        snapshot: true,
+        hold_time: SNAPSHOT_HOLD_TIME,
+      },
+    })
+  }
 
   if (!playerStatus || !user) return
 
@@ -140,10 +175,11 @@ export const PlayerSuspense = () => {
         value={{
           texturePath,
           onCollision,
+          onSnapshot,
           handleModelHandle,
-          stunTimeout: STUN_TIMEOUT,
+          stunTimeout,
           shouldHandleCollision: isObstacle,
-          shrinkDuration: MAX_SPACE_HOLD_TIME,
+          shrinkDuration,
           positionEmitter: playerPositionEmitter,
           rotationEmitter: playerRotationEmitter,
         }}>

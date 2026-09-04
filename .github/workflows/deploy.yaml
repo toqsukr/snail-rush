@@ -4,54 +4,33 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    types: [closed]
-    branches:
-      - master
+
 env:
-  SSH_PRIVATE_KEY: |
-    -----BEGIN OPENSSH PRIVATE KEY-----
-    b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABBPcHtNz2
-    Hfvn6U+3OOAAZuAAAAGAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIH148ZoK1h9ABtkZ
-    5zikfMiRhsnyf4gRvGFwJna+MILQAAAAoNzrfPs06N9AEQsvgMPTES3Yxmx4HibFSvPdyk
-    MVCo4YZZxvzxu3fM1/YNY5XSrZ1fSr15bIhhO8mEGarad58eB9bQ/qjuiY6sbpVI8j8GQo
-    aPICGSPPT6N9HJjGAFZCev6VA0Ykcdh7Q/m5KZF7H8+NZ/iy9DWRWRe1YgUq87C/WDB4mt
-    sYCGXACEoCOlyzramT+i37Kj0Kb4gp9l9Y25U=
-    -----END OPENSSH PRIVATE KEY-----
-  SSH_KNOWN_HOSTS_CONTENT: |
-    213.171.31.233 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINGkZv0Z1xCXf7dLUEVCUIYCak+JfHOMEKHN3bgrtjOM
-    213.171.31.233 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8X9DYOdDE7zBBI507TVnYBp921Q/2HhP93if9pz8gVIGQyp/Qi+IpHoUByWKIfA2V0ofWma24DsOIzUgnr4xyjRbTwNyBuo3FeMOrKdCjpYVRLMUObmoAfAy9dAjEgXCcSKr/HbOOx2T8NolXIxsU8a/j4BakBPD0jKGakUpAAIPSmZO7nla3HlLDJDck5G1i8uRaHuLD6sq2UO2ad+Ohy3pXsre2aZc4b7O0yx0w8zpi1nj+U/hL5gEnDNUiI1IT5622DSuEW8q4JF6uxOksBEQU/uAGIjKZzQvxgujFGgxeCaOEga8l0ZfWMRfjUzUa35b9XjGUxvYXBUH74TYgt/5R4LT9JyCge8Qjplhs12dIPgqjeNMPujJKf8XsldqUyuVV7lao8KxjfnV460SZe1fb71KQ3De2NafrNXRxDXrnfCzLPNO9PDSBHOohjC0eLdMFPcriTsRy+eUR/GeJaBT0wr0kWruOr1LZQWcjSK1dgu03Yi9FeMpmalcqTwk=
-    213.171.31.233 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBMoJKVOBVuWxmZIcF2JDiASXi0E0HrVw/BN8bFSny+Ql5vuGmcjs1UEMM4dcaLsmHXFeKH62dSmKdkFnaObZ+L0=
-  SSH_PUBLIC_KEY: |
-    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH148ZoK1h9ABtkZ5zikfMiRhsnyf4gRvGFwJna+MILQ skeesh@skeesh-modern15b12m
-  REMOTE_USER: "skeesh"
-  REMOTE_HOST: "213.171.31.233"
-  
+  REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+  REMOTE_USER: ${{ secrets.REMOTE_USER }}
+  PUBLIC_HOST: ${{ vars.PUBLIC_HOST }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if triggered by push or merged PR
-        if: |
-          github.event_name == 'push' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
-        run: echo "This will run on push to master or merged PR"
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-          
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          echo "${{ env.SSH_PUBLIC_KEY }}" > ~/.ssh/id_ed25519.pub
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ env.REMOTE_HOST }} >> ~/.ssh/known_hosts
-          
-      - name: Assert there is known host
+          ssh-keyscan -H "$REMOTE_HOST" >> ~/.ssh/known_hosts
+
+      - name: Deploy to hosting
         run: |
-          cat ~/.ssh/known_hosts
-          
-      - name: Deploy to Hosting
-        run: |
-          ssh ${{ env.REMOTE_USER }}@${{ env.REMOTE_HOST }} "cd snail-rush && git pull origin master && docker compose up --build -d"
+          test -n "$PUBLIC_HOST" || { echo "PUBLIC_HOST variable is not set"; exit 1; }
+          ssh "$REMOTE_USER@$REMOTE_HOST" PUBLIC_HOST="$PUBLIC_HOST" bash -s <<'REMOTE'
+          set -e
+          docker network inspect snail >/dev/null 2>&1 || docker network create snail
+          cd /root/snail-rush
+          git pull origin master
+          printf 'PUBLIC_HOST=%s\n' "$PUBLIC_HOST" > .env
+          docker compose up --build -d
+          docker image prune -f
+          docker builder prune -f --filter until=72h
+          REMOTE

@@ -1,8 +1,7 @@
 import { FC, PropsWithChildren } from 'react'
 import { CountdownProvider } from '@features/countdown'
 import { getPlayerPosition, getStartPosition, useGameStore } from '@features/game'
-
-const START_TIMER_VALUE = 3
+import { COUNTDOWN_DURATION } from '@shared/config/game'
 
 const CountdownLayout: FC<PropsWithChildren> = ({ children }) => {
   const { allowMoving, playerStatus } = useGameStore()
@@ -10,7 +9,7 @@ const CountdownLayout: FC<PropsWithChildren> = ({ children }) => {
 
   const countdownDeps = {
     onAlarm: allowMoving,
-    startValue: START_TIMER_VALUE,
+    duration: COUNTDOWN_DURATION,
     playerPosition: playerStartPosition,
   }
 

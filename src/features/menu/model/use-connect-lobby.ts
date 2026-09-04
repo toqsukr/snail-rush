@@ -2,6 +2,7 @@ import { useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
 import { useConnectSession } from '../api/connect-session'
 import { useMainMenuDeps } from '../deps'
+import { flushRename } from './rename'
 import { useMenu } from './store'
 
 export const useConnectLobby = () => {
@@ -13,6 +14,8 @@ export const useConnectLobby = () => {
 
   return async (sessionID: string) => {
     if (!user?.id) return
+
+    await flushRename()
 
     const session = await connectSession.mutateAsync({ sessionID, playerID: user.id })
     connectLobby()

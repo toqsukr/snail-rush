@@ -11,6 +11,8 @@ import {
   OpponentRotationType,
   useEventsHandler,
   type OpponentStartJumpType,
+  isBounce,
+  isSnapshot,
 } from '@features/lobby-events'
 import { useAppendLog, useClearLogs } from '@features/logflow'
 import { useMenuMode, useToggleReady, useKickLobbyPlayer } from '@features/menu'
@@ -18,6 +20,7 @@ import {
   pushOpponentPosition,
   pushOpponentRotation,
   pushOpponentShrink,
+  pushOpponentSnapshot,
 } from '@features/opponent-control'
 import { useFollowTarget } from '@features/tracking-camera'
 import { getPlayerPosition, getStartPosition, useGameStore } from '@features/game'
@@ -25,6 +28,7 @@ import { getPlayer, TPlayer } from '@entities/players'
 import { invalidateSession, useSession } from '@entities/session'
 import { useUser } from '@entities/user'
 import { WS_HOST_URL } from '@shared/api/base-template'
+import { RACE_LEAD } from '@shared/config/game'
 import { unixFloatToDate } from '@shared/lib/time'
 import { WebSocketProvider } from '@shared/lib/websocket'
 
@@ -59,9 +63,11 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     })
   }
 
-  const onGameStart = async () => {
+  const onGameStart = async (delay = RACE_LEAD) => {
+    const startAt = Date.now() + delay
+    gameStore.markStart(startAt)
+    startTimer(startAt)
     await followTarget(new Vector3(...playerStartPosition))
-    startTimer()
     gameStore.startGame()
     setTimeout(() => {
       if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
@@ -98,9 +104,16 @@ const WebSocketLayout: FC<PropsWithChildren> = ({ children }) => {
     const { duration, hold_time, x, y, z, position } = move
     const startPosition = new Vector3(position.x, position.y, position.z)
 
+    if (isSnapshot(move))
+      return pushOpponentSnapshot({
+        position: startPosition,
+        velocity: new Vector3(x, y, z),
+      })
+
     pushOpponentPosition({
       correctStartPosition: true,
       impulse: new Vector3(x, y, z),
+      bounced: isBounce(move),
       holdTime: hold_time,
       startPosition,
       duration,

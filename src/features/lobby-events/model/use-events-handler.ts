@@ -1,7 +1,9 @@
-import { parseFromPlayerDTO, TPlayer } from '@entities/players'
+import { invalidatePlayerByID, parseFromPlayerDTO, TPlayer } from '@entities/players'
 import { invalidateSession, resetSession, useSessionCode } from '@entities/session'
 import { useUser } from '@entities/user'
+import { isSnapshot } from '../lib/is-snapshot'
 import {
+  ActorSchema,
   ConnectPlayerMessageType,
   KickPlayerMessageType,
   MessageSchema,
@@ -16,6 +18,8 @@ import {
   PlayerRotateMessageType,
   PlayerStartJumpMessageSchema,
   PlayerStartJumpMessageType,
+  StartMessageSchema,
+  StartMessageType,
   WebSocketResponse,
   WebSocketResponseSchema,
 } from './types'
@@ -23,7 +27,7 @@ import {
 type LobbyEventsProviderProp = {
   onKickMe?: () => void
   onKickPlayer?: (id: string) => Promise<void>
-  onGameStart?: () => void
+  onGameStart?: (delay?: number) => void
   onGameStop?: () => void
   onOpponentShrink?: (position: OpponentStartJumpType) => void
   onGameFinish?: (data: MessageType) => void
@@ -63,10 +67,14 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
     try {
       const responseData: WebSocketResponse = WebSocketResponseSchema.parse(JSON.parse(event.data))
 
+      const actor = ActorSchema.safeParse(responseData.data)
+      if (actor.success && actor.data.actor_id === user?.id) return
+
       switch (responseData.type) {
         case Operations.PLAYER_CONNECT: {
           invalidateSession()
           const connectData = responseData.data as ConnectPlayerMessageType
+          connectData.players.forEach(({ player_id }) => invalidatePlayerByID(player_id))
           console.log(responseData, connectData.players)
           onPlayerConnected?.(
             connectData.players.map(player => parseFromPlayerDTO(player)),
@@ -91,7 +99,12 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
         case Operations.PLAYER_MOVE: {
           const { move } = PlayerMoveMessageSchema.parse(responseData.data) as PlayerMoveMessageType
           onChangeOpponentPosition?.({ move })
-          console.log('player moved from', move.position, 'with impulse', [move.x, move.y, move.z])
+          if (!isSnapshot(move))
+            console.log('player moved from', move.position, 'with impulse', [
+              move.x,
+              move.y,
+              move.z,
+            ])
           break
         }
         case Operations.PLAYER_ROTATION: {
@@ -121,7 +134,8 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
         }
         case Operations.SESSION_START: {
-          onGameStart?.()
+          const { start_delay } = StartMessageSchema.parse(responseData.data) as StartMessageType
+          onGameStart?.(start_delay && start_delay * 1000)
           console.log('game started')
           break
         }
@@ -137,7 +151,7 @@ export const useEventsHandler = (props: LobbyEventsProviderProp) => {
           break
       }
     } catch (e) {
-      console.error(e)
+      console.error('cannot handle an inbound lobby message', event.data, e)
     }
   }
 

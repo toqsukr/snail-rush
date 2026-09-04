@@ -1,10 +1,10 @@
-import skinService from '@shared/api/skin'
+import skinService, { type SkinDTO } from '@shared/api/skin'
 import { useQuery } from '@tanstack/react-query'
 import { TSkin } from './type'
 
 const allSkinsQueryKey = 'get-all-skins'
 
-const selectSkins: (data: { name: string; skin_id: string }[]) => TSkin[] = skinsDTO => {
+const selectSkins: (data: SkinDTO[]) => TSkin[] = skinsDTO => {
   return skinsDTO.map(({ skin_id, ...rest }) => ({ skinID: skin_id, ...rest }))
 }
 

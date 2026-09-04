@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { usePlayerDeps } from '../deps'
-import { MAX_SPACE_HOLD_TIME } from '@shared/config/game'
 import { useSnailContext } from '@features/snail'
+import { useControlParams } from './params'
 
 export const useSpaceHold = () => {
   const startTime = useRef<number>(-1)
@@ -19,7 +19,8 @@ export const useSpaceHold = () => {
     let pressDuration = 0
     if (startTime.current !== -1) {
       const endTime = Date.now()
-      pressDuration = Math.min(endTime - startTime.current, MAX_SPACE_HOLD_TIME)
+      const limit = useControlParams.getState().maxSpaceHoldTime
+      pressDuration = Math.min(endTime - startTime.current, limit)
       startTime.current = -1
       onStopShrink?.()
     }
@@ -27,9 +28,13 @@ export const useSpaceHold = () => {
     return pressDuration
   }
 
+  const resetHold = () => {
+    handleKeyUp()
+  }
+
   const blurCallback = () => {
     stopShrinkAnimation?.(true)
-    handleKeyUp()
+    resetHold()
   }
 
   useEffect(() => {
@@ -40,5 +45,5 @@ export const useSpaceHold = () => {
     }
   }, [stopShrinkAnimation])
 
-  return { handleKeyDown, handleKeyUp }
+  return { handleKeyDown, handleKeyUp, resetHold }
 }

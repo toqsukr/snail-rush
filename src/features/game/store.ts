@@ -5,15 +5,23 @@ import { PlayerSkins, PlayerStatus } from './status'
 
 const GAME_STORE_KEY = 'game-data-store'
 
+/**
+ * Race state shared by every screen of a running game. The startedAt attribute
+ * holds the instant the countdown begins, in local clock milliseconds, and is
+ * stamped ahead of time so both clients anchor their countdown and their
+ * choppers to the very same moment.
+ */
 type GameStore = {
   pause: boolean
   started: boolean
+  startedAt: number
   moveable: boolean
   finished: boolean
   playerModelHandle: number
   winner: TPlayer | null
   pauseGame: () => void
   startGame: () => void
+  markStart: (startedAt: number) => void
   finishGame: () => void
   toMainMenu: () => void
   resumeGame: () => void
@@ -31,6 +39,7 @@ export const useGameStore = create(
       pause: false,
       winner: null,
       started: false,
+      startedAt: 0,
       moveable: false,
       finished: false,
       playerStatus: null,
@@ -38,6 +47,7 @@ export const useGameStore = create(
       playerModelHandle: -1,
       updatePlayerModelHandle: playerModelHandle => set({ ...get(), playerModelHandle }),
       startGame: () => set({ ...get(), started: true, finished: false, winner: null }),
+      markStart: startedAt => set({ ...get(), startedAt }),
       updateWinner: winner => set({ ...get(), winner }),
       allowMoving: () => set({ ...get(), moveable: true }),
       updateMoveable: moveable => set({ ...get(), moveable }),

@@ -1,8 +1,8 @@
 import { Vector3 } from 'three'
 
-const HOST_START_POSITION = new Vector3(19, 0.1, -10)
+const HOST_START_POSITION = new Vector3(22.4, 0.1, -12)
 
-const JOINED_START_POSITION = new Vector3(12.2, 0.1, -10)
+const JOINED_START_POSITION = new Vector3(15.6, 0.1, -12)
 
 export type PlayerStatus = 'host' | 'joined'
 
@@ -26,8 +26,8 @@ export const getStartPosition = (playerPosition: PlayerPositions) => {
 
 export const getTexturePath = (skin: string) => {
   const defineModelPath: Record<string, string> = {
-    herbivore: '/textures/herbivore.png',
-    predator: '/textures/predator.png',
+    herbivore: '/textures/herbivore.webp',
+    predator: '/textures/predator.webp',
   }
   return defineModelPath[skin]
 }

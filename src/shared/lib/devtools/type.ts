@@ -1,7 +1,7 @@
 type ToolMap = {
   toggle: boolean
   field: string
-  range: [value: number, minLimit: number, maxLimit: number]
+  range: [value: number, minLimit: number, maxLimit: number, step: number]
 }
 
 export type ToolItem<TType extends ToolType = 'toggle'> = {

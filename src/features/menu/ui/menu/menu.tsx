@@ -8,11 +8,12 @@ import { useSession } from '@entities/session'
 import { TSkin, useSkins } from '@entities/skin'
 import { useUser } from '@entities/user'
 import { invalidateUser, resetUser } from '@entities/user/query'
-import Button from '@shared/uikit/button/Button'
-import Input from '@shared/uikit/input/Input'
+import { Button } from '@shared/uikit/button'
+import { Input } from '@shared/uikit/input'
 import { removeTokenEverywhere } from '@shared/config/token'
-import { ClipboardText } from '@shared/uikit/clipboard-text/clipboard-text'
-import UnderlinedText from '@shared/uikit/underlined-text/underlined-text'
+import { ClipboardText } from '@shared/uikit/clipboard-text'
+import { Loader } from '@shared/uikit/loader'
+import { UnderlinedText } from '@shared/uikit/underlined-text'
 
 import { useLobbyMenuDeps, useMainMenuDeps } from '../../deps'
 import { useCreateLobby } from '../../model/use-create-lobby'
@@ -36,7 +37,6 @@ import css from './menu.module.scss'
 import { useUpdatePlayer } from '@features/menu/api/update-user'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
-  const { t } = useTranslation()
   const { isLoading } = useMainMenuDeps()
   const isConnecting = useIsConnectingSession()
   const isLobbyCreating = useIsLobbyCreating()
@@ -54,7 +54,7 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
     isUserCreating ||
     isSkinsLoading
   )
-    return <div>{t('loading_text')}</div>
+    return <Loader />
 
   return (
     <section className='relative text-center'>

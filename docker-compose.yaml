@@ -1,8 +1,33 @@
 services:
   frontend:
-    build: .
+    build:
+      context: .
+      args:
+        VITE_CLIENT_IP: ${PUBLIC_HOST}
+        VITE_CLIENT_PORT: "443"
+    restart: unless-stopped
+    networks:
+      - snail
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST}
     ports:
-      - "81:80"
-      - "444:443"
-    env_file:
-      - .env
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - snail
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  snail:
+    external: true

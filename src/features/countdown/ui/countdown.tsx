@@ -1,64 +1,61 @@
 import { useGLTF } from '@react-three/drei'
 import { PrimitiveProps, useFrame } from '@react-three/fiber'
-import { FC, Suspense, useEffect, useRef } from 'react'
-import { AnimationMixer } from 'three'
+import { FC, Suspense, useEffect, useRef, useState } from 'react'
+import { AnimationAction, AnimationMixer } from 'three'
+import { CountdownPhase, countdownState } from '../lib/countdown-state'
 import { useCountdownStore } from '../model/store'
 import { useCountdownDeps } from './countdown-provider'
 
 type CountdownProp = Omit<PrimitiveProps, 'object'>
 
 export const Countdown: FC<CountdownProp> = props => {
-  const { started, value, updateValue } = useCountdownStore()
-  const { startValue, onAlarm, playerPosition } = useCountdownDeps()
+  const { startAt } = useCountdownStore()
+  const { duration, onAlarm, playerPosition } = useCountdownDeps()
 
-  const isRunning = useRef(false)
+  const [phase, setPhase] = useState<CountdownPhase>('pending')
 
-  const model = useGLTF('models/compressed_start-timer.glb')
+  const model = useGLTF('models/start-timer.glb')
 
+  const alarmedAt = useRef<number | null>(null)
   const mixerRef = useRef<AnimationMixer | null>(null)
-
-  useFrame((_, delta) => {
-    if (mixerRef.current) mixerRef.current.update(delta)
-  })
+  const actionRef = useRef<AnimationAction | null>(null)
 
   useEffect(() => {
-    mixerRef.current = new AnimationMixer(model.scene)
-    if (!mixerRef.current) return
+    const mixer = new AnimationMixer(model.scene)
+    mixerRef.current = mixer
+    actionRef.current = mixer.clipAction(model.animations[0])
+    actionRef.current.play()
 
     return () => {
-      mixerRef.current?.stopAllAction()
+      mixer.stopAllAction()
+      mixerRef.current = null
+      actionRef.current = null
     }
   }, [model])
 
-  useEffect(() => {
-    if (started && !isRunning.current) {
-      updateValue(startValue)
-      isRunning.current = true
-      const currentAnimation = model.animations[0]
-
-      const action = mixerRef.current?.clipAction(currentAnimation)
-
-      action?.play()
-
-      const timeout = setTimeout(() => {
-        updateValue(value - 1)
-        if (value === 0) {
-          isRunning.current = false
-          onAlarm()
-        }
-      }, startValue * 1000)
-
-      return () => clearTimeout(timeout)
+  useFrame(() => {
+    if (startAt === null) return
+    const { phase: current, elapsed } = countdownState(Date.now(), startAt, duration)
+    if (current !== phase) setPhase(current)
+    if (current === 'running' && actionRef.current) {
+      actionRef.current.time = (elapsed / duration) * actionRef.current.getClip().duration
+      mixerRef.current?.update(0)
     }
-  }, [started])
+    if (current === 'done' && alarmedAt.current !== startAt) {
+      alarmedAt.current = startAt
+      onAlarm()
+    }
+  })
 
-  const position = [playerPosition.x, playerPosition.y + 8, playerPosition.z]
-
-  if (!isRunning.current) return
+  if (phase !== 'running') return
 
   return (
     <Suspense fallback={null}>
-      <primitive {...props} object={model.scene} position={position} />
+      <primitive
+        {...props}
+        object={model.scene}
+        position={[playerPosition.x, playerPosition.y + 8, playerPosition.z]}
+      />
     </Suspense>
   )
 }

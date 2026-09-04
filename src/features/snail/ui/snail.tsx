@@ -1,30 +1,22 @@
-import { Text, useAnimations, useGLTF, useTexture } from '@react-three/drei'
-import { useFrame, useGraph, useThree } from '@react-three/fiber'
-import {
-  CuboidCollider,
-  RapierRigidBody,
-  RigidBody,
-  RoundCuboidCollider,
-} from '@react-three/rapier'
+import { useAnimations, useGLTF, useTexture } from '@react-three/drei'
+import { useFrame, useGraph } from '@react-three/fiber'
+import { RapierRigidBody, RigidBody, RoundCuboidCollider } from '@react-three/rapier'
 import React, { FC, RefObject, useEffect, useMemo, useRef } from 'react'
-import { BufferGeometry, Group, MeshPhysicalMaterial, Object3DEventMap, Skeleton } from 'three'
+import { BufferGeometry, Group, Object3DEventMap, Skeleton } from 'three'
 import { SkeletonUtils } from 'three-stdlib'
 import { useSnailDeps } from '../deps'
 import { useAnimation } from '../model/use-animation'
+import { useSnailParams } from '../model/params'
 import { useCollision } from '../model/use-collision'
 import { useJump } from '../model/use-jump'
+import { useMaterial } from '../model/use-material'
+import { useSnapshot } from '../model/use-snapshot'
+import { NameLabel } from './name-label'
 import { useSnailContext } from './snail-provider'
-import { DreiTextProps } from '@shared/lib/three'
 
 const STUN_ANIMATION_NAME = 'stun-animation'
 const JUMP_ANIMATION_NAME = 'BakedAnimation'
 const SHRINK_ANIMATION_NAME = 'shrink-animation'
-
-export const textures = [
-  '/textures/snail-metal.png',
-  '/textures/snail-normal.png',
-  '/textures/snail-roughness.png',
-]
 
 export const Snail: FC<{ username?: string; userID?: string }> = ({ username, userID }) => {
   const { texturePath, shrinkDuration, stunTimeout, handleModelHandle } = useSnailDeps()
@@ -33,6 +25,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   const { ref, actions } = useAnimations(animations)
 
   const [mapTexture] = useTexture([texturePath])
+  const linearDamping = useSnailParams(state => state.linearDamping)
 
   const rigidBodyRef = useRef<RapierRigidBody | null>(null)
   const { animate, stopAnimation, isAnimationRunning } = useAnimation(actions)
@@ -52,7 +45,10 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
 
   const stopJumpAnimation = () => stopAnimation(JUMP_ANIMATION_NAME)
 
-  useJump(rigidBodyRef, startJumpAnimation)
+  useJump(rigidBodyRef, startJumpAnimation, () => {
+    stopAllAnimation()
+    startStunAnimation()
+  })
 
   const startShrinkAnimation = () =>
     animate(SHRINK_ANIMATION_NAME, {
@@ -75,10 +71,9 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     stopStunAnimation()
   }
 
-  const handleCollision = useCollision(rigidBodyRef, startStunAnimation, stopAllAnimation)
+  const collision = useCollision(rigidBodyRef, startStunAnimation, stopAllAnimation)
 
-  const { camera } = useThree()
-  const textRef = useRef<DreiTextProps | null>(null)
+  const snapshot = useSnapshot(rigidBodyRef)
 
   useEffect(() => {
     updateStartShrinkAnimation(startShrinkAnimation)
@@ -87,13 +82,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
   }, [])
 
   useFrame(() => {
-    if (textRef.current) {
-      textRef.current.lookAt?.(camera.position)
-    }
-    const playerPos = rigidBodyRef.current?.translation()
-    if (playerPos) {
-      rigidBodyRef.current?.setTranslation({ ...playerPos, y: 0 }, true)
-    }
+    snapshot.tick()
   })
 
   const userData = useMemo(() => ({ userID }), [])
@@ -109,16 +98,7 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
     }
   }
 
-  mapTexture.flipY = false
-  mapTexture.colorSpace = 'srgb'
-
-  const material = new MeshPhysicalMaterial({
-    ...meshProps.material,
-    map: mapTexture,
-    color: 0xaaaaaa,
-    metalness: 0.1,
-    roughness: 0.1,
-  })
+  const material = useMaterial(meshProps.material, mapTexture)
 
   return (
     <RigidBody
@@ -128,15 +108,14 @@ export const Snail: FC<{ username?: string; userID?: string }> = ({ username, us
       ref={rigidBodyRef}
       userData={userData}
       friction={1.5}
-      linearDamping={1.2}
-      onCollisionEnter={handleCollision}
+      linearDamping={linearDamping}
+      onCollisionEnter={collision.enter}
+      onIntersectionEnter={collision.enter}
       enabledRotations={[false, false, false]}
+      enabledTranslations={[true, false, true]}
       restitution={0}>
-      <CuboidCollider name='leg' args={[0.27, 0.2, 1]} position={[0, 0.22, -0.2]} />
-      <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.5, 0.5]} position={[0, 1, 0]} />
-      <Text ref={textRef} fontSize={0.8} fontWeight={800} fillOpacity={0.8} position={[0, 4, 0]}>
-        {username}
-      </Text>
+      <RoundCuboidCollider name='shell' args={[0.08, 0.5, 0.7, 0.5]} position={[0, 1, 0]} />
+      <NameLabel text={username} position={[0, 4, 0]} />
       <group ref={ref as RefObject<Group<Object3DEventMap>>} dispose={null}>
         <group name='Scene'>
           <group name='snail' position={[0, 0.2, 0.11]} rotation={[Math.PI / 2, 0, 0]}>

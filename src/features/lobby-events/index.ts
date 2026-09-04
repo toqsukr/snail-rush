@@ -1,4 +1,6 @@
 export type { MessageType, OpponentPositionType, OpponentRotationType } from './model/types'
+export { BOUNCE_HOLD_TIME, isBounce } from './lib/is-bounce'
+export { SNAPSHOT_HOLD_TIME, isSnapshot } from './lib/is-snapshot'
 export { useEventsHandler } from './model/use-events-handler'
 export { useSendFinishGame } from './model/use-send-finish-game'
 export { useSendShrink } from './model/use-send-shrink'

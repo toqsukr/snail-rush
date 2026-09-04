@@ -4,16 +4,16 @@ import {
   opponentPositionEmitter,
   opponentRotationEmitter,
   opponentShrinkEmitter,
+  opponentSnapshotEmitter,
 } from '@features/opponent-control'
+import { useControlParams } from '@features/player-control'
 import { useGameStore } from '@features/game'
-import { Snail, snailDepsContext, SnailProvider } from '@features/snail'
+import { Snail, snailDepsContext, SnailProvider, useSnailParams } from '@features/snail'
 import { getPlayerPosition, getStartPosition, getTexturePath, PlayerSkins } from '@features/game'
 import { usePlayerByID } from '@entities/players'
 import { useSession } from '@entities/session'
 import { useSkinById } from '@entities/skin/query'
 import { TUser, useUser } from '@entities/user'
-import { MAX_SPACE_HOLD_TIME, STUN_TIMEOUT } from '@shared/config/game'
-import { isObstacle } from '@shared/lib/game/obstacle'
 
 const OpponentSnail: FC<{ user: TUser }> = ({ user }) => {
   const { data: session } = useSession()
@@ -30,6 +30,8 @@ const OpponentSuspense = () => {
   const sessionOpponent = session?.players.find(({ id }) => id !== user?.id)
   const { data: opponentPlayer } = usePlayerByID(sessionOpponent?.id ?? '')
   const { data: skin } = useSkinById(opponentPlayer?.skinID ?? '')
+  const { stunTimeout } = useSnailParams()
+  const { maxSpaceHoldTime: shrinkDuration } = useControlParams()
 
   if (!playerStatus || (session?.players.length ?? 0) < 2 || !user) return
 
@@ -42,9 +44,10 @@ const OpponentSuspense = () => {
           positionEmitter: opponentPositionEmitter,
           rotationEmitter: opponentRotationEmitter,
           shrinkEmitter: opponentShrinkEmitter,
-          stunTimeout: STUN_TIMEOUT,
-          shouldHandleCollision: isObstacle,
-          shrinkDuration: MAX_SPACE_HOLD_TIME,
+          snapshotEmitter: opponentSnapshotEmitter,
+          stunTimeout,
+          shouldHandleCollision: () => false,
+          shrinkDuration,
           texturePath,
         }}>
         <SnailProvider

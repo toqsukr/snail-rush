@@ -1,12 +1,14 @@
-import { FC, useState } from 'react'
-import { useThree } from '@react-three/fiber'
+import { FC, lazy, Suspense, useMemo, useState } from 'react'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
-import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
-import { TransformControls, TransformControlsProps, useGLTF } from '@react-three/drei'
-import { ChopperObstacle, StaticObstacle } from './obstacle'
+import { Euler, EulerTuple, Vector3, Vector3Tuple } from 'three'
+import { useGLTF } from '@react-three/drei'
+import { ChopperObstacle, ColliderBox, StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
 import { StartModel } from './start'
 import { ModelPrimitive } from './primitive'
+import { modelInstance } from './model-instance'
+
+const MapTransform = lazy(() => import('./map-transform'))
 
 export type MapObject = {
   name: string
@@ -23,6 +25,7 @@ export type MapData = {
   finishLine: MapObject
   planeModelPath: string
   wallsModelPath: string
+  decorationModelPath?: string
   obstacle: {
     chopper?: {
       items: Chopper[]
@@ -43,7 +46,18 @@ export type MapData = {
   }
 }
 
-type EditMode = 'rotate' | 'translate'
+const STONE_COLLIDER: ColliderBox = {
+  args: [1.25, 1.42, 1.64],
+  position: [-0.02, 1.42, -0.02],
+  rotation: [0, -0.44, 0],
+}
+const SMALL_STONE_COLLIDER: ColliderBox = {
+  args: [0.65, 0.57, 0.72],
+  position: [-0.03, 0.57, 0.01],
+  rotation: [0, -1.2, 0],
+}
+
+export type EditMode = 'rotate' | 'translate'
 
 export type ChangeSelectedOptions = {
   name: string
@@ -55,6 +69,7 @@ export type ChangeSelectedOptions = {
 type GameMapProp = {
   mapData: MapData
   isStarted: boolean
+  startedAt?: number
   onFinish: (userData: unknown) => Promise<void>
 } & (
   | {
@@ -68,32 +83,39 @@ type GameMapProp = {
     }
 )
 
+const MapDecoration: FC<{ modelPath: string }> = ({ modelPath }) => {
+  const { scene } = useGLTF(modelPath)
+  const decoration = useMemo(() => modelInstance(scene), [scene])
+
+  return (
+    <group>
+      <primitive object={decoration} />
+    </group>
+  )
+}
+
 export const MapModelConstruct = ({
   planeModelPath,
   wallsModelPath,
+  decorationModelPath,
 }: {
   planeModelPath: string
   wallsModelPath: string
+  decorationModelPath?: string
 }) => {
   const mapPlane = useGLTF(planeModelPath)
   const mapWalls = useGLTF(wallsModelPath)
 
   return (
     <>
-      <RigidBody
-        colliders='cuboid'
-        collisionGroups={interactionGroups(0b01, 0b10)}
-        type='fixed'
-        position={[0, 0, 0]}
-        rotation={[0, 0, 0]}>
+      {decorationModelPath && <MapDecoration modelPath={decorationModelPath} />}
+      <RigidBody colliders='cuboid' collisionGroups={interactionGroups(0b01, 0b10)} type='fixed'>
         <primitive object={mapPlane.scene} />
       </RigidBody>
       <RigidBody
         type='fixed'
         colliders='trimesh'
         collisionGroups={interactionGroups(0b01, 0b10)}
-        rotation={[0, 0, 0]}
-        position={[0, 0, 0]}
         userData={{ isObstacle: true }}>
         <primitive object={mapWalls.scene} />
       </RigidBody>
@@ -101,48 +123,34 @@ export const MapModelConstruct = ({
   )
 }
 
-export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, ...props }) => {
+export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, startedAt, ...props }) => {
   const { stone, smallStone, bigStone, chopper } = mapData.obstacle
-  const { planeModelPath, wallsModelPath } = mapData
-  const { scene } = useThree()
+  const { planeModelPath, wallsModelPath, decorationModelPath } = mapData
   const [editMode, setEditMode] = useState<EditMode>('translate')
+  const [openedAt] = useState(() => Date.now())
 
   return (
     <>
-      <MapModelConstruct planeModelPath={planeModelPath} wallsModelPath={wallsModelPath} />
+      <MapModelConstruct
+        planeModelPath={planeModelPath}
+        wallsModelPath={wallsModelPath}
+        decorationModelPath={decorationModelPath}
+      />
       <StartModel {...mapData.startLine} />
       <FinishControl {...mapData.finishLine} onFinish={onFinish} />
       {props.editable && props.selectedName && (
-        <TransformControls
-          mode={editMode}
-          object={scene.getObjectByName(props.selectedName)}
-          onObjectChange={e => {
-            const obj = (e?.target as TransformControlsProps).object as Group
-            const worldPosition = new Vector3()
-            const worldQuaternion = new Quaternion()
-            const worldScale = new Vector3()
-
-            obj.matrixWorld.decompose(worldPosition, worldQuaternion, worldScale)
-
-            // Конвертируем кватернион в углы Эйлера (радианы)
-            const euler = new Euler().setFromQuaternion(worldQuaternion)
-
-            props.onChangeSelected({
-              name: obj.name,
-              position: worldPosition
-                .toArray()
-                .map(value => parseFloat(value.toFixed(2))) as Vector3Tuple,
-              rotation: [euler.x, euler.y, euler.z].map(value =>
-                parseFloat(value.toFixed(2)),
-              ) as EulerTuple,
-              mode: editMode,
-            })
-          }}
-        />
+        <Suspense fallback={null}>
+          <MapTransform
+            mode={editMode}
+            selectedName={props.selectedName}
+            onChangeSelected={props.onChangeSelected}
+          />
+        </Suspense>
       )}
       {stone?.items.map(({ name, position, rotation }) => (
         <StaticObstacle
           key={name}
+          collider={STONE_COLLIDER}
           rotation={new Euler(...rotation)}
           position={new Vector3(...position)}
           model={
@@ -160,6 +168,7 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, ...prop
       {smallStone?.items.map(({ name, position, rotation }) => (
         <StaticObstacle
           key={name}
+          collider={SMALL_STONE_COLLIDER}
           rotation={new Euler(...rotation)}
           position={new Vector3(...position)}
           model={
@@ -191,24 +200,23 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, ...prop
           }
         />
       ))}
-      {isStarted &&
-        chopper?.items.map(({ extremePositions, speed }) => (
-          <ChopperObstacle
-            speed={speed}
-            key={`chopper-${extremePositions.join()}`}
-            model={
-              <ModelPrimitive
-                name={`chopper-${extremePositions.join()}`}
-                scale={3}
-                modelPath={chopper.modelPath}
-              />
-            }
-            extremePositions={[
-              new Vector3(...extremePositions[0]),
-              new Vector3(...extremePositions[1]),
-            ]}
-          />
-        ))}
+      {chopper?.items.map(({ extremePositions, speed }) => (
+        <ChopperObstacle
+          speed={speed}
+          startedAt={isStarted ? startedAt || openedAt : undefined}
+          key={`chopper-${extremePositions.join()}`}
+          model={
+            <ModelPrimitive
+              name={`chopper-${extremePositions.join()}`}
+              modelPath={chopper.modelPath}
+            />
+          }
+          extremePositions={[
+            new Vector3(...extremePositions[0]),
+            new Vector3(...extremePositions[1]),
+          ]}
+        />
+      ))}
     </>
   )
 }

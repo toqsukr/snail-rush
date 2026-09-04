@@ -12,6 +12,7 @@ import { getPlayerPosition, getStartPosition, useGameStore } from '@features/gam
 import { useSendKick, useSendStartGame, useSendStopGame } from '@features/lobby-events'
 import { useUser } from '@entities/user'
 import { useIsHost } from '@entities/session'
+import { RACE_LEAD } from '@shared/config/game'
 import { invalidateSession, useSession } from '@entities/session'
 
 const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
@@ -21,6 +22,7 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     toMainMenu,
     finished,
     startGame,
+    markStart,
     playerStatus,
     updatePlayerStatus,
   } = useGameStore()
@@ -60,10 +62,12 @@ const LobbyMenuLayout: FC<PropsWithChildren> = ({ children }) => {
   }
 
   const onPlay = async () => {
-    sendStartGame()
+    sendStartGame(RACE_LEAD / 1000)
+    const startAt = Date.now() + RACE_LEAD
+    markStart(startAt)
+    startTimer(startAt)
     await followTarget(new Vector3(...playerStartPosition))
     startGame()
-    startTimer()
     if (session?.players.find(({ id }) => user?.id === id)?.isReady) {
       toggleReady({ sessionID: session?.id ?? '', playerID: user?.id ?? '' })
     }
