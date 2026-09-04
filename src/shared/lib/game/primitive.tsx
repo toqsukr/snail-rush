@@ -2,6 +2,7 @@ import { useGLTF } from '@react-three/drei'
 import { PrimitiveProps } from '@react-three/fiber'
 import { FC, useMemo } from 'react'
 import { Mesh } from 'three'
+import { modelInstance } from './model-instance'
 
 type ModelPrimitiveProps = {
   modelPath: string
@@ -11,7 +12,7 @@ export const ModelPrimitive: FC<ModelPrimitiveProps> = ({ modelPath, ...props })
   const { scene } = useGLTF(modelPath)
 
   const clonedScene = useMemo(() => {
-    const clone = scene.clone()
+    const clone = modelInstance(scene)
     clone.traverse(child => {
       if ((child as Mesh).isMesh) {
         child.castShadow = true
