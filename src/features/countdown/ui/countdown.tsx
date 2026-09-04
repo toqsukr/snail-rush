@@ -14,7 +14,7 @@ export const Countdown: FC<CountdownProp> = props => {
 
   const [phase, setPhase] = useState<CountdownPhase>('pending')
 
-  const model = useGLTF('models/compressed_start-timer.glb')
+  const model = useGLTF('models/start-timer.glb')
 
   const alarmedAt = useRef<number | null>(null)
   const mixerRef = useRef<AnimationMixer | null>(null)
