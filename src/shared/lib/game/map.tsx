@@ -1,13 +1,14 @@
-import { FC, useMemo, useState } from 'react'
-import { useThree } from '@react-three/fiber'
+import { FC, lazy, Suspense, useMemo, useState } from 'react'
 import { interactionGroups, RigidBody } from '@react-three/rapier'
-import { Euler, EulerTuple, Group, Quaternion, Vector3, Vector3Tuple } from 'three'
-import { TransformControls, TransformControlsProps, useGLTF } from '@react-three/drei'
+import { Euler, EulerTuple, Vector3, Vector3Tuple } from 'three'
+import { useGLTF } from '@react-three/drei'
 import { ChopperObstacle, ColliderBox, StaticObstacle } from './obstacle'
 import { FinishControl } from './finish'
 import { StartModel } from './start'
 import { ModelPrimitive } from './primitive'
 import { modelInstance } from './model-instance'
+
+const MapTransform = lazy(() => import('./map-transform'))
 
 export type MapObject = {
   name: string
@@ -56,7 +57,7 @@ const SMALL_STONE_COLLIDER: ColliderBox = {
   rotation: [0, -1.2, 0],
 }
 
-type EditMode = 'rotate' | 'translate'
+export type EditMode = 'rotate' | 'translate'
 
 export type ChangeSelectedOptions = {
   name: string
@@ -125,7 +126,6 @@ export const MapModelConstruct = ({
 export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, startedAt, ...props }) => {
   const { stone, smallStone, bigStone, chopper } = mapData.obstacle
   const { planeModelPath, wallsModelPath, decorationModelPath } = mapData
-  const { scene } = useThree()
   const [editMode, setEditMode] = useState<EditMode>('translate')
   const [openedAt] = useState(() => Date.now())
 
@@ -139,32 +139,13 @@ export const GameMap: FC<GameMapProp> = ({ mapData, onFinish, isStarted, started
       <StartModel {...mapData.startLine} />
       <FinishControl {...mapData.finishLine} onFinish={onFinish} />
       {props.editable && props.selectedName && (
-        <TransformControls
-          mode={editMode}
-          object={scene.getObjectByName(props.selectedName)}
-          onObjectChange={e => {
-            const obj = (e?.target as TransformControlsProps).object as Group
-            const worldPosition = new Vector3()
-            const worldQuaternion = new Quaternion()
-            const worldScale = new Vector3()
-
-            obj.matrixWorld.decompose(worldPosition, worldQuaternion, worldScale)
-
-            // Конвертируем кватернион в углы Эйлера (радианы)
-            const euler = new Euler().setFromQuaternion(worldQuaternion)
-
-            props.onChangeSelected({
-              name: obj.name,
-              position: worldPosition
-                .toArray()
-                .map(value => parseFloat(value.toFixed(2))) as Vector3Tuple,
-              rotation: [euler.x, euler.y, euler.z].map(value =>
-                parseFloat(value.toFixed(2)),
-              ) as EulerTuple,
-              mode: editMode,
-            })
-          }}
-        />
+        <Suspense fallback={null}>
+          <MapTransform
+            mode={editMode}
+            selectedName={props.selectedName}
+            onChangeSelected={props.onChangeSelected}
+          />
+        </Suspense>
       )}
       {stone?.items.map(({ name, position, rotation }) => (
         <StaticObstacle

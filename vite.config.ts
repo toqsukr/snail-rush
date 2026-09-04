@@ -5,13 +5,13 @@ import Unfonts from 'unplugin-fonts/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import basicSSL from '@vitejs/plugin-basic-ssl'
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
 
   return {
     plugins: [
       react(),
-      basicSSL(),
+      ...(command === 'build' ? [] : [basicSSL()]),
       Unfonts({
         google: { families: ['Jersey 25', 'Roboto'], preconnect: true },
       }),
@@ -92,6 +92,18 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
           secure: false,
           ws: true,
+        },
+      },
+    },
+    build: {
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          manualChunks: id => {
+            if (!id.includes('node_modules')) return
+            if (id.includes('@dimforge')) return 'rapier'
+            if (id.includes('/node_modules/three/')) return 'three'
+          },
         },
       },
     },

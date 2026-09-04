@@ -15,5 +15,6 @@
   "not_found_hint_text": "Такой трассы здесь нет, вернитесь на старт",
   "to_home_text": "На главную",
   "request_error_text": "Ошибка запроса ({{status}})",
-  "network_error_text": "Сервер недоступен"
+  "network_error_text": "Сервер недоступен",
+  "loading_text": "Загрузка..."
 }

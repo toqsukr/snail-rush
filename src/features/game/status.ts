@@ -26,8 +26,8 @@ export const getStartPosition = (playerPosition: PlayerPositions) => {
 
 export const getTexturePath = (skin: string) => {
   const defineModelPath: Record<string, string> = {
-    herbivore: '/textures/herbivore.png',
-    predator: '/textures/predator.png',
+    herbivore: '/textures/herbivore.webp',
+    predator: '/textures/predator.webp',
   }
   return defineModelPath[skin]
 }

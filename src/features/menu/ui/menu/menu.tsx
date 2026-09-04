@@ -12,6 +12,7 @@ import { Button } from '@shared/uikit/button'
 import { Input } from '@shared/uikit/input'
 import { removeTokenEverywhere } from '@shared/config/token'
 import { ClipboardText } from '@shared/uikit/clipboard-text'
+import { Loader } from '@shared/uikit/loader'
 import { UnderlinedText } from '@shared/uikit/underlined-text'
 
 import { useLobbyMenuDeps, useMainMenuDeps } from '../../deps'
@@ -36,7 +37,6 @@ import css from './menu.module.scss'
 import { useUpdatePlayer } from '@features/menu/api/update-user'
 
 const Menu: FC<PropsWithChildren> = ({ children }) => {
-  const { t } = useTranslation()
   const { isLoading } = useMainMenuDeps()
   const isConnecting = useIsConnectingSession()
   const isLobbyCreating = useIsLobbyCreating()
@@ -54,7 +54,7 @@ const Menu: FC<PropsWithChildren> = ({ children }) => {
     isUserCreating ||
     isSkinsLoading
   )
-    return <div>{t('loading_text')}</div>
+    return <Loader />
 
   return (
     <section className='relative text-center'>
