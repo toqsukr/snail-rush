@@ -16,5 +16,7 @@
   "to_home_text": "На главную",
   "request_error_text": "Ошибка запроса ({{status}})",
   "network_error_text": "Сервер недоступен",
+  "rotate_title_text": "Поверните устройство",
+  "rotate_hint_text": "Игра работает только в горизонтальном режиме, поверните телефон",
   "loading_text": "Загрузка..."
 }
