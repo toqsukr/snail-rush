@@ -9,10 +9,12 @@ import { JoystickController } from '@shared/lib/mobile-control/joystick'
 import ButtonController from '@shared/lib/mobile-control/button'
 import { useDeviceDetection } from '@shared/lib/device'
 import { DevTools } from '@shared/lib/devtools'
+import { usePortrait } from '@shared/lib/orientation'
 import { useObserveTabFocus } from '@shared/lib/tab-focus'
 import { withWebgl } from '@shared/lib/webgl'
 import { Toasts } from '@shared/uikit/toast'
 import '../i18n'
+import RotateScreen from '../ui/rotate-screen'
 import WebglScreen from '../ui/webgl-screen'
 
 const AppLayout: FC<PropsWithChildren> = ({ children }) => {
@@ -20,6 +22,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation()
 
   const { started } = useGameStore()
+  const portrait = usePortrait()
 
   const handleLeft = () => {
     window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowRight' }))
@@ -75,6 +78,7 @@ const AppLayout: FC<PropsWithChildren> = ({ children }) => {
         </KeyboardControls>
       </Canvas>
       <Toasts />
+      {device !== 'desktop' && portrait && <RotateScreen />}
       {process.env.NODE_ENV === 'development' && <DevTools />}
       {device !== 'desktop' && started && (
         <>

@@ -16,5 +16,7 @@
   "to_home_text": "TO HOME",
   "request_error_text": "Request failed ({{status}})",
   "network_error_text": "Server is unreachable",
+  "rotate_title_text": "Rotate the device",
+  "rotate_hint_text": "The game runs in landscape only, turn the phone sideways",
   "loading_text": "Loading..."
 }
