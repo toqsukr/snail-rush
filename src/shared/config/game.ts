@@ -1,5 +1,6 @@
 export const STUN_TIMEOUT = 1600
 export const MAX_SPACE_HOLD_TIME = 500
+export const MIN_JUMP_POWER = 0.4
 export const CAMERA_MOVE_DURATION = 2500
 export const CAMERA_FOCUS_DURATION = 1400
 export const COUNTDOWN_DURATION = 3000

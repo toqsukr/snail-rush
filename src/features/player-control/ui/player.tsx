@@ -7,6 +7,7 @@ import { useSpaceHold } from '../model/use-space-hold'
 import { pushPlayerPosition } from '../model/position-emitter'
 import { pushPlayerRotation } from '../model/rotation-emitter'
 import { Euler, Vector3 } from 'three'
+import { MIN_JUMP_POWER } from '@shared/config/game'
 import { useControlParams } from '../model/params'
 import { useTabFocus } from '@shared/lib/tab-focus'
 
@@ -23,7 +24,7 @@ export const Player: FC<PropsWithChildren> = ({ children }) => {
   const { onJump, onRotate, canMove } = usePlayerDeps()
 
   const handleJump = (holdTime: number) => {
-    const koef = Math.max(0.4, holdTime / useControlParams.getState().maxSpaceHoldTime)
+    const koef = Math.max(MIN_JUMP_POWER, holdTime / useControlParams.getState().maxSpaceHoldTime)
     const callback = (impulse: Vector3, duration: number) =>
       pushPlayerPosition({
         impulse,

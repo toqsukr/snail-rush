@@ -25,5 +25,16 @@
   "game_over_text": "Игра окончена",
   "won_text": "Победил",
   "rating_text": "Ваш рейтинг",
-  "total_games_text": "Всего игр"
+  "total_games_text": "Всего игр",
+  "controls_text": "Управление",
+  "controls_arrows_term_text": "← →",
+  "controls_joystick_term_text": "Джойстик",
+  "controls_turn_hint_text": "Поворот на месте: чем дольше удержание, тем круче поворачивает улитка",
+  "controls_space_term_text": "Пробел",
+  "controls_jump_button_term_text": "Кнопка прыжка",
+  "controls_jump_hint_text": "Удерживайте для замаха, отпустите для прыжка: полная сила через {{charge}} мс, слабее {{floor}}% не бывает",
+  "controls_air_term_text": "В полёте",
+  "controls_air_hint_text": "Пока улитка не приземлится, поворот недоступен",
+  "controls_stun_term_text": "Препятствия",
+  "controls_stun_hint_text": "Удар оглушает улитку на {{stun}} с"
 }
