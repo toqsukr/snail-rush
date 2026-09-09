@@ -5,6 +5,7 @@ type MainMenuDeps = {
   onCreateLobby: (userID: string, sessionID: string) => void
   onConnectLobby: (userID: string, sessionID: string) => void
   onToSkins: () => void
+  onToControls: () => void
   onBackToMainMenu: () => void
   onChangeSkin: (skin: TSkin) => void
   onRegister: (data: { username: string; password: string }) => void

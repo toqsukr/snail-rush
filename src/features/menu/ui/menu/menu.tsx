@@ -28,6 +28,7 @@ import { useDisconnectLobby } from '../../model/use-disconnect-lobby'
 import { useJoinLobby } from '../../model/use-join-lobby'
 import { usePlay } from '../../model/use-play'
 import BackButton from '../action-buttons/back-button'
+import { Controls } from '../controls/controls'
 import BackToLobbyButton from '../action-buttons/back-to-lobby-button'
 import LobbyBoard from '../lobby-board/lobby-board'
 import UsernameInput from '../username-input'
@@ -67,9 +68,9 @@ const MainMenuContent = () => {
   const { t } = useTranslation()
   const joinLobby = useJoinLobby()
   const { data: user } = useUser()
-  const { visibility, mode, toSkins } = useMenu()
+  const { visibility, mode, toSkins, toControls } = useMenu()
   const { data: session } = useSession()
-  const { onToSkins } = useMainMenuDeps()
+  const { onToSkins, onToControls } = useMainMenuDeps()
   const createLobby = useCreateLobby()
 
   const formData = useForm<{ username: string }>({
@@ -81,6 +82,11 @@ const MainMenuContent = () => {
   const changeSkin = () => {
     toSkins()
     onToSkins()
+  }
+
+  const showControls = () => {
+    toControls()
+    onToControls()
   }
 
   const onExit = () => {
@@ -134,6 +140,9 @@ const MainMenuContent = () => {
       </Button>
       <Button onClick={changeSkin} disabled={globalDisable}>
         {t('change_skin_text')}
+      </Button>
+      <Button onClick={showControls} disabled={globalDisable}>
+        {t('controls_text')}
       </Button>
       <Button onClick={onExit} disabled={globalDisable}>
         {t('exit_text')}
@@ -201,6 +210,19 @@ export const SkinMenu = () => {
         </ul>
       </section>
       <BackButton disabled={!isActiveMenu} />
+    </Menu>
+  )
+}
+
+export const ControlsMenu = () => {
+  const { visibility, mode } = useMenu()
+
+  if (!visibility || !mode.includes('main-menu')) return
+
+  return (
+    <Menu>
+      <Controls />
+      <BackButton disabled={mode !== 'main-menu-controls'} />
     </Menu>
   )
 }

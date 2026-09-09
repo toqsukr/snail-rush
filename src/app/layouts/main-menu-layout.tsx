@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Vector3 } from 'three'
 
-import { MAIN_MENU_POSITION, SKIN_MENU_POSITION } from '@pages/home'
+import { CONTROLS_MENU_POSITION, MAIN_MENU_POSITION, SKIN_MENU_POSITION } from '@pages/home'
 import { useLogin, useRegister, useIsLogining, useIsRegistering } from '@features/auth'
 import { useGameStore } from '@features/game'
 import { useAppendLog } from '@features/logflow'
@@ -45,6 +45,10 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
     await focusTo(new Vector3(...SKIN_MENU_POSITION))
   }
 
+  const onToControls = async () => {
+    await focusTo(new Vector3(...CONTROLS_MENU_POSITION))
+  }
+
   const onLogin = async (data: { username: string; password: string }) => {
     const { access_token } = await login(data)
 
@@ -67,6 +71,7 @@ const MainMenuLayout: FC<PropsWithChildren> = ({ children }) => {
         onConnectLobby,
         onCreateLobby,
         onToSkins,
+        onToControls,
         onBackToMainMenu,
         onChangeSkin,
         onRegister,

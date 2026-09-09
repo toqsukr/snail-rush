@@ -25,5 +25,16 @@
   "game_over_text": "GAME OVER",
   "won_text": "WON",
   "rating_text": "Your rating",
-  "total_games_text": "Total games"
+  "total_games_text": "Total games",
+  "controls_text": "CONTROLS",
+  "controls_arrows_term_text": "← →",
+  "controls_joystick_term_text": "JOYSTICK",
+  "controls_turn_hint_text": "Turn on the spot: the longer you hold, the sharper the snail turns",
+  "controls_space_term_text": "SPACE",
+  "controls_jump_button_term_text": "JUMP BUTTON",
+  "controls_jump_hint_text": "Hold to charge, release to jump: full power after {{charge}} ms, never weaker than {{floor}}%",
+  "controls_air_term_text": "IN THE AIR",
+  "controls_air_hint_text": "No turning until the snail lands",
+  "controls_stun_term_text": "OBSTACLES",
+  "controls_stun_hint_text": "A hit stuns the snail for {{stun}} s"
 }

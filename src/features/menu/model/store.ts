@@ -5,6 +5,7 @@ export type MenuMode =
   | 'auth-password'
   | 'main-menu'
   | 'main-menu-skin'
+  | 'main-menu-controls'
   | 'join-lobby'
   | 'lobby'
   | 'game-pause'
@@ -26,6 +27,7 @@ type MenuStore = {
   resumeGame: () => void
   finishGame: () => void
   toSkins: () => void
+  toControls: () => void
   updateMenuMode: (mode: MenuMode) => void
 }
 
@@ -39,6 +41,7 @@ export const useMenu = create<MenuStore>((set, get) => ({
   connectLobby: () => set({ ...get(), mode: 'lobby' }),
   joinLobby: () => set({ ...get(), mode: 'join-lobby' }),
   toSkins: () => set({ ...get(), mode: 'main-menu-skin' }),
+  toControls: () => set({ ...get(), mode: 'main-menu-controls' }),
   disconnectLobby: () => set({ ...get(), mode: 'main-menu', visibility: true }),
   backToMainMenu: () => set({ ...get(), mode: 'main-menu', visibility: true }),
   backToLobby: () => set({ ...get(), mode: 'lobby', visibility: true }),
