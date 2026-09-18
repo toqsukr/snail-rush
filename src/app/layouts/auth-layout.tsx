@@ -2,6 +2,7 @@ import { FC, PropsWithChildren } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useMenuMode } from '@features/menu'
 import { resetSession, useSessionCode } from '@entities/session'
+import { resetUser } from '@entities/user'
 import { useToken, useTokenExpiry } from '@shared/config/token'
 import { Routes } from '@shared/model/routes'
 
@@ -14,6 +15,7 @@ const AuthLayout: FC<PropsWithChildren> = ({ children }) => {
   if (!token) {
     deleteSession()
     resetSession()
+    resetUser()
     updateMenuMode('auth-username')
     return <Navigate to={Routes.AUTH} />
   }

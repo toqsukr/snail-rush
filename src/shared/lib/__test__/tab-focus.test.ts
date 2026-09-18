@@ -36,6 +36,16 @@ describe('useObserveTabFocus', () => {
     expect(result.current).toBe(false)
   })
 
+  it('cannot stay unfocused once the phone restores the page', () => {
+    renderHook(() => useObserveTabFocus())
+    const { result } = renderHook(() => useTabFocus())
+    act(() => window.dispatchEvent(new Event('pagehide')))
+
+    act(() => window.dispatchEvent(new Event('pageshow')))
+
+    expect(result.current).toBe(true)
+  })
+
   it('cannot keep the focus while the desktop window blurs', () => {
     renderHook(() => useObserveTabFocus())
     const { result } = renderHook(() => useTabFocus())

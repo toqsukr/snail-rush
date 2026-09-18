@@ -42,8 +42,7 @@ export const useTokenExpiry = () => {
     const moment = expiration(token)
     if (moment === null) return
     const rest = moment - Date.now()
-    if (rest > MAX_TIMEOUT) return
-    if (rest <= 0) return removeToken()
+    if (rest <= 0 || rest > MAX_TIMEOUT) return
     const timer = setTimeout(removeToken, rest)
     return () => clearTimeout(timer)
   }, [token, removeToken])

@@ -12,13 +12,14 @@ afterEach(() => {
 })
 
 describe('useTokenExpiry', () => {
-  it('drops a token that expired before the player came back', () => {
+  it('cannot drop a token the server might still accept', () => {
     vi.useFakeTimers({ now: 1734567890000 })
-    useToken.setState({ token: signed('stale', 1734567880000) })
+    const ahead = signed('ahead', 1734567880000)
+    useToken.setState({ token: ahead })
 
     renderHook(() => useTokenExpiry())
 
-    expect(token()).toBeNull()
+    expect(token()).toBe(ahead)
   })
 
   it('drops a token once its expiry moment comes', () => {

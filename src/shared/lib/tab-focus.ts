@@ -27,12 +27,14 @@ export const useObserveTabFocus = () => {
     window.addEventListener('blur', leave)
     window.addEventListener('focus', enter)
     window.addEventListener('pagehide', leave)
+    window.addEventListener('pageshow', enter)
     document.addEventListener('visibilitychange', toggle)
 
     return () => {
       window.removeEventListener('blur', leave)
       window.removeEventListener('focus', enter)
       window.removeEventListener('pagehide', leave)
+      window.removeEventListener('pageshow', enter)
       document.removeEventListener('visibilitychange', toggle)
     }
   }, [updateTabFocus])
