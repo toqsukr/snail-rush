@@ -30,7 +30,15 @@ describe('controls reference', () => {
   })
 
   it('cannot keep the arrow keys silent on a desktop', () => {
+    expect(reference('desktop').getByText('← →')).toBeTruthy()
+  })
+
+  it('cannot keep the jump key silent on a desktop', () => {
     expect(reference('desktop').getByText('SPACE')).toBeTruthy()
+  })
+
+  it('cannot draw arrow keys for a touch player', () => {
+    expect(reference('mobile').queryByText('← →')).toBeNull()
   })
 
   it('cannot name keyboard keys on a touch device', () => {
