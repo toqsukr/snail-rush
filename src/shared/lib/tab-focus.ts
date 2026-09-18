@@ -20,21 +20,20 @@ export const useTabFocus = () => {
 export const useObserveTabFocus = () => {
   const updateTabFocus = useTabFocusStore(s => s.updateTabFocus)
 
-  const blurCallback = () => {
-    updateTabFocus(false)
-  }
-
-  const focusCallback = () => {
-    updateTabFocus(true)
-  }
-
   useEffect(() => {
-    window.addEventListener('blur', blurCallback)
-    window.addEventListener('focus', focusCallback)
+    const leave = () => updateTabFocus(false)
+    const enter = () => updateTabFocus(true)
+    const toggle = () => updateTabFocus(document.visibilityState === 'visible')
+    window.addEventListener('blur', leave)
+    window.addEventListener('focus', enter)
+    window.addEventListener('pagehide', leave)
+    document.addEventListener('visibilitychange', toggle)
 
     return () => {
-      window.removeEventListener('blur', blurCallback)
-      window.removeEventListener('focus', focusCallback)
+      window.removeEventListener('blur', leave)
+      window.removeEventListener('focus', enter)
+      window.removeEventListener('pagehide', leave)
+      document.removeEventListener('visibilitychange', toggle)
     }
   }, [updateTabFocus])
 }
