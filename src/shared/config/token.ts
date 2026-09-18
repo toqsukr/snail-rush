@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { expiration } from '@shared/lib/jwt'
 
 const TOKEN_STORAGE_KEY = 'user-access-token'
 
@@ -28,4 +30,21 @@ export const getRawTokenFromStorage = (): string | null => useToken.getState().t
 
 export const removeTokenEverywhere = () => {
   useToken.getState().removeToken()
+}
+
+const MAX_TIMEOUT = 2147483647
+
+export const useTokenExpiry = () => {
+  const token = useToken(s => s.token)
+  const removeToken = useToken(s => s.removeToken)
+  useEffect(() => {
+    if (!token) return
+    const moment = expiration(token)
+    if (moment === null) return
+    const rest = moment - Date.now()
+    if (rest > MAX_TIMEOUT) return
+    if (rest <= 0) return removeToken()
+    const timer = setTimeout(removeToken, rest)
+    return () => clearTimeout(timer)
+  }, [token, removeToken])
 }
